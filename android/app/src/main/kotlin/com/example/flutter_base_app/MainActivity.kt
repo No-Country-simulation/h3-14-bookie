@@ -1,4 +1,4 @@
-package com.example.h3-14-bookie
+package com.example.h3_14_bookie
 
 import io.flutter.embedding.android.FlutterActivity
 
