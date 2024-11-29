@@ -1,6 +1,6 @@
 {
-    "name": "h3-14-bookie",
-    "short_name": "h3-14-bookie",
+    "name": "h3_14_bookie",
+    "short_name": "h3_14_bookie",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
