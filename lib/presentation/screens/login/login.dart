@@ -6,7 +6,7 @@ import 'package:h3_14_bookie/presentation/screens/signup/signup.dart';
 
 class Login extends StatelessWidget {
   Login({super.key});
-
+  static const String name = 'Login';
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
