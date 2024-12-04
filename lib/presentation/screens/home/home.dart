@@ -12,33 +12,31 @@ class Home extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Hello👋',
-                style: GoogleFonts.raleway(
-                    textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20)),
+              Column(
+                children: [
+                  Text(
+                    'Hello👋',
+                    style: GoogleFonts.inter(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    FirebaseAuth.instance.currentUser!.email!.toString(),
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                FirebaseAuth.instance.currentUser!.email!.toString(),
-                style: GoogleFonts.raleway(
-                    textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20)),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              _logout(context)
+              _logoutButton(context),
             ],
           ),
         ),
@@ -46,20 +44,40 @@ class Home extends StatelessWidget {
     );
   }
 
-  Widget _logout(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xff0D6EFD),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+  Widget _logoutButton(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text(
+          '¿Deseas cerrar sesión?',
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 14,
+          ),
         ),
-        minimumSize: const Size(double.infinity, 60),
-        elevation: 0,
-      ),
-      onPressed: () async {
-        await AuthService().signout(context: context);
-      },
-      child: const Text("Sign Out"),
+        const SizedBox(height: 16),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF006494),
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            minimumSize: const Size(double.infinity, 56),
+            elevation: 0,
+          ),
+          onPressed: () async {
+            await AuthService().signout(context: context);
+          },
+          child: const Text(
+            "Cerrar sesión",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

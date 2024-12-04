@@ -15,56 +15,43 @@ class Login extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
-      bottomNavigationBar: _signup(context),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: 100,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Container(
-            margin: const EdgeInsets.only(left: 10),
-            decoration: const BoxDecoration(
-                color: Color(0xffF7F7F9), shape: BoxShape.circle),
-            child: const Center(
-              child: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Colors.black,
-              ),
-            ),
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Text(
-                  'Hello Again',
-                  style: GoogleFonts.raleway(
-                      textStyle: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 32)),
+              const SizedBox(height: 20),
+              Text(
+                'Inicio de sesión',
+                style: GoogleFonts.inter(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
                 ),
               ),
-              const SizedBox(
-                height: 80,
+              const SizedBox(height: 8),
+              Text(
+                'Para comenzar, ingresa a tu cuenta.',
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: Colors.black87,
+                ),
               ),
-              _emailAddress(),
-              const SizedBox(
-                height: 20,
-              ),
-              _password(),
-              const SizedBox(
-                height: 50,
-              ),
-              _signin(context),
+              const SizedBox(height: 32),
+              _socialLoginButtons(),
+              const SizedBox(height: 24),
+              _divider(),
+              const SizedBox(height: 24),
+              _loginForm(context),
             ],
           ),
         ),
@@ -72,117 +59,147 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget _emailAddress() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _socialLoginButtons() {
+    return Row(
       children: [
-        Text(
-          'Email Address',
-          style: GoogleFonts.raleway(
-              textStyle: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 16)),
+        Expanded(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              side: const BorderSide(color: Colors.grey, width: 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+            onPressed: () {},
+            child: Image.asset('assets/images/google_icon.png', height: 24),
+          ),
         ),
-        const SizedBox(
-          height: 16,
+        const SizedBox(width: 16),
+        Expanded(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              side: const BorderSide(color: Colors.grey, width: 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+            onPressed: () {},
+            child: Image.asset('assets/images/facebook_icon.png', height: 24),
+          ),
         ),
+      ],
+    );
+  }
+
+  Widget _divider() {
+    return Row(
+      children: [
+        Expanded(child: Divider(color: Colors.grey.shade300)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text('o', style: TextStyle(color: Colors.grey.shade600)),
+        ),
+        Expanded(child: Divider(color: Colors.grey.shade300)),
+      ],
+    );
+  }
+
+  Widget _loginForm(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
         TextField(
           controller: _emailController,
           decoration: InputDecoration(
-              filled: true,
-              hintText: 'mahdiforwork@gmail.com',
-              hintStyle: const TextStyle(
-                  color: Color(0xff6A6A6A),
-                  fontWeight: FontWeight.normal,
-                  fontSize: 14),
-              fillColor: const Color(0xffF7F7F9),
-              border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(14))),
-        )
-      ],
-    );
-  }
-
-  Widget _password() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Password',
-          style: GoogleFonts.raleway(
-              textStyle: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 16)),
-        ),
-        const SizedBox(
-          height: 16,
-        ),
-        TextField(
-          obscureText: true,
-          controller: _passwordController,
-          decoration: InputDecoration(
-              filled: true,
-              fillColor: const Color(0xffF7F7F9),
-              border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(14))),
-        )
-      ],
-    );
-  }
-
-  Widget _signin(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xff0D6EFD),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-        minimumSize: const Size(double.infinity, 60),
-        elevation: 0,
-      ),
-      onPressed: () async {
-        await AuthService().signin(
-            email: _emailController.text,
-            password: _passwordController.text,
-            context: context);
-      },
-      child: const Text("Sign In"),
-    );
-  }
-
-  Widget _signup(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(children: [
-            const TextSpan(
-              text: "New User? ",
-              style: TextStyle(
-                  color: Color(0xff6A6A6A),
-                  fontWeight: FontWeight.normal,
-                  fontSize: 16),
+            hintText: 'Usuario o correo electrónico',
+            filled: true,
+            fillColor: Colors.grey.shade100,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
             ),
-            TextSpan(
-                text: "Create Account",
-                style: const TextStyle(
-                    color: Color(0xff1A1D1E),
-                    fontWeight: FontWeight.normal,
-                    fontSize: 16),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Signup()),
-                    );
-                  }),
-          ])),
+            contentPadding: const EdgeInsets.all(16),
+          ),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _passwordController,
+          obscureText: true,
+          decoration: InputDecoration(
+            hintText: 'Contraseña',
+            filled: true,
+            fillColor: Colors.grey.shade100,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.all(16),
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.visibility_off),
+              onPressed: () {},
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        TextButton(
+          onPressed: () {},
+          child: Text(
+            '¿Olvidaste tu contraseña?',
+            style: TextStyle(color: Colors.blue.shade700),
+          ),
+        ),
+        const SizedBox(height: 16),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF006494),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 16),
+          ),
+          onPressed: () async {
+            try {
+              await AuthService().signin(
+                email: _emailController.text,
+                password: _passwordController.text,
+                context: context,
+              );
+            } catch (e) {
+              // Manejar el error
+            }
+          },
+          child: const Text(
+            'Iniciar sesión',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              '¿Aún no tienes tu cuenta? ',
+              style: TextStyle(color: Colors.black87),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Signup()));
+              },
+              child: Text(
+                'Regístrate',
+                style: TextStyle(color: Colors.blue.shade700),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

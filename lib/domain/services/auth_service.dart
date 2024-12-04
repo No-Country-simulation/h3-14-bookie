@@ -1,27 +1,31 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/presentation/screens/home/home.dart';
 import 'package:h3_14_bookie/presentation/screens/login/login.dart';
 
 class AuthService {
-  Future<void> signup(
-      {required String email,
-      required String password,
-      required BuildContext context}) async {
+  Future<void> signup({
+    required String email,
+    required String password,
+    // required BuildContext context,
+    String? name,
+    String? username,
+  }) async {
     try {
-      await FirebaseAuth.instance
+      UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      await Future.delayed(const Duration(seconds: 1));
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) => const Home()));
+      // if (context.mounted) {
+      //   context.go('/home/0');
+      // }
     } on FirebaseAuthException catch (e) {
       String message = '';
       if (e.code == 'weak-password') {
-        message = 'The password provided is too weak.';
+        message = 'La contraseña proporcionada es muy débil.';
       } else if (e.code == 'email-already-in-use') {
-        message = 'An account already exists with that email.';
+        message = 'Ya existe una cuenta con este correo electrónico.';
       }
       Fluttertoast.showToast(
         msg: message,
@@ -42,9 +46,9 @@ class AuthService {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
 
-      await Future.delayed(const Duration(seconds: 1));
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) => const Home()));
+      if (context.mounted) {
+        context.go('/home/0');
+      }
     } on FirebaseAuthException catch (e) {
       String message = '';
       if (e.code == 'invalid-email') {
@@ -65,8 +69,8 @@ class AuthService {
 
   Future<void> signout({required BuildContext context}) async {
     await FirebaseAuth.instance.signOut();
-    await Future.delayed(const Duration(seconds: 1));
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (BuildContext context) => Login()));
+    if (context.mounted) {
+      context.go('/login');
+    }
   }
 }
