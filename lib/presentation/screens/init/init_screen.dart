@@ -29,10 +29,10 @@ class InitScreen extends StatelessWidget {
         children: [
           // Fondo de imagen
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
-                    'assets/images/background.jpg'), // Ruta de tu imagen
+                    'assets/images/back_img.png'), // Ruta de tu imagen
                 fit: BoxFit
                     .cover, // Asegura que la imagen cubra toda la pantalla
               ),
@@ -45,7 +45,7 @@ class InitScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 350),
                   const SizedBox(height: 32),
                   _socialLoginButtons(),
                   const SizedBox(height: 24),
@@ -153,12 +153,14 @@ class InitScreen extends StatelessWidget {
             style: TextStyle(fontSize: 16, color: AppColors.accentColor),
           ),
         ),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Al registrarte, aceptas nuestros Terminos de uso y Politicas de Privacidad',
-              style: TextStyle(color: AppColors.background),
+            Flexible(
+              child: Text(
+                'Al registrarte, aceptas nuestros Terminos de uso y Politicas de Privacidad',
+                style: TextStyle(color: AppColors.background),
+              ),
             ),
           ],
         ),

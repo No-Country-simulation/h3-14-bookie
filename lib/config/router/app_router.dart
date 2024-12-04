@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/config/router/auth_refresh_stream.dart';
+import 'package:h3_14_bookie/presentation/screens/init/init_screen.dart';
 import 'package:h3_14_bookie/presentation/screens/screens.dart';
 import 'package:h3_14_bookie/presentation/screens/login/login.dart';
 import 'package:h3_14_bookie/presentation/screens/signup/user_created.dart';
@@ -9,7 +10,7 @@ import 'package:h3_14_bookie/presentation/screens/signup/user_created.dart';
 final authStateChanges = FirebaseAuth.instance.authStateChanges();
 
 final appRouter = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/initScreen',
   // Escuchar cambios de autenticación
   refreshListenable: GoRouterRefreshStream(authStateChanges),
   routes: [
@@ -24,9 +25,9 @@ final appRouter = GoRouter(
     ),
     // Ruta de inicio de sesión
     GoRoute(
-      path: '/login',
-      name: Login.name,
-      builder: (context, state) => Login(),
+      path: '/initScreen',
+      name: InitScreen.name,
+      builder: (context, state) => InitScreen(),
     ),
     // Ruta de usuario creado
     GoRoute(
@@ -38,11 +39,11 @@ final appRouter = GoRouter(
   // Redirección basada en el estado de autenticación
   redirect: (context, state) async {
     final isLoggedIn = FirebaseAuth.instance.currentUser != null;
-    final isGoingToLogin = state.matchedLocation == '/login';
+    final isGoingToLogin = state.matchedLocation == '/initScreen';
 
     // Si no está logueado y no va al login, redirigir al login
     if (!isLoggedIn && !isGoingToLogin) {
-      return '/login';
+      return '/initScreen';
     }
 
     // Si está logueado y va al login, redirigir a home
