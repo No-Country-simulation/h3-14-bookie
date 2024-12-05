@@ -17,10 +17,9 @@ class CustomAppbar extends StatelessWidget {
             children: [
               Image.asset(AppImages.iconLogo),
               const SizedBox(width: 10,),
-              const SearchWidget(),
-              const Spacer(),
-              const Icon(Icons.notifications_outlined),
-              const Icon(Icons.account_circle_outlined)
+              const Expanded(child: SearchWidget()),
+              const Icon(Icons.notifications_outlined, size: 30,),
+              const Icon(Icons.account_circle_outlined, size: 30)
             ],
           ),
         ),

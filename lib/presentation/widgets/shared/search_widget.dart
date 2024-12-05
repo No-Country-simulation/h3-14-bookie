@@ -7,15 +7,16 @@ class SearchWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: AppColors.background
+        color: AppColors.secondaryColor,
+        border: Border.all(color: AppColors.background)
       ),
       child: const Row(
         children: [
-          Icon(Icons.search),
+          Icon(Icons.search, color: AppColors.background),
           SizedBox(width: 10,),
           Text('Busca historias')
         ],

@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:h3_14_bookie/presentation/screens/book_read_screend.dart';
+import 'package:h3_14_bookie/presentation/screens/book_read_screen.dart';
 import 'package:h3_14_bookie/presentation/screens/screens.dart';
 import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/config/router/auth_refresh_stream.dart';
@@ -33,9 +33,9 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: 'read',
-              name: BookReadScreend.name,
+              name: BookReadScreen.name,
               builder: (context, state) {
-                return const BookReadScreend();
+                return const BookReadScreen();
               },
             ),
           ]

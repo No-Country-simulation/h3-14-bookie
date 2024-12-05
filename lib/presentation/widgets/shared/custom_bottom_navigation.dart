@@ -37,11 +37,11 @@ class CustomBottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(20.0),
-        topRight: Radius.circular(20.0),
+        topLeft: Radius.circular(15.0),
+        topRight: Radius.circular(15.0),
       ),
       child: SizedBox(
-        height: 80,
+        height: 60,
         child: BottomNavigationBar(
           selectedFontSize: 0,
           backgroundColor: AppColors.secondaryColor,
@@ -83,7 +83,7 @@ class CustomBottomNavigation extends StatelessWidget {
     required bool isSelected,
     required String tooltip,
   }) {
-    final color = isSelected ? AppColors.primaryColor : AppColors.background;
+    const color = AppColors.primaryColor;
     return BottomNavigationBarItem(
         icon: Column(
           mainAxisSize: MainAxisSize.min,
@@ -92,13 +92,13 @@ class CustomBottomNavigation extends StatelessWidget {
               Icon(
                 icon,
                 color: color,
-                size: 30,
+                size: 35,
               )
             else if (imagePath != null)
               Image.asset(
                 imagePath,
-                width: 30,
-                height: 30,
+                width: 35,
+                height: 35,
                 color: color,
               ),
             if (isSelected)
@@ -128,11 +128,11 @@ class CustomBottomNavigation extends StatelessWidget {
                     blurRadius: 7,
                     offset: const Offset(0, 3))
               ]),
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(8),
           child: Icon(
             icon,
             color: AppColors.accentColor,
-            size: 35,
+            size: 25,
           ),
         ),
         label: '',

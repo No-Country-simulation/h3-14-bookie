@@ -21,11 +21,14 @@ class HomeView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Historias cerca', style: textStyle.titleLarge,),
+                    Text('Historias cerca', style: textStyle.titleLarge!.copyWith(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold
+                    ),),
                     IconButton(onPressed: (){
                       EndDrawerWidget.instance.body = const CategoriesDrawer();
                       locator<GlobalKey<ScaffoldState>>().currentState!.openEndDrawer();
-                    }, icon: const Icon(Icons.sort))
+                    }, icon: const Icon(Icons.sort, size: 30,))
                   ],
                 ),
                 Expanded(

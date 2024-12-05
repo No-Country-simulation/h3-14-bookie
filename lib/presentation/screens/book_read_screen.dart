@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
 
-class BookReadScreend extends StatelessWidget {
+class BookReadScreen extends StatelessWidget {
   static const name = 'book-read-screen';
-  const BookReadScreend({super.key});
+  const BookReadScreen({super.key});
   @override
   Widget build(BuildContext context) {
     final keyScaffold = GlobalKey<ScaffoldState>();
