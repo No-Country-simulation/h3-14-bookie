@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:h3_14_bookie/domain/model/app_user.dart';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
+final String _collectionName = 'users10';
+
 //. Leer base  de datos
 Future<List<Map<String, dynamic>>> getUsers() async {
   List<Map<String, dynamic>> users = [];
@@ -30,4 +33,37 @@ Future<void> addUser(
     "password": password,
     "userName": userName
   });
+}
+
+Future<void> addUserData() async {
+  try {
+    // Datos a enviar
+    Map<String, dynamic> userData = {
+      "name": "Juan Perez",
+      "email": "juan.perez@example.com",
+      "address": "Calle Falsa 123, Ciudad, País",
+      "age": 30,
+    };
+
+    // Crear el documento dentro de la colección "userData"
+    await db.collection("userData").add(userData);
+    print("Datos guardados correctamente.");
+  } catch (e) {
+    print("Error al guardar los datos: $e");
+  }
+}
+
+Future<void> createUser(AppUser user) async {
+  try {
+    await db
+        .collection(_collectionName)
+        .doc(user.email) // Usando el email como ID del documento
+        .withConverter(
+          fromFirestore: AppUser.fromFirestore,
+          toFirestore: (AppUser user, _) => user.toFirestore(),
+        )
+        .set(user);
+  } catch (e) {
+    throw Exception('Error al crear usuario: $e');
+  }
 }
