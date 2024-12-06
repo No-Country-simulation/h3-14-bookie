@@ -28,6 +28,7 @@ class HomeScreen extends StatelessWidget {
         children: viewRoutes,
       ),
       bottomNavigationBar: CustomBottomNavigation(currentIndex: pageIndex),
+      floatingActionButton: pageIndex == 3 ? const FloatingButtonAddBook(): null,
     );
   }
 }

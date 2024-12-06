@@ -8,42 +8,72 @@ class BookWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme;
+    final labelStyle = textStyle.bodySmall!.copyWith(fontWeight: FontWeight.bold);
     return RepaintBoundary(
       child: Container(
-        padding: const EdgeInsets.all(15),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: AppColors.background,
           boxShadow: [
             BoxShadow(
-                color: AppColors.primaryColor.withOpacity(0.5),
+                color: Colors.black.withOpacity(0.5),
                 spreadRadius: 0,
-                blurRadius: 7,
-                offset: const Offset(0, 3))
+                blurRadius: 5,
+                offset: const Offset(0, 2))
           ]
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: double.infinity,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.secondaryColor,
-                borderRadius: BorderRadius.circular(15),
-              ),
+            Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: Container(
+                    width: double.infinity,
+                    height: 140,
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 3,
+                  top: 0,
+                  child: IconButton(
+                    style: ButtonStyle(
+                      iconColor: WidgetStateProperty.all<Color>(AppColors.primaryColor),
+                      backgroundColor: WidgetStateProperty.all<Color>(AppColors.background)
+                    ),
+                    onPressed: (){},
+                    icon: const Icon(Icons.book_outlined)
+                  ),
+                )
+              ]
             ),
-            SizedBox(height: 3,),
-            Text('Titulo del libro', style: textStyle.bodyMedium!.copyWith(fontWeight: FontWeight.bold),),
-            Text('Inicio de sinipsis del libro',
-              style: textStyle.bodySmall,
+            const SizedBox(height: 10,),
+            Text('Titulo del libro', style: textStyle.bodyLarge!.copyWith(fontWeight: FontWeight.w700),),
+            Text('Inicio de sinipsis del libro mas largo super largo largo',
+              style: textStyle.labelLarge!.copyWith(fontWeight: FontWeight.w400),
               overflow: TextOverflow.ellipsis, maxLines: 2,),
+            const SizedBox(height: 3,),
             const StarRating(calification: 4),
+            const SizedBox(height: 3,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('10K reads a 2km'),
-                GestureDetector(onTap: (){}, child: const Icon(Icons.book_outlined))
+                IconLabelWidget(
+                  iconSize: 20,
+                  spaceWith: 1,
+                  labelStyle: labelStyle,
+                  label: '10K reads', icon: Icons.remove_red_eye_outlined),
+                IconLabelWidget(
+                  iconSize: 20,
+                  spaceWith: 0,
+                  labelStyle: labelStyle,
+                  label: 'a 2km', icon: Icons.place_outlined)
               ],
             )
           ],

@@ -16,24 +16,30 @@ class BookNavigation extends StatelessWidget {
               Icons.arrow_back_rounded,
               color: AppColors.accentColor,
             ),
-            color: AppColors.primaryColor,
+            style: const ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(AppColors.primaryColor,)
+            )
           ),
+          const SizedBox(width: 20,),
           const Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: LinearProgressIndicator(
-                backgroundColor: AppColors.primaryColor,
-                value: 60,
-              ),
-            ),
+            child: LinearProgressIndicator(
+              backgroundColor: Color(0xFFDADADA),
+              value: 0.6,
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              minHeight: 5,
+            )
           ),
+          const SizedBox(width: 20,),
           IconButton(
             onPressed: (){},
             icon: const Icon(
               Icons.arrow_forward_rounded,
               color: AppColors.accentColor,
             ),
-            color: AppColors.primaryColor,
+            style: const ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(AppColors.primaryColor,)
+            ),
           )
         ],
       ),

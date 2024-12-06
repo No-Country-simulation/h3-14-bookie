@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/presentation/widgets/shared/border_layout.dart';
 
 class CategoriesDrawer extends StatelessWidget {
@@ -6,7 +7,7 @@ class CategoriesDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = Theme.of(context).textTheme;
+    final textStyle = Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold);
     final List<String> categories = [
       "Acción",
       "Aventura",
@@ -25,11 +26,14 @@ class CategoriesDrawer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Categorias', style: textStyle.titleLarge,),
-          _CustomWrap(categories: categories),
+          const SizedBox(height: 10,),
+          Text('Categorías', style: textStyle,),
+          const SizedBox(height: 10,),
+          _CustomWrap(categories: categories, isTag: false,),
           const SizedBox(height: 20,),
-          Text('Etiquetas', style: textStyle.titleLarge),
-          _CustomWrap(categories: categories),
+          Text('Etiquetas', style: textStyle),
+          const SizedBox(height: 10,),
+          _CustomWrap(categories: categories, isTag: true,),
         ],
       )
     );
@@ -37,11 +41,13 @@ class CategoriesDrawer extends StatelessWidget {
 }
 
 class _CustomWrap extends StatelessWidget {
+  final List<String> categories;
+  final bool isTag;
+
   const _CustomWrap({
     required this.categories,
+    required this.isTag,
   });
-
-  final List<String> categories;
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +56,10 @@ class _CustomWrap extends StatelessWidget {
       runSpacing: 8.0, // Espaciado vertical entre líneas
       children: categories.map((category) {
         return Chip(
-          label: Text(category),
-          backgroundColor: Colors.white,
-          shape: StadiumBorder(
-            side: BorderSide(color: Colors.grey.shade400),
+          label: Text((isTag?'#':'')+category, style: const TextStyle(color: AppColors.primaryColor),),
+          backgroundColor: AppColors.background,
+          shape: const StadiumBorder(
+            side: BorderSide(color: AppColors.primaryColor),
           ),
         );
       }).toList(),
