@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:h3_14_bookie/presentation/screens/screens.dart';
 import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/config/router/auth_refresh_stream.dart';
 import 'package:h3_14_bookie/presentation/screens/init/init_screen.dart';
-import 'package:h3_14_bookie/presentation/screens/screens.dart';
-import 'package:h3_14_bookie/presentation/screens/login/login.dart';
 import 'package:h3_14_bookie/presentation/screens/signup/user_created.dart';
 
 // Crear un listenable para escuchar cambios en el estado de autenticación
@@ -22,6 +21,42 @@ final appRouter = GoRouter(
         final pageIndex = state.pathParameters['page'] ?? '0';
         return HomeScreen(pageIndex: int.parse(pageIndex));
       },
+      routes: [
+        GoRoute(
+          path: 'book/:id',
+          name: BookInfoScreen.name,
+          builder: (context, state) {
+            final movieId = state.pathParameters['id'] ?? 'no-id';
+            return BookInfoScreen(bookId: movieId);
+          },
+          routes: [
+            GoRoute(
+              path: 'read',
+              name: BookReadScreen.name,
+              builder: (context, state) {
+                return const BookReadScreen();
+              },
+            ),
+          ]
+        ),
+        GoRoute(
+          path: '/book-create',
+          name: BookCreateScreen.name,
+          builder: (context, state) => const BookCreateScreen(),
+          routes: [
+            GoRoute(
+              path: '/tags',
+              name: BookTagsScreen.name,
+              builder: (context, state) => const BookTagsScreen(),
+            ),
+            GoRoute(
+              path: '/categories',
+              name: BookCategoriesScreen.name,
+              builder: (context, state) => const BookCategoriesScreen(),
+            ),
+          ]
+        ),
+      ]
     ),
     // Ruta de inicio de sesión
     GoRoute(

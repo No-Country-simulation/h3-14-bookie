@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:h3_14_bookie/config/get_it/locator.dart';
 import 'package:h3_14_bookie/config/router/app_router.dart';
 import 'package:h3_14_bookie/config/theme/app_theme.dart';
 
@@ -10,6 +11,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  setupLocator();
   runApp(const MyApp());
 }
 
