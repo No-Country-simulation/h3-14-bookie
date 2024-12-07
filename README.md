@@ -84,7 +84,7 @@ El propósito de Bookie es revolucionar la experiencia de lectura al combinarla 
    git clone https://github.com/No-Country-simulation/h3-14-bookie.git
 2. Navega al directorio del proyecto:
    ```bash
-   cd nombre-proyecto
+   cd h3-14-bookie
 4. Instalar las dependencias:
    ```bash
    flutter pub get
