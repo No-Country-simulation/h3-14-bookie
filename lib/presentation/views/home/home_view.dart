@@ -28,7 +28,7 @@ class HomeView extends StatelessWidget {
                     IconButton(onPressed: (){
                       EndDrawerWidget.instance.body = const CategoriesDrawer();
                       locator<GlobalKey<ScaffoldState>>().currentState!.openEndDrawer();
-                    }, icon: const Icon(Icons.sort, size: 30,))
+                    }, icon: const Icon(Icons.sort, size: 30))
                   ],
                 ),
                 Expanded(
@@ -36,10 +36,10 @@ class HomeView extends StatelessWidget {
                     clipBehavior: Clip.none,
                     padding: const EdgeInsets.only(top: 10),
                     gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 200,
-                      mainAxisExtent: 250,
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
+                      maxCrossAxisExtent: 180,
+                      mainAxisExtent: 290,
+                      mainAxisSpacing: 20,
+                      crossAxisSpacing: 20,
                     ),
                     itemCount: targets.length,
                     itemBuilder: (context, index) {

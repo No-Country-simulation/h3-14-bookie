@@ -35,43 +35,53 @@ class CustomBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(15.0),
-        topRight: Radius.circular(15.0),
-      ),
-      child: SizedBox(
-        height: 60,
-        child: BottomNavigationBar(
-          selectedFontSize: 0,
-          backgroundColor: AppColors.secondaryColor,
-          enableFeedback: false,
-          currentIndex: currentIndex,
-          elevation: 0,
-          onTap: (value) => onItemTapped(context, value),
-          type: BottomNavigationBarType.fixed,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          items: [
-            _buildBarItem(
-                imagePath: AppImages.iconHome,
-                isSelected: currentIndex == 0,
-                tooltip: 'Inicio'),
-            _buildBarItem(
-                imagePath: AppImages.iconLibrary,
-                isSelected: currentIndex == 1,
-                tooltip: 'Favoritos'),
-            _buildCentralItem(Icons.explore_outlined,
-                isSelected: currentIndex == 2, tooltip: 'Navegar'),
-            _buildBarItem(
-                imagePath: AppImages.iconPencil,
-                isSelected: currentIndex == 3,
-                tooltip: 'Escribir'),
-            _buildBarItem(
-                icon: Icons.menu,
-                isSelected: currentIndex == 4,
-                tooltip: 'Configuración'),
+    return SizedBox(
+      height: 60,
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 15,
+            ),
           ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
+          ),
+          child: BottomNavigationBar(
+            selectedFontSize: 0,
+            backgroundColor: AppColors.background,
+            enableFeedback: false,
+            currentIndex: currentIndex,
+            elevation: 0,
+            onTap: (value) => onItemTapped(context, value),
+            type: BottomNavigationBarType.fixed,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            items: [
+              _buildBarItem(
+                  imagePath: AppImages.iconHome,
+                  isSelected: currentIndex == 0,
+                  tooltip: 'Inicio'),
+              _buildBarItem(
+                  imagePath: AppImages.iconLibrary,
+                  isSelected: currentIndex == 1,
+                  tooltip: 'Favoritos'),
+              _buildCentralItem(Icons.explore_outlined,
+                  isSelected: currentIndex == 2, tooltip: 'Navegar'),
+              _buildBarItem(
+                  imagePath: AppImages.iconPencil,
+                  isSelected: currentIndex == 3,
+                  tooltip: 'Escribir'),
+              _buildBarItem(
+                  icon: Icons.menu,
+                  isSelected: currentIndex == 4,
+                  tooltip: 'Configuración'),
+            ],
+          ),
         ),
       ),
     );
@@ -91,7 +101,7 @@ class CustomBottomNavigation extends StatelessWidget {
             if (icon != null)
               Icon(
                 icon,
-                color: color,
+                color: isSelected ?color : Colors.black,
                 size: 35,
               )
             else if (imagePath != null)
@@ -99,7 +109,7 @@ class CustomBottomNavigation extends StatelessWidget {
                 imagePath,
                 width: 35,
                 height: 35,
-                color: color,
+                color: isSelected ?color : Colors.black,
               ),
             if (isSelected)
               Container(

@@ -17,7 +17,7 @@ class StarRating extends StatelessWidget {
             itemBuilder: (context, index) {
               return Icon(
                 index < calification ? Icons.star : Icons.star_border,
-                color: AppColors.primaryColor,
+                color: const Color(0xff906E2A),
                 size: 18,
               );
             },

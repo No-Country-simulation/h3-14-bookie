@@ -13,7 +13,7 @@ class EndDrawerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Drawer(
-        backgroundColor: AppColors.secondaryColor,
+        backgroundColor: AppColors.background,
         child: body));
   }
 }

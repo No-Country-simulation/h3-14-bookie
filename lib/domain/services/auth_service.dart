@@ -73,4 +73,33 @@ class AuthService {
       context.go('/login');
     }
   }
+
+  Future<void> verifyEmail(String email) async {
+    try {
+      // Verificar si el email existe en Firebase
+      final methods =
+          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+      if (methods.isEmpty) {
+        throw FirebaseAuthException(
+          code: 'user-not-found',
+          message: 'No existe una cuenta con este correo electrónico.',
+        );
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> sendRecoveryLink(String email, String method) async {
+    try {
+      if (method == 'email') {
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      } else {
+        // Implementar envío por SMS si se requiere
+        throw UnimplementedError('Método SMS no implementado');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

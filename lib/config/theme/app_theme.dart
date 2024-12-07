@@ -5,6 +5,9 @@ class AppTheme {
   ThemeData getTheme() => ThemeData(
         useMaterial3: true,
         colorSchemeSeed: AppColors.primaryColor,
+        drawerTheme: const DrawerThemeData(
+          backgroundColor: AppColors.secondaryColor,
+        ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             backgroundColor: WidgetStateProperty.all(AppColors.primaryColor),
@@ -16,5 +19,10 @@ class AppTheme {
             ),
           ),
         ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: ButtonStyle(
+            foregroundColor: WidgetStateProperty.all(AppColors.primaryColor),
+          )
+        )
       );
 }
