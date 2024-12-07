@@ -3,13 +3,14 @@ import 'package:h3_14_bookie/domain/model/writing.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AppUser {
+  final String? authUserUid;
   final String? name;
   final String? email;
-  final String? role;
   final List<Reading>? readings;
   final List<Writing>? writings;
 
-  AppUser({this.name, this.email, this.role, this.readings, this.writings});
+  AppUser(
+      {this.authUserUid, this.name, this.email, this.readings, this.writings});
 
   factory AppUser.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -17,9 +18,9 @@ class AppUser {
   ) {
     final data = snapshot.data();
     return AppUser(
+      authUserUid: data?['authUserUid'],
       name: data?['name'],
       email: data?['email'],
-      role: data?['role'],
       readings:
           data?['readings'] is Iterable ? List.from(data?['readings']) : null,
       writings:
@@ -29,9 +30,9 @@ class AppUser {
 
   Map<String, dynamic> toFirestore() {
     return {
+      if (authUserUid != null) "authUserUid": authUserUid,
       if (name != null) "name": name,
       if (email != null) "email": email,
-      if (role != null) "role": role,
       if (readings != null) "readings": readings,
       if (writings != null) "writings": writings,
     };
