@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
-class BookCreateScreen extends StatelessWidget {
+class BookCreateScreen extends StatefulWidget {
   static const name = 'book-create';
   const BookCreateScreen({super.key});
 
   @override
+  State<BookCreateScreen> createState() => _BookCreateScreenState();
+}
+
+class _BookCreateScreenState extends State<BookCreateScreen> {
+  final titleController = TextEditingController();
+  final synopsisController = TextEditingController();
+  final placeController = TextEditingController();
+  final chapterController = TextEditingController();
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    const locations = [
-      'Plaza de la prevalencia',
-      'Café Torres',
-      'Parque Versalles'
-    ];
+    final bookCreateBloc = context.read<BookCreateBloc>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Agregando Historia'),
@@ -39,7 +46,7 @@ class BookCreateScreen extends StatelessWidget {
                   height: size.height * 0.35,
                   decoration: BoxDecoration(
                       color: Colors.grey,
-                      borderRadius: BorderRadius.circular(8)),
+                      borderRadius: BorderRadius.circular(16)),
                   child: const Center(
                     child: Text('Inserte una foto de portada'),
                   ),
@@ -48,12 +55,16 @@ class BookCreateScreen extends StatelessWidget {
               const SizedBox(
                 height: 15,
               ),
-              const TextForm(
+              TextForm(
                 label: 'Título',
+                hintText: 'Ingrese el título de la historia',
+                controller: titleController,
               ),
-              const TextForm(
+              TextForm(
                 label: 'Sinopsis',
                 maxLines: 4,
+                hintText: 'Haz una descripción de la historia',
+                controller: synopsisController,
               ),
               ButtonAddForm(
                   label: 'Etiquetas',
@@ -70,32 +81,50 @@ class BookCreateScreen extends StatelessWidget {
                   context.go('/home/3/book-create/categories');
                 },
               ),
-              ButtonAddForm(
-                onTap: (){},
-                label: 'Lugares',
-                message: 'Seleccionar ubicaciones en el mapa',
-              ),
               const SizedBox(
-                height: 3,
+                height: 10,
               ),
-              const Text(
-                'Capítulos',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+              const LabelForm(label: 'Lugares'),
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  const Icon(Icons.push_pin_outlined, color: AppColors.primaryColor,),
+                  const SizedBox(width: 20,),
+                  Expanded(
+                    child: TextFormField(
+                      controller: placeController,
+                      decoration: const InputDecoration(
+                        hintText: 'Ingrese el nombre de la ubicación',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(
                 height: 10,
               ),
-              ...locations.asMap().entries.map((entry) {
-                int index = entry.key;
-                var location = entry.value;
-                return IconLabelWidget(
-                  label: 'Capítulo ${index + 1}: $location',
-                  icon: Icons.list,
-                );
-              }),
+              const LabelForm(label: 'Capítulos'),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  const IconLabelWidget(label: 'Capítulo 1', icon: Icons.list),
+                  const SizedBox(width: 20,),
+                  Expanded(
+                    child: TextFormField(
+                      controller: chapterController,
+                      decoration: const InputDecoration(
+                        hintText: 'Título del capítulo',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -103,8 +132,16 @@ class BookCreateScreen extends StatelessWidget {
                   SizedBox(
                     width: size.width * 0.8,
                     child: ElevatedButton(
-                      onPressed: () => {},
-                      child: const Text('Guardar'),
+                      onPressed: () {
+                        bookCreateBloc.add(
+                          AddInitialChapterEvent(
+                            title: chapterController.text,
+                            placeName: placeController.text
+                          )
+                        );
+                        context.go('/home/3/book-create/chapter-edit');
+                      },
+                      child: const Text('Guardar y Continuar'),
                     ),
                   ),
                 ],
@@ -121,31 +158,49 @@ class BookCreateScreen extends StatelessWidget {
 class TextForm extends StatelessWidget {
   final String label;
   final int? maxLines;
-  const TextForm({super.key, required this.label, this.maxLines});
+  final String hintText;
+  final TextEditingController controller;
+  const TextForm({super.key, required this.label, this.maxLines, required this.hintText, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        LabelForm(label: label),
         const SizedBox(height: 5),
         TextFormField(
+          controller: controller,
           maxLines: maxLines,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            hintText: hintText,
+            border: const OutlineInputBorder(),
           ),
         ),
         const SizedBox(
           height: 3,
         )
       ],
+    );
+  }
+}
+
+class LabelForm extends StatelessWidget {
+  const LabelForm({
+    super.key,
+    required this.label,
+  });
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 }

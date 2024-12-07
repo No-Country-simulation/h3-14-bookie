@@ -12,3 +12,5 @@ export 'book/book_navigation.dart';
 export 'shared/custom_map_widget.dart';
 export 'book/floating_button_add_book.dart';
 export 'home/book_item_widget.dart';
+export 'shared/custom_title_appbar.dart';
+export 'book/block_content.dart';
