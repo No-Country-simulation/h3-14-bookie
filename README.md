@@ -31,7 +31,7 @@ Bookie aborda la desconexión entre los lectores y el contexto físico al moment
 El propósito de Bookie es revolucionar la experiencia de lectura al combinarla con la geolocalización. La aplicación permite a los usuarios desbloquear capítulos únicamente al estar en lugares específicos, creando un vínculo directo entre la narrativa y el entorno físico. Esto fomenta la exploración, el turismo y el descubrimiento de nuevos lugares mientras se disfruta de historias únicas. También brinda a los escritores una plataforma para publicar relatos inmersivos y conectados con espacios del mundo real.
 
 <div align="center">
-<img src="https://via.placeholder.com/600x300?text=Imagen+Demo+App" alt="Demostración App" width="70%">
+<img src="Activos-Imagenes/Imagenes/Foto README.png" alt="Demostración App" width="70%">
 </div>
 </div>
 
