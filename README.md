@@ -1,5 +1,8 @@
 <div align="center">
-![Bookie Banner](https://via.placeholder.com/800x200?text=Tu+Banner+Aquí)
+   
+![Bookie Banner]([https://via.placeholder.com/800x200?text=Tu+Banner+Aquí](https://github.com/No-Country-simulation/h3-14-bookie/blob/develop/assets/images/icon_logo.svg))
+
+   
 # **📖 Bookie**  
 *Descubre historias en el mundo real, un capítulo a la vez.*
 
