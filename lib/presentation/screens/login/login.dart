@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/domain/services/auth_service.dart';
+import 'package:h3_14_bookie/presentation/screens/password/forgot_password_screen.dart';
 import 'package:h3_14_bookie/presentation/screens/signup/signup.dart';
 
 class Login extends StatelessWidget {
@@ -48,7 +49,7 @@ class Login extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              _socialLoginButtons(),
+              _socialButtons(),
               const SizedBox(height: 24),
               _divider(),
               const SizedBox(height: 24),
@@ -75,7 +76,7 @@ class Login extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 12),
             ),
             onPressed: () {},
-            child: Image.asset('assets/images/google_icon.png', height: 24),
+            child: Image.asset('assets/images/google_icon.png', height: 35),
           ),
         ),
         const SizedBox(width: 16),
@@ -95,6 +96,50 @@ class Login extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _socialButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _socialButton(
+          'assets/images/google_icon.png',
+          onTap: () {
+            // Implementar login con Google
+          },
+        ),
+        const SizedBox(width: 24),
+        _socialButton(
+          'assets/images/facebook_icon.png',
+          onTap: () {
+            // Implementar login con Facebook
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _socialButton(String iconPath, {required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 48,
+        height: 48,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Image.asset(iconPath),
+      ),
     );
   }
 
@@ -149,7 +194,12 @@ class Login extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ForgotPasswordScreen()));
+          },
           child: Text(
             '¿Olvidaste tu contraseña?',
             style: TextStyle(color: Colors.blue.shade700),

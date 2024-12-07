@@ -9,7 +9,7 @@ class Story {
   final String? cover;
   final String? synopsis;
   final List<Label>? labels;
-  final List<Category>? categories;
+  // final List<Category>? categories;
   final int? rate;
   final int? readings;
   final int? storyTimeInMin;
@@ -21,7 +21,7 @@ class Story {
       this.cover,
       this.synopsis,
       this.labels,
-      this.categories,
+      // this.categories,
       this.rate,
       this.readings,
       this.storyTimeInMin,
@@ -38,9 +38,9 @@ class Story {
         cover: data?['cover'],
         synopsis: data?['synopsis'],
         labels: data?['labels'] is Iterable ? List.from(data?['labels']) : null,
-        categories: data?['categories'] is Iterable
-            ? List.from(data?['categories'])
-            : null,
+        // categories: data?['categories'] is Iterable
+        //     ? List.from(data?['categories'])
+        //     : null,
         rate: data?['rate'],
         readings: data?['readings'],
         storyTimeInMin: data?['storyTimeInMin'],
@@ -56,7 +56,7 @@ class Story {
       if (cover != null) "cover": cover,
       if (synopsis != null) "synopsis": synopsis,
       if (labels != null) "labels": labels,
-      if (categories != null) "categories": categories,
+      // if (categories != null) "categories": categories,
       if (rate != null) "rate": rate,
       if (readings != null) "readings": readings,
       if (storyTimeInMin != null) "storyTimeInMin": storyTimeInMin,
