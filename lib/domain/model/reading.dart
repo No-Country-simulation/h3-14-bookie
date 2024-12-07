@@ -3,10 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Reading {
   final String? storyId;
-  final List<Chapter>? completedChapter;
+  final List<String>? chapterUids;
   final bool? inLibrary;
 
-  Reading({this.storyId, this.completedChapter, this.inLibrary});
+  Reading({this.storyId, this.chapterUids, this.inLibrary});
 
   factory Reading.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -15,8 +15,8 @@ class Reading {
     final data = snapshot.data();
     return Reading(
       storyId: data?['storyId'],
-      completedChapter: data?['completedChapter'] is Iterable
-          ? List.from(data?['completedChapter'])
+      chapterUids: data?['chapterUids'] is Iterable
+          ? List.from(data?['chapterUids'])
           : null,
       inLibrary: data?['inLibrary'],
     );
@@ -25,7 +25,7 @@ class Reading {
   Map<String, dynamic> toFirestore() {
     return {
       if (storyId != null) "storyId": storyId,
-      if (completedChapter != null) "completedChapter": completedChapter,
+      if (chapterUids != null) "chapterUids": chapterUids,
       if (inLibrary != null) "inLibrary": inLibrary
     };
   }
