@@ -97,7 +97,8 @@ Nota: Asegúrate de tener Flutter y Dart correctamente instalados.
 
 ## **🚀 Tecnologías Utilizadas**  
 
-| ![Flutter](https://img.icons8.com/color/48/flutter.png) | ![Firestore](https://img.icons8.com/color/48/firebase.png) | ![Auth0](https://static-00.iconduck.com/assets.00/auth0-icon-512x512-3wef3www.png) | ![Google Maps](https://img.icons8.com/color/48/google-maps.png) | ![Figma](https://img.icons8.com/color/48/figma.png) |
+| ![Flutter](https://img.icons8.com/color/48/flutter.png) | ![Firestore](https://img.icons8.com/color/48/firebase.png) | ![Auth0]<img src="https://static-00.iconduck.com/assets.00/auth0-icon-512x512-3wef3www.png" alt="Auth0 Icon" width="48" height="48">
+| ![Google Maps](https://img.icons8.com/color/48/google-maps.png) | ![Figma](https://img.icons8.com/color/48/figma.png) |
 |:------------------------------------------------------:|:--------------------------------------------------------:|:--------------------------------------------------:|:------------------------------------------------------------:|:--------------------------------------------------:|
 | **Flutter**                                           | **Firestore**                                            | **Auth0**                                           | **Google Maps**                                               | **Figma**                                           |
 
