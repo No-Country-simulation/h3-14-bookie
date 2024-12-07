@@ -1,6 +1,6 @@
 <div align="center">
    
-![Bookie Banner]([https://via.placeholder.com/800x200?text=Tu+Banner+Aquí](https://github.com/No-Country-simulation/h3-14-bookie/blob/develop/assets/images/icon_logo.svg))
+![Bookie Logo](assets/images/icon_logo.svg)
 
    
 # **📖 Bookie**  
