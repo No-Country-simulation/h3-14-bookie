@@ -23,19 +23,16 @@ class AppUserServiceImpl implements IAppUserService {
 
   @override
   Future<void> createAppUser(UserDto newUser) async {
-    AppUser newAppUser =
-        AppUser(name: newUser.name, email: newUser.email, role: newUser.role);
+    AppUser newAppUser = AppUser(
+        authUserUid: newUser.authUserUid,
+        name: newUser.name,
+        email: newUser.email);
     _appUserRef.add(newAppUser);
   }
 
   @override
-  Future<void> updateUser(
-      String uid, String name, String email, String role) async {
-    _appUserRef.doc(uid).update({
-      "name": name,
-      "email": email,
-      "role": role,
-    });
+  Future<void> updateUser(String uid, String name, String email) async {
+    _appUserRef.doc(uid).update({"name": name, "email": email});
   }
 
   @override
