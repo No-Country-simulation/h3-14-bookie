@@ -97,7 +97,7 @@ Nota: Asegúrate de tener Flutter y Dart correctamente instalados.
 
 ## **🚀 Tecnologías Utilizadas**  
 
-| ![Flutter](https://img.icons8.com/color/48/flutter.png) | ![Firestore](https://img.icons8.com/color/48/firebase.png) | ![Auth0](https://img.icons8.com/color/48/auth0.png) | ![Google Maps](https://img.icons8.com/color/48/google-maps.png) | ![Figma](https://img.icons8.com/color/48/figma.png) |
+| ![Flutter](https://img.icons8.com/color/48/flutter.png) | ![Firestore](https://img.icons8.com/color/48/firebase.png) | ![Auth0](https://static-00.iconduck.com/assets.00/auth0-icon-512x512-3wef3www.png) | ![Google Maps](https://img.icons8.com/color/48/google-maps.png) | ![Figma](https://img.icons8.com/color/48/figma.png) |
 |:------------------------------------------------------:|:--------------------------------------------------------:|:--------------------------------------------------:|:------------------------------------------------------------:|:--------------------------------------------------:|
 | **Flutter**                                           | **Firestore**                                            | **Auth0**                                           | **Google Maps**                                               | **Figma**                                           |
 
@@ -106,5 +106,6 @@ Nota: Asegúrate de tener Flutter y Dart correctamente instalados.
 ## **🔗 Enlaces Relevantes**  
 - [Repositorio en GitHub](https://github.com/No-Country-simulation/h3-14-bookie)
 - [Prototipo en Figma](https://www.figma.com/proto/hps5pgUhOIUXp7aydqOWMq/Bookie?page-id=0%3A1&node-id=145-3121&node-type=canvas&viewport=388%2C312%2C0.07&t=5nFk2UPSgdSaPgcI-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=145%3A3121)
-- [Video demostrativo](#)  
+- [Video demostrativo](#Subir)  
 - [Documentación oficial](https://drive.google.com/drive/folders/1Y8Cqw8kKARASbGS59DPaMGM3kdfGq6Ll?usp=sharing)
+- [Deploy](https://drive.google.com/drive/folders/1HnPpLkT4QMea-eRRiRE2wNXBrBj4V3PY?usp=drive_link)
