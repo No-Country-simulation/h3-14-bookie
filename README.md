@@ -1,6 +1,6 @@
 <div align="center">
    
-![Bookie Logo](assets/images/icon_logo.svg)
+![Bookie Logo](Activos-Imagenes/Iconos,png/Logo Bookie.png)
 
    
 # **📖 Bookie**  
