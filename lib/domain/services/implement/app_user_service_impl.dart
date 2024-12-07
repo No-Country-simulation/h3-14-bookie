@@ -25,7 +25,7 @@ class AppUserServiceImpl implements IAppUserService {
   Future<void> createAppUser(UserDto newUser) async {
     AppUser newAppUser = AppUser(
         authUserUid: newUser.authUserUid,
-        name: newUser.name,
+        name: newUser?.name,
         email: newUser.email);
     _appUserRef.add(newAppUser);
   }

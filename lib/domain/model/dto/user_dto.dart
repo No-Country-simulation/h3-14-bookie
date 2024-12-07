@@ -1,7 +1,7 @@
 class UserDto {
   String authUserUid;
-  String name;
+  String? name;
   String email;
 
-  UserDto({required this.authUserUid, required this.name, required this.email});
+  UserDto({required this.authUserUid, this.name, required this.email});
 }
