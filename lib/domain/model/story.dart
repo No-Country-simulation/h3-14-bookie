@@ -13,6 +13,7 @@ class Story {
   final int? rate;
   final int? readings;
   final int? storyTimeInMin;
+  final bool? isDraft;
   final List<Chapter>? chapters;
 
   Story(
@@ -25,6 +26,7 @@ class Story {
       this.rate,
       this.readings,
       this.storyTimeInMin,
+      this.isDraft,
       this.chapters});
 
   factory Story.fromFirestore(
@@ -44,6 +46,7 @@ class Story {
         rate: data?['rate'],
         readings: data?['readings'],
         storyTimeInMin: data?['storyTimeInMin'],
+        isDraft: data?['isDraft'],
         chapters: data?['chapters'] is Iterable
             ? List.from(data?['chapters'])
             : null);
@@ -60,6 +63,7 @@ class Story {
       if (rate != null) "rate": rate,
       if (readings != null) "readings": readings,
       if (storyTimeInMin != null) "storyTimeInMin": storyTimeInMin,
+      if (isDraft != null) "isDraft": isDraft,
       if (chapters != null) "chapters": chapters,
     };
   }
