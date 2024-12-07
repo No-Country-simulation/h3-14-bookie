@@ -70,7 +70,7 @@ El propósito de Bookie es revolucionar la experiencia de lectura al combinarla 
 | **Rodrigo Cordoneda**     | Team Leader         | [LinkedIn](https://www.linkedin.com/in/rodrigocordoneda/) | [GitHub](https://github.com/Pollorius) |
 | **Cristian Cerón**        | Product Manager     | [LinkedIn](https://www.linkedin.com/in/cristianceronb/) |                                             |
 | **Sofía Álvarez**         | Diseñadora UX/UI     | [LinkedIn](https://www.linkedin.com/in/sofía-álvarez-20)  | [GitHub](https://github.com/Sofi-Alvarez) |
-| **Valentina Molina**      | Diseñadora UX/UI     | [LinkedIn](https://www.linkedin.com/in/valentina-molina-monroy-973619263/) | [GitHub] |
+| **Valentina Molina**      | Diseñadora UX/UI     | [LinkedIn](https://www.linkedin.com/in/valentina-molina-monroy-973619263/) |  |
 | **Jhosep Tinta Mancilla** | Front-end           | [LinkedIn](https://www.linkedin.com/in/jhosep-tinta/) | [GitHub](https://github.com/JhosepTM) |
 | **Jose Luis Huanca**      | Front-end           | [LinkedIn](https://www.linkedin.com/in/joseluishc/) | [GitHub](https://github.com/JoseLuisHcoder) |
 | **Daniel Matos**          | Back-end            | [LinkedIn](https://www.linkedin.com/in/daniel-matos-echevarria/) | [GitHub](https://github.com/Daniel-M12) |
