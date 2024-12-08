@@ -21,10 +21,13 @@ class BlockContent extends StatelessWidget {
           child: Center(
               child: SizedBox(
             width: double.infinity,
-            child: Text(
-              message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.w600),
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
           )),
         ),

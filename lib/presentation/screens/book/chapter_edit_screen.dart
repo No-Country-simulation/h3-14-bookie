@@ -21,6 +21,8 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
 
   late TextEditingController _textController;
 
+  bool blockContent = true;
+
   @override
   void initState() {
     super.initState();
@@ -43,7 +45,7 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
     final CameraPosition kLake = const CameraPosition(
         bearing: 0, target: LatLng(-34.625946, -58.463903), tilt: 0, zoom: 14);
 
-    bool blockContent = true;
+    
 
     return Scaffold(
       key: keyScaffold,
@@ -120,8 +122,10 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                               borderRadius: BorderRadius.circular(16),
                               child: Stack(
                                 children: [
-                                  CustomMapWidget(
-                                      postion: kLake, controller: controller),
+                                  CustomMapInfoWidget(
+                                      postion: kLake,
+                                      // controller: controller
+                                    ),
                                   if (blockContent)
                                     GestureDetector(
                                       onTap: (){
@@ -129,13 +133,28 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                                           blockContent = false;
                                         });
                                       },
-                                      child: Container(
-                                        color: AppColors.secondaryColor,
-                                        width: double.infinity,
-                                        height: 250,
-                                        child: const Center(child: Text('Diríjase a la ubicación elegida para este capítulo. Presiona aquí para utilizar el GPS y asignar la ubicación', textAlign: TextAlign.center,)),
+                                      child: const BlockContent(
+                                        factorHeight: 0.4,
+                                        message: 'Diríjase a la ubicación elegida para este capítulo. Presiona aquí para utilizar el GPS y asignar la ubicación'
                                       ),
                                     ),
+                                  if(!blockContent)
+                                    Positioned(
+                                      right: 2,
+                                      child: IconButton(
+                                        onPressed: (){
+                                          setState(() {
+                                            blockContent = true;
+                                          });
+                                        },
+                                        icon: const Icon(Icons.delete_outline, color: AppColors.background,),
+                                        style: const ButtonStyle(
+                                          backgroundColor: WidgetStatePropertyAll(
+                                            AppColors.primaryColor
+                                          )
+                                        ),
+                                      ),
+                                    )
                                 ],
                               ),
                             ),
@@ -204,6 +223,7 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                     totalPages: state.chapterActive.pages.length,
                     currentPage: state.currentPage,
                     adding: true,
+                    activeLabels: true,
                     addingAction: () {
                       bookCreateBloc.add(UpdateChapterActive(
                           chapter: state.chapterActive.copyWith(

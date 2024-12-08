@@ -38,15 +38,6 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
   }
 
   void _onInitCategoriesEvent(InitCategoriesEvent event, Emitter<BookCreateState> emit) async {
-    // emit(state.copyWith(
-    //   categories: const [
-    //   CategoryUserEntity(name: 'Terror', isActive: false, uid: 'TwCqJ2CTCovsw9kKTshD'),
-    //   CategoryUserEntity(name: 'Acción', isActive: false, uid: 'UxFIrMmyHp7vvVOtFeSU'),
-    //   CategoryUserEntity(name: 'Aventura', isActive: false, uid: 'gweHAz8bWKI6kndD3QHs'),
-    //   CategoryUserEntity(name: 'Ciencia Ficción', isActive: false, uid: 'rqD1BLqKKq1tKPTXzVJC'),
-    //   CategoryUserEntity(name: 'Fantasy', isActive: false, uid: 'TwCqJ2CTCovsw9kKTshD'),
-    // ]
-    // ));
     try{
       final categories = await categoryService.getCategories();
       emit(state.copyWith(

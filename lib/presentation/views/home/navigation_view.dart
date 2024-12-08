@@ -18,9 +18,9 @@ class NavigationView extends StatelessWidget {
         
     return Container(
       color: Colors.amber,
-      child: CustomMapWidget(
+      child: CustomMapInfoWidget(
         postion: kLake,
-        controller: controller,
+        // controller: controller,
         positions: const [
           LatLng(-34.624781, -58.462809),
           LatLng(-34.625955, -58.462272),

@@ -124,7 +124,9 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: CustomMapWidget(postion: _kLake, controller: _controller),
+                  child: CustomMapInfoWidget(postion: _kLake,
+                    // controller: _controller
+                  ),
                 ),
               ),
               const SizedBox(height: 10,),

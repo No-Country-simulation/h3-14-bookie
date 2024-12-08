@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +7,7 @@ import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 
 class BookCreateScreen extends StatefulWidget {
   static const name = 'book-create';
@@ -19,6 +22,16 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
   final synopsisController = TextEditingController();
   final placeController = TextEditingController();
   final chapterController = TextEditingController();
+  File? _image; 
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -42,14 +55,46 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: Container(
-                  width: size.width * 0.7,
-                  height: size.height * 0.35,
-                  decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(16)),
-                  child: const Center(
-                    child: Text('Inserte una foto de portada'),
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: size.width * 0.7,
+                        height: size.height * 0.35,
+                        decoration: BoxDecoration(
+                            image: _image == null? null :DecorationImage(
+                              image: FileImage(_image!),
+                              fit: BoxFit.cover
+                            ),
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(16)),
+                        child: Center(
+                          child: _image == null
+                            ? const Text('Inserte una foto de portada')
+                            : null,
+                        ),
+                      ),
+                      if(_image != null)
+                      Positioned(
+                        top: 2,
+                        right: 1,
+                        child: IconButton(
+                          style: const ButtonStyle(
+                            backgroundColor: WidgetStatePropertyAll(
+                              AppColors.background
+                            )
+                          ),
+                          onPressed: (){
+                            setState(() {
+                              _image = null;
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: AppColors.primaryColor,)),
+                      )
+                    ],
                   ),
                 ),
               ),
@@ -134,14 +179,14 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                     width: size.width * 0.8,
                     child: ElevatedButton(
                       onPressed: () {
-                        bookCreateBloc.add(CreateStoryEvent(
-                          story: StoryDto(
-                            title: titleController.text,
-                            synopsis: synopsisController.text,
-                            categoriesUid: bookCreateBloc.state.categories.map((c)=>c.uid).toList(),
-                            labels: bookCreateBloc.state.targets
-                          )
-                        ));
+                        // bookCreateBloc.add(CreateStoryEvent(
+                        //   story: StoryDto(
+                        //     title: titleController.text,
+                        //     synopsis: synopsisController.text,
+                        //     categoriesUid: bookCreateBloc.state.categories.map((c)=>c.uid).toList(),
+                        //     labels: bookCreateBloc.state.targets
+                        //   )
+                        // ));
                         bookCreateBloc.add(
                           AddInitialChapterEvent(
                             title: chapterController.text,
