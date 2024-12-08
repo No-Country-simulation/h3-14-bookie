@@ -1,5 +1,4 @@
 import 'package:h3_14_bookie/domain/model/category.dart';
-import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Story {
@@ -13,7 +12,7 @@ class Story {
   final int? readings;
   final int? storyTimeInMin;
   final bool? isDraft;
-  final List<Chapter>? chapters;
+  final List<String>? chaptersUid;
 
   Story(
       {this.title,
@@ -26,7 +25,7 @@ class Story {
       this.readings,
       this.storyTimeInMin,
       this.isDraft,
-      this.chapters});
+      this.chaptersUid});
 
   factory Story.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -40,16 +39,15 @@ class Story {
         synopsis: data?['synopsis'],
         labels: data?['labels'] is Iterable ? List.from(data?['labels']) : null,
         categories: data?['categories'] is Iterable
-            ? List.from(data?['categories']
-                .map((category) => Category.fromFirestore(category, null)))
+            ? List<Category>.from(data?['categories']
+                .map((category) => Category(name: category['name'])))
             : [],
         rate: data?['rate'],
         readings: data?['readings'],
         storyTimeInMin: data?['storyTimeInMin'],
         isDraft: data?['isDraft'],
-        chapters: data?['chapters'] is Iterable
-            ? List.from(data?['chapters']
-                .map((chapter) => Chapter.fromFirestore(chapter, null)))
+        chaptersUid: data?['chaptersUid'] is Iterable
+            ? List.from(data?['chaptersUid'])
             : []);
   }
 
@@ -65,8 +63,7 @@ class Story {
       if (readings != null) "readings": readings,
       if (storyTimeInMin != null) "storyTimeInMin": storyTimeInMin,
       if (isDraft != null) "isDraft": isDraft,
-      if (chapters != null)
-        "chapters": chapters?.map((chapter) => chapter.toFirestore()),
+      if (chaptersUid != null) "chaptersUid": chaptersUid,
     };
   }
 }
