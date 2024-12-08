@@ -24,10 +24,19 @@ class CategoryServiceImpl implements ICategoryService {
   }
 
   @override
-  String createCategory(String categoryName) {
-    Category category = Category(name: categoryName);
-    _categoryRef.add(category);
+  Future<Category> getCategoryByUid(String uid) async {
+    final docSnap = await _categoryRef.doc(uid).get();
+    if (!docSnap.exists) {
+      throw Exception('Category not found');
+    }
+    return (docSnap as DocumentSnapshot<Category>).data()!;
+  }
 
-    return 'created';
+  @override
+  Future<String> createCategory(String categoryName) async {
+    Category category = Category(name: categoryName);
+    final docRef = await _categoryRef.add(category);
+    final docSnap = await docRef.get() as DocumentSnapshot<Category>;
+    return docSnap.id;
   }
 }
