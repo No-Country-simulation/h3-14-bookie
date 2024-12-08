@@ -1,9 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:h3_14_bookie/domain/model/category.dart';
+import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
 
 interface class ICategoryService {
-  Stream<QuerySnapshot> getCategories() {
-    return Stream.empty();
+  Future<List<CategoryDto>> getCategories() {
+    return Future.value([]);
   }
 
   Future<Category> getCategoryByUid(String uid) async {

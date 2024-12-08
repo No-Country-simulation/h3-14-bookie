@@ -1,4 +1,5 @@
 import 'package:h3_14_bookie/domain/model/category.dart';
+import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
 import 'package:h3_14_bookie/domain/services/category_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -19,8 +20,12 @@ class CategoryServiceImpl implements ICategoryService {
   }
 
   @override
-  Stream<QuerySnapshot<Object?>> getCategories() {
-    return _categoryRef.snapshots();
+  Future<List<CategoryDto>> getCategories() async {
+    final docs = await _categoryRef.get();
+    return docs.docs.map((doc) {
+      final category = (doc as DocumentSnapshot<Category>).data();
+      return CategoryDto(uid: doc.id, name: category?.name ?? '');
+    }).toList();
   }
 
   @override

@@ -1,6 +1,5 @@
 import 'package:h3_14_bookie/domain/model/category.dart';
 import 'package:h3_14_bookie/domain/model/chapter.dart';
-import 'package:h3_14_bookie/domain/model/label.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Story {
