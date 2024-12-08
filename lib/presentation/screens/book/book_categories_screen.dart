@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
 class BookCategoriesScreen extends StatelessWidget {
@@ -8,22 +10,69 @@ class BookCategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // List<CategoryUserEntity> list =
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Agregando Categoría'),
-        centerTitle: true,
-        bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(1.0),
-            child: Container(
-              color: AppColors.primaryColor,
-              height: 1.0,
-            )),
-        shadowColor: AppColors.primaryColor,
-        surfaceTintColor: Colors.transparent,
-      ),
+      appBar: const CustomTitleAppbar(title: 'Categorías'),
       body: BorderLayout(
-        child: Column(
-          
+        child: BlocBuilder<BookCreateBloc, BookCreateState>(
+          builder: (context, state) {
+            return SingleChildScrollView(
+              child: Column(
+                children: state.categories.map((c) {
+                  return _CustomChipSelect(
+                    label: c.name,
+                    active: c.isActive,
+                    onTap: (){
+                      context.read<BookCreateBloc>().add(ToogleCategoryEvent(uidCategory: c.uid));
+                    },
+                  );
+                }).toList(),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _CustomChipSelect extends StatelessWidget {
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+  const _CustomChipSelect({required this.label, required this.active, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+        decoration: BoxDecoration(
+            border: Border.all(color: AppColors.primaryColor),
+            borderRadius: BorderRadius.circular(30.0),
+            color: active ? AppColors.secondaryColor : null),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style:
+                  const TextStyle(fontSize: 16.0, color: AppColors.primaryColor),
+              textAlign: TextAlign.center,
+            ),
+            if (active) ...[
+              const SizedBox(
+                width: 10,
+              ),
+              const Icon(
+                Icons.check,
+                color: AppColors.primaryColor,
+              )
+            ]
+          ],
         ),
       ),
     );

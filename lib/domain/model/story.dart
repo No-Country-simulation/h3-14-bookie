@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
-import 'package:h3_14_bookie/domain/model/chapter.dart';
-import 'package:h3_14_bookie/domain/model/label.dart';
+import 'package:h3_14_bookie/domain/model/category.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Story {
@@ -8,12 +6,13 @@ class Story {
   final String? author; //AppUser name
   final String? cover;
   final String? synopsis;
-  final List<Label>? labels;
-  // final List<Category>? categories;
+  final List<String>? labels;
+  final List<Category> categories;
   final int? rate;
   final int? readings;
   final int? storyTimeInMin;
-  final List<Chapter>? chapters;
+  final bool? isDraft;
+  final List<String>? chaptersUid;
 
   Story(
       {this.title,
@@ -21,11 +20,12 @@ class Story {
       this.cover,
       this.synopsis,
       this.labels,
-      // this.categories,
+      required this.categories,
       this.rate,
       this.readings,
       this.storyTimeInMin,
-      this.chapters});
+      this.isDraft,
+      this.chaptersUid});
 
   factory Story.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -38,15 +38,17 @@ class Story {
         cover: data?['cover'],
         synopsis: data?['synopsis'],
         labels: data?['labels'] is Iterable ? List.from(data?['labels']) : null,
-        // categories: data?['categories'] is Iterable
-        //     ? List.from(data?['categories'])
-        //     : null,
+        categories: data?['categories'] is Iterable
+            ? List<Category>.from(data?['categories']
+                .map((category) => Category(name: category['name'])))
+            : [],
         rate: data?['rate'],
         readings: data?['readings'],
         storyTimeInMin: data?['storyTimeInMin'],
-        chapters: data?['chapters'] is Iterable
-            ? List.from(data?['chapters'])
-            : null);
+        isDraft: data?['isDraft'],
+        chaptersUid: data?['chaptersUid'] is Iterable
+            ? List.from(data?['chaptersUid'])
+            : []);
   }
 
   Map<String, dynamic> toFirestore() {
@@ -56,11 +58,12 @@ class Story {
       if (cover != null) "cover": cover,
       if (synopsis != null) "synopsis": synopsis,
       if (labels != null) "labels": labels,
-      // if (categories != null) "categories": categories,
+      "categories": categories.map((category) => category.toFirestore()),
       if (rate != null) "rate": rate,
       if (readings != null) "readings": readings,
       if (storyTimeInMin != null) "storyTimeInMin": storyTimeInMin,
-      if (chapters != null) "chapters": chapters,
+      if (isDraft != null) "isDraft": isDraft,
+      if (chaptersUid != null) "chaptersUid": chaptersUid,
     };
   }
 }

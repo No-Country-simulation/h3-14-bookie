@@ -9,18 +9,14 @@ class NavigationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Completer<GoogleMapController> controller =
-        Completer<GoogleMapController>();
 
     const CameraPosition kLake = CameraPosition( bearing: 0, target: LatLng(-34.625946, -58.463903), tilt: 80, zoom: 18, );
     // CameraPosition(
     //     bearing: 0, target: LatLng(-34.625946, -58.463903), tilt: 0, zoom: 18);
         
     return Container(
-      color: Colors.amber,
-      child: CustomMapWidget(
+      child: CustomMapInfoWidget(
         postion: kLake,
-        controller: controller,
         positions: const [
           LatLng(-34.624781, -58.462809),
           LatLng(-34.625955, -58.462272),

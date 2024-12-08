@@ -23,9 +23,11 @@ class HomeScreen extends StatelessWidget {
       key: locator<GlobalKey<ScaffoldState>>(),
       endDrawer: EndDrawerWidget.instance,
       resizeToAvoidBottomInset: false,
-      body: IndexedStack(
-        index: pageIndex,
-        children: viewRoutes,
+      body: SafeArea(
+        child: IndexedStack(
+          index: pageIndex,
+          children: viewRoutes,
+        ),
       ),
       bottomNavigationBar: CustomBottomNavigation(currentIndex: pageIndex),
       floatingActionButton: pageIndex == 3 ? const FloatingButtonAddBook(): null,

@@ -2,14 +2,14 @@ import 'package:h3_14_bookie/domain/model/Location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Chapter {
-  final int? number;
+  int? number;
   final String? title;
-  final String? content;
+  final List<String>? pages;
   final bool? isCompleted;
   final Location? location;
 
   Chapter(
-      {this.number, this.title, this.content, this.isCompleted, this.location});
+      {this.number, this.title, this.pages, this.isCompleted, this.location});
 
   factory Chapter.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -19,9 +19,11 @@ class Chapter {
     return Chapter(
       number: data?['number'],
       title: data?['title'],
-      content: data?['content'],
+      pages: data?['pages'] is Iterable ? List.from(data?['pages']) : [],
       isCompleted: data?['isCompleted'],
-      location: data?['location'],
+      location: data?['location'] != null
+          ? Location.fromFirestore(data?['location'], options)
+          : null,
     );
   }
 
@@ -29,9 +31,9 @@ class Chapter {
     return {
       if (number != null) "number": number,
       if (title != null) "title": title,
-      if (content != null) "content": content,
+      if (pages != null) "pages": pages,
       if (isCompleted != null) "isCompleted": isCompleted,
-      if (location != null) "location": location,
+      if (location != null) "location": location?.toFirestore(),
     };
   }
 }

@@ -9,8 +9,7 @@ interface class IAppUserService {
 
   Future<void> createAppUser(UserDto newUser) async {}
 
-  Future<void> updateUser(
-      String uid, String first_name, String last_name, String email) async {}
+  Future<void> updateUser(String uid, String name, String email) async {}
 
   Future<void> addNewReading(String storyId, bool inLibrary) async {}
 

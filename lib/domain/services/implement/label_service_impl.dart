@@ -7,12 +7,12 @@ const String LABEL_COLLECTION_REF = "labels";
 class LabelServiceImpl implements ILabelService {
   final db = FirebaseFirestore.instance;
 
-  late final CollectionReference _categoryRef;
+  late final CollectionReference _labelRef;
 
   LabelServiceImpl() {
-    _categoryRef = db.collection(LABEL_COLLECTION_REF).withConverter<Label>(
+    _labelRef = db.collection(LABEL_COLLECTION_REF).withConverter<Label>(
         fromFirestore: (snapshots, _) => Label.fromFirestore(snapshots, _),
-        toFirestore: (category, _) => category.toFirestore());
+        toFirestore: (label, _) => label.toFirestore());
   }
 
   @override
@@ -22,10 +22,16 @@ class LabelServiceImpl implements ILabelService {
   }
 
   @override
-  String createLabel(String categoryName) {
-    Label category = Label(name: categoryName);
-    _categoryRef.add(category);
+  Future<Label> getLabelByUid(String uid) async {
+    final docSnap = await _labelRef.doc(uid).get() as DocumentSnapshot<Label>;
+    return docSnap.data()!;
+  }
 
-    return 'created';
+  @override
+  Future<String> createLabel(String labelName) async {
+    Label label = Label(name: labelName);
+    final docRef = await _labelRef.add(label);
+    final docSnap = await docRef.get() as DocumentSnapshot<Label>;
+    return docSnap.id;
   }
 }
