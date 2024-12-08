@@ -1,10 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
+import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
 
 interface class IStoryService {
-  Stream<QuerySnapshot> getStories() {
-    return Stream.empty();
+  Future<List<Story>> getStories() async {
+    return [];
+  }
+
+  Future<List<StoryResponseDto>> getMyStories(String? draftOrPublished) async {
+    return [];
   }
 
   Future<String> createStory(StoryDto storyDto) async {

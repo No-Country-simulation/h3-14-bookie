@@ -2,8 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:h3_14_bookie/domain/model/category.dart';
 import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
+import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
+import 'package:h3_14_bookie/domain/services/app_user_service.dart';
 import 'package:h3_14_bookie/domain/services/category_service.dart';
+import 'package:h3_14_bookie/domain/services/implement/app_user_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/implement/category_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/implement/label_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/label_service.dart';
@@ -16,7 +19,7 @@ class StoryServiceImpl implements IStoryService {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final ICategoryService categoryService = CategoryServiceImpl();
   final ILabelService labelService = LabelServiceImpl();
-
+  final IAppUserService appUserService = AppUserServiceImpl();
   late final CollectionReference _storyRef;
 
   StoryServiceImpl() {
@@ -26,8 +29,52 @@ class StoryServiceImpl implements IStoryService {
   }
 
   @override
-  Stream<QuerySnapshot<Object?>> getStories() {
-    return _storyRef.snapshots();
+  Future<List<Story>> getStories() async {
+    final docs = await _storyRef.get();
+    return docs.docs.map((doc) => doc.data() as Story).toList();
+  }
+
+  /// Get the stories of the current user
+  /// If [draftOrPublished] is null, return all stories
+  /// If [draftOrPublished] is "draft", return all draft stories
+  /// If [draftOrPublished] is "published", return all published stories
+  @override
+  Future<List<StoryResponseDto>> getMyStories(String? draftOrPublished) async {
+    final authorUid = FirebaseAuth.instance.currentUser?.uid;
+    if (authorUid == null) {
+      throw Exception('User not found');
+    }
+    final writings = await appUserService.getAuthorWritings(authorUid);
+    final filteredWritings = draftOrPublished != null
+        ? draftOrPublished == "draft"
+            ? writings.where((writing) => writing.isDraft == true)
+            : writings.where((writing) => writing.isDraft == false)
+        : writings;
+    final storiesResponseDtos =
+        await Future.wait(filteredWritings.map((writing) async {
+      final story = await getStoryById(writing.storyId!);
+      if (story == null) {
+        throw Exception('Story not found');
+      }
+      return convertToStoryResponseDto(writing.storyId!, story);
+    }));
+    return storiesResponseDtos;
+  }
+
+  Future<StoryResponseDto> convertToStoryResponseDto(
+      String storyUid, Story story) async {
+    return StoryResponseDto(
+        storyUid,
+        story.title ?? '',
+        (await appUserService.getAppUserById(story.authorUid!))?.name ?? '',
+        story.cover ?? '',
+        story.synopsis ?? '',
+        story.labels?.whereType<String>().toList() ?? [],
+        (story.categories).map((category) => category.name ?? '').toList(),
+        story.rate ?? 0,
+        story.readings ?? 0,
+        story.storyTimeInMin ?? 0,
+        story.chaptersUid?.toList() ?? []);
   }
 
   @override
@@ -37,18 +84,19 @@ class StoryServiceImpl implements IStoryService {
 
     Story story = Story(
         title: storyDto.title,
-        author: FirebaseAuth.instance.currentUser?.displayName,
+        authorUid: FirebaseAuth.instance.currentUser?.uid,
         cover: storyDto.cover,
         synopsis: storyDto.synopsis,
         categories: categories,
         labels: storyDto.labels,
-        isDraft: true,
         rate: 0,
         readings: 0);
     await _storyRef.add(story);
 
     final docRef = await _storyRef.add(story);
     final docSnap = await docRef.get();
+    await appUserService.addNewWriting(story.authorUid!, docSnap.id, true);
+
     return docSnap.id;
   }
 

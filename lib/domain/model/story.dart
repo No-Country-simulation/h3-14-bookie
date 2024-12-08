@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Story {
   final String? title;
-  final String? author; //AppUser name
+  final String? authorUid; //AppUser authUserUid
   final String? cover;
   final String? synopsis;
   final List<String>? labels;
@@ -11,12 +11,11 @@ class Story {
   final int? rate;
   final int? readings;
   final int? storyTimeInMin;
-  final bool? isDraft;
   final List<String>? chaptersUid;
 
   Story(
       {this.title,
-      this.author,
+      this.authorUid,
       this.cover,
       this.synopsis,
       this.labels,
@@ -24,7 +23,6 @@ class Story {
       this.rate,
       this.readings,
       this.storyTimeInMin,
-      this.isDraft,
       this.chaptersUid});
 
   factory Story.fromFirestore(
@@ -34,7 +32,7 @@ class Story {
     final data = snapshot.data();
     return Story(
         title: data?['title'],
-        author: data?['author'],
+        authorUid: data?['authorUid'],
         cover: data?['cover'],
         synopsis: data?['synopsis'],
         labels: data?['labels'] is Iterable ? List.from(data?['labels']) : null,
@@ -45,7 +43,6 @@ class Story {
         rate: data?['rate'],
         readings: data?['readings'],
         storyTimeInMin: data?['storyTimeInMin'],
-        isDraft: data?['isDraft'],
         chaptersUid: data?['chaptersUid'] is Iterable
             ? List.from(data?['chaptersUid'])
             : []);
@@ -54,7 +51,7 @@ class Story {
   Map<String, dynamic> toFirestore() {
     return {
       if (title != null) "title": title,
-      if (author != null) "author": author,
+      if (authorUid != null) "authorUid": authorUid,
       if (cover != null) "cover": cover,
       if (synopsis != null) "synopsis": synopsis,
       if (labels != null) "labels": labels,
@@ -62,7 +59,6 @@ class Story {
       if (rate != null) "rate": rate,
       if (readings != null) "readings": readings,
       if (storyTimeInMin != null) "storyTimeInMin": storyTimeInMin,
-      if (isDraft != null) "isDraft": isDraft,
       if (chaptersUid != null) "chaptersUid": chaptersUid,
     };
   }
