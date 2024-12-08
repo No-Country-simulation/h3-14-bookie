@@ -179,14 +179,14 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                     width: size.width * 0.8,
                     child: ElevatedButton(
                       onPressed: () {
-                        // bookCreateBloc.add(CreateStoryEvent(
-                        //   story: StoryDto(
-                        //     title: titleController.text,
-                        //     synopsis: synopsisController.text,
-                        //     categoriesUid: bookCreateBloc.state.categories.map((c)=>c.uid).toList(),
-                        //     labels: bookCreateBloc.state.targets
-                        //   )
-                        // ));
+                        bookCreateBloc.add(CreateStoryEvent(
+                          story: StoryDto(
+                            title: titleController.text,
+                            synopsis: synopsisController.text,
+                            categoriesUid: bookCreateBloc.state.categories.map((c)=>c.uid).toList(),
+                            labels: bookCreateBloc.state.targets
+                          )
+                        ));
                         bookCreateBloc.add(
                           AddInitialChapterEvent(
                             title: chapterController.text,

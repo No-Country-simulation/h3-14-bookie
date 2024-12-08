@@ -20,6 +20,7 @@ dependencies:
   google_fonts: ^6.2.1
   google_maps_flutter: ^2.10.0
   image_picker: ^1.1.2
+  location: ^7.0.1
 
 dev_dependencies:
   cloud_firestore: ^5.5.0

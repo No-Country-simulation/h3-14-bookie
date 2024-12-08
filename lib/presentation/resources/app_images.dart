@@ -5,4 +5,5 @@ class AppImages {
   static const String iconLogo= 'assets/images/icon_logo.svg';
   static const String iconMarkerOn = 'assets/images/icon_marker_on.png';
   static const String iconMarkerOff = 'assets/images/icon_marker_off.png';
+  static const String iconStreetView = 'assets/images/street_view_icon.png';
 }

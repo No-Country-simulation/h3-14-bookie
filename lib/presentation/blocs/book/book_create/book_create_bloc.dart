@@ -4,8 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:h3_14_bookie/domain/entities/book_chapter_entity.dart';
 import 'package:h3_14_bookie/domain/entities/category_user_entity.dart';
+import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
 import 'package:h3_14_bookie/domain/services/implement/category_service_impl.dart';
+import 'package:h3_14_bookie/domain/services/implement/chapter_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/implement/story_service_impl.dart';
 
 part 'book_create_event.dart';
@@ -14,9 +16,11 @@ part 'book_create_state.dart';
 class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
   final StoryServiceImpl storyService;
   final CategoryServiceImpl categoryService;
+  final ChapterServiceImpl chapterService;
   BookCreateBloc({
     required this.storyService,
     required this.categoryService,
+    required this.chapterService
   }) : super(const BookCreateState()) {
     on<AddTargetEvent>(_onAddTargetEvent);
     on<InitCategoriesEvent>(_onInitCategoriesEvent);
@@ -27,6 +31,7 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
     on<UpdateCurrentPage>(_onUpdateCurrentPage);
     on<AddChapterEvent>(_onAddChapterEvent);
     on<CreateStoryEvent>(_onCreateStoryEvent);
+    on<CreateChapterEvent>(_onCreateChapterEvent);
   }
 
   void _onAddTargetEvent(AddTargetEvent event, Emitter<BookCreateState> emit) {
@@ -61,6 +66,7 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
 
   void _onAddInitialChapterEvent(AddInitialChapterEvent event, Emitter<BookCreateState> emit) {
     final chapter = BookChapterEntity(
+      number: 1,
       uid: '',
       placeName: event.placeName,
       titleChapter: event.title,
@@ -99,11 +105,12 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
   }
 
   void _onAddChapterEvent(AddChapterEvent event, Emitter<BookCreateState> emit) {
-    const chapter = BookChapterEntity(
+    final chapter = BookChapterEntity(
+      number: state.chapters.length + 1,
       uid: '',
       placeName: '',
       titleChapter: '',
-      pages: ['']
+      pages: const ['']
     );
     emit(state.copyWith(
       chapters: [...state.chapters,chapter],
@@ -118,6 +125,23 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
       emit(state.copyWith(
         storyId: uuidStory
       ));
+    }catch(e) {
+      Fluttertoast.showToast(msg: '$e');
+    }
+  }
+
+  void _onCreateChapterEvent(CreateChapterEvent event, Emitter<BookCreateState> emit) async {
+    try{
+      for (var c in state.chapters) {
+        chapterService.createChapter(ChapterDto(
+          storyUid: state.storyId,
+          title: c.titleChapter,
+          pages: c.pages,
+          placeName: c.placeName,
+          lat: c.position.latitude,
+          long: c.position.longitude
+        ));
+      }
     }catch(e) {
       Fluttertoast.showToast(msg: '$e');
     }

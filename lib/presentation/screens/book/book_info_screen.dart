@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
@@ -17,8 +15,6 @@ class BookInfoScreen extends StatefulWidget {
 }
 
 class _BookInfoScreenState extends State<BookInfoScreen> {
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
 
   static const CameraPosition _kLake = CameraPosition(
       bearing: 0,
@@ -124,8 +120,7 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: CustomMapInfoWidget(postion: _kLake,
-                    // controller: _controller
+                  child: const CustomMapInfoWidget(postion: _kLake,
                   ),
                 ),
               ),
