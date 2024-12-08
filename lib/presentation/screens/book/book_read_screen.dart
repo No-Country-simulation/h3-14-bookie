@@ -66,7 +66,9 @@ class BookReadScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     child: Stack(
                       children: [
-                        CustomMapWidget(postion: kLake, controller: controller),
+                        CustomMapInfoWidget(postion: kLake,
+                          // controller: controller
+                        ),
                         if(blockContent)
                         const BlockContent(
                           factorHeight: 0.4,
@@ -107,39 +109,10 @@ class BookReadScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const BookNavigation()
+            BookNavigation(currentPage: 10,totalPages: 50,changePage: (currentPage) {
+              
+            },)
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class BlockContent extends StatelessWidget {
-  final double factorHeight;
-  final String message;
-  const BlockContent({
-    super.key,
-    required this.factorHeight,
-    required this.message,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * factorHeight,
-      child: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-          child: Center(
-              child: SizedBox(
-            width: double.infinity,
-            child: Text(
-              message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-          )),
         ),
       ),
     );

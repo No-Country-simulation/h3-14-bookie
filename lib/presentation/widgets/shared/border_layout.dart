@@ -6,7 +6,7 @@ class BorderLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double horizontal = 20;
+    double horizontal = 17;
     double veritical = 10;
 
     return Padding(
