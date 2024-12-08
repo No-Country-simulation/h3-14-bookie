@@ -42,6 +42,11 @@ class BookChapterEntity extends Equatable{
     pages: pages ?? this.pages,
     position: position ?? this.position);
   }
+
+  @override
+  String toString() {
+    return 'placeName $placeName, position $position, titleChapter $titleChapter';
+  }
   
   @override
   List<Object?> get props => [uid, number, placeName, titleChapter, pages, position];

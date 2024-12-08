@@ -83,8 +83,13 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
       body: PopScope(
         canPop: true,
         onPopInvokedWithResult: (didPop, result) {
-          context.go('/home/3');
+          bookCreateBloc.add(SaveChapterActive(
+                            chapter: bookCreateBloc.state.chapterActive.copyWith(
+                              placeName: _placeController.text,
+                              titleChapter: _titleController.text,
+                            )));
           bookCreateBloc.add(const CreateChapterEvent());
+          context.go('/home/3');
         },
         child: BorderLayout(
           child: BlocListener<BookCreateBloc, BookCreateState>(
@@ -279,7 +284,10 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                       thirdOption: true,
                       thirdOptionAction: () async {
                         bookCreateBloc.add(SaveChapterActive(
-                            chapter: bookCreateBloc.state.chapterActive));
+                            chapter: bookCreateBloc.state.chapterActive.copyWith(
+                              placeName: _placeController.text,
+                              titleChapter: _titleController.text,
+                            )));
                         // await Future.delayed(Duration(seconds: 1));
                         bookCreateBloc.add(const AddChapterEvent());
                       },

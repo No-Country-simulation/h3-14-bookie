@@ -183,7 +183,7 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                           story: StoryDto(
                             title: titleController.text,
                             synopsis: synopsisController.text,
-                            categoriesUid: bookCreateBloc.state.categories.map((c)=>c.uid).toList(),
+                            categoriesUid: bookCreateBloc.state.categories.where((c)=>c.isActive).map((c)=>c.uid).toList(),
                             labels: bookCreateBloc.state.targets
                           )
                         ));
