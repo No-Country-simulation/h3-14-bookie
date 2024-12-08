@@ -9,6 +9,7 @@ import 'package:h3_14_bookie/domain/services/firebase_service.dart';
 import 'package:h3_14_bookie/domain/services/implement/app_user_service_impl.dart';
 
 import 'package:h3_14_bookie/presentation/widgets/dialogs/error_dialog.dart';
+import 'package:h3_14_bookie/presentation/widgets/getStructure/get%20structure.dart';
 
 class FavoritesView extends StatelessWidget {
   const FavoritesView({super.key});
@@ -26,6 +27,7 @@ class FavoritesView extends StatelessWidget {
         _Button2(context),
         _ButtonDialog(context),
         _logoutButton(context),
+        _GetStructure(context),
       ],
     );
   }
@@ -160,6 +162,39 @@ Widget _ButtonDialog(BuildContext context) {
         },
         child: const Text(
           "Show Dialog",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _GetStructure(BuildContext context) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const SizedBox(height: 16),
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF006494),
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          minimumSize: const Size(double.infinity, 56),
+          elevation: 0,
+        ),
+        onPressed: () async {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FirestoreSchemaExporter()));
+        },
+        child: const Text(
+          "Get Structure",
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
