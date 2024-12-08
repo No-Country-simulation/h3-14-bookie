@@ -11,7 +11,11 @@ interface class IStoryService {
     return '';
   }
 
-  Future<Story?> getStoryDetailById(int storyId) {
+  Future<Story?> getStoryById(String storyUid) {
     return Future(() => null);
+  }
+
+  Future<bool> addChapterToStory(String storyUid, String chapterUid) async {
+    return false;
   }
 }
