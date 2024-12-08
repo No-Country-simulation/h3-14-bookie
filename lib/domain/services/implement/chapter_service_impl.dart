@@ -22,9 +22,13 @@ class ChapterServiceImpl implements IChapterService {
   }
 
   @override
-  Future<List<Chapter>> getChapters() {
-    // TODO: implement getChapters
-    throw UnimplementedError();
+  Future<List<Chapter>> getChapters() async {
+    final docs = await _chapterRef.get();
+    return docs.docs.map((doc) {
+      final chapter = (doc as DocumentSnapshot<Chapter>).data();
+      if (chapter == null) throw Exception('Chapter data is null');
+      return chapter;
+    }).toList();
   }
 
   /// Create a chapter and add it to the story
@@ -38,6 +42,7 @@ class ChapterServiceImpl implements IChapterService {
       long: chapterDto.long,
     );
     Chapter chapter = Chapter(
+      storyUid: chapterDto.storyUid,
       title: chapterDto.title,
       pages: chapterDto.pages,
       isCompleted: false,
