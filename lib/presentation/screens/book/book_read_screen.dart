@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -14,8 +13,6 @@ class BookReadScreen extends StatelessWidget {
     final textStyle = Theme.of(context).textTheme;
     final keyScaffold = GlobalKey<ScaffoldState>();
     final size = MediaQuery.of(context).size;
-    final Completer<GoogleMapController> controller =
-        Completer<GoogleMapController>();
 
     const CameraPosition kLake = CameraPosition(
         bearing: 0, target: LatLng(-34.625946, -58.463903), tilt: 0, zoom: 14);
@@ -67,7 +64,6 @@ class BookReadScreen extends StatelessWidget {
                     child: Stack(
                       children: [
                         CustomMapInfoWidget(postion: kLake,
-                          // controller: controller
                         ),
                         if(blockContent)
                         const BlockContent(

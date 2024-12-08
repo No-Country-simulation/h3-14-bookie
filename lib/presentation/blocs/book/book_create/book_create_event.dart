@@ -69,3 +69,7 @@ class CreateStoryEvent extends BookCreateEvent{
     required this.story
   });
 }
+
+class CreateChapterEvent extends BookCreateEvent{
+  const CreateChapterEvent();
+}

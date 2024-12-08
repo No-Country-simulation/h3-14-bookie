@@ -2,15 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:h3_14_bookie/domain/model/dto/user_dto.dart';
-import 'package:h3_14_bookie/domain/services/app_user_service.dart';
-import 'package:h3_14_bookie/domain/services/implement/app_user_service_impl.dart';
 import 'package:h3_14_bookie/presentation/screens/home/home.dart';
 import 'package:h3_14_bookie/presentation/screens/login/login.dart';
 
 class AuthService {
-  final IAppUserService _appUserService = AppUserServiceImpl();
-
   Future<void> signup({
     required String email,
     required String password,
@@ -22,10 +17,6 @@ class AuthService {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      UserDto newUser =
-          UserDto(authUserUid: userCredential.user!.uid, email: email);
-
-      _appUserService.createAppUser(newUser);
       // if (context.mounted) {
       //   context.go('/home/0');
       // }
@@ -80,6 +71,35 @@ class AuthService {
     await FirebaseAuth.instance.signOut();
     if (context.mounted) {
       context.go('/login');
+    }
+  }
+
+  Future<void> verifyEmail(String email) async {
+    try {
+      // Verificar si el email existe en Firebase
+      final methods =
+          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+      if (methods.isEmpty) {
+        throw FirebaseAuthException(
+          code: 'user-not-found',
+          message: 'No existe una cuenta con este correo electrónico.',
+        );
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> sendRecoveryLink(String email, String method) async {
+    try {
+      if (method == 'email') {
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      } else {
+        // Implementar envío por SMS si se requiere
+        throw UnimplementedError('Método SMS no implementado');
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }

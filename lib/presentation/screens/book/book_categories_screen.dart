@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
-import 'package:h3_14_bookie/domain/entities/category_user_entity.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
@@ -11,29 +10,24 @@ class BookCategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final categories = [
-      'Terror',
-      'Acción',
-      'Aventura',
-      'Ciencia Ficción',
-      'Fanfic'
-    ];
     // List<CategoryUserEntity> list =
     return Scaffold(
       appBar: const CustomTitleAppbar(title: 'Categorías'),
       body: BorderLayout(
         child: BlocBuilder<BookCreateBloc, BookCreateState>(
           builder: (context, state) {
-            return Column(
-              children: state.categories.map((c) {
-                return _CustomChipSelect(
-                  label: c.name,
-                  active: c.isActive,
-                  onTap: (){
-                    context.read<BookCreateBloc>().add(ToogleCategoryEvent(uidCategory: c.uid));
-                  },
-                );
-              }).toList(),
+            return SingleChildScrollView(
+              child: Column(
+                children: state.categories.map((c) {
+                  return _CustomChipSelect(
+                    label: c.name,
+                    active: c.isActive,
+                    onTap: (){
+                      context.read<BookCreateBloc>().add(ToogleCategoryEvent(uidCategory: c.uid));
+                    },
+                  );
+                }).toList(),
+              ),
             );
           },
         ),
