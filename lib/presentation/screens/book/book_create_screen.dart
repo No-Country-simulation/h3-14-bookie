@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
+import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
@@ -133,13 +134,21 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                     width: size.width * 0.8,
                     child: ElevatedButton(
                       onPressed: () {
+                        bookCreateBloc.add(CreateStoryEvent(
+                          story: StoryDto(
+                            title: titleController.text,
+                            synopsis: synopsisController.text,
+                            categoriesUid: bookCreateBloc.state.categories.map((c)=>c.uid).toList(),
+                            labels: bookCreateBloc.state.targets
+                          )
+                        ));
                         bookCreateBloc.add(
                           AddInitialChapterEvent(
                             title: chapterController.text,
                             placeName: placeController.text
                           )
                         );
-                        context.go('/home/3/book-create/chapter-edit');
+                        context.push('/home/3/book-create/chapter-edit');
                       },
                       child: const Text('Guardar y Continuar'),
                     ),

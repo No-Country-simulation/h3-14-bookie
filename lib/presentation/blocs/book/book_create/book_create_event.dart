@@ -62,3 +62,10 @@ class UpdateCurrentPage extends BookCreateEvent{
 class AddChapterEvent extends BookCreateEvent{
   const AddChapterEvent();
 }
+
+class CreateStoryEvent extends BookCreateEvent{
+  final StoryDto story;
+  const CreateStoryEvent({
+    required this.story
+  });
+}

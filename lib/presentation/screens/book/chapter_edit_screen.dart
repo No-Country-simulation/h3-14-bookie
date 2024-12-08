@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
@@ -48,7 +49,9 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
       key: keyScaffold,
       appBar: AppBar(
         leading:
-            IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_back)),
+            IconButton(onPressed: () {
+              context.go('/home/3');
+            }, icon: const Icon(Icons.arrow_back)),
         actions: [
           IconButton(
               onPressed: () {

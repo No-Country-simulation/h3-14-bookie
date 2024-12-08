@@ -7,6 +7,7 @@ class BookCreateState extends Equatable {
   final List<BookChapterEntity> chapters;
   final BookChapterEntity chapterActive;
   final int currentPage;
+  final String storyId;
   const BookCreateState({
     this.targets = const [],
     this.categories = const [],
@@ -14,6 +15,7 @@ class BookCreateState extends Equatable {
     this.chapters = const [],
     this.chapterActive = const BookChapterEntity.empty(),
     this.currentPage = 0,
+    this.storyId = '',
   });
 
   BookCreateState copyWith({
@@ -23,6 +25,7 @@ class BookCreateState extends Equatable {
     List<BookChapterEntity>? chapters,
     BookChapterEntity? chapterActive,
     int? currentPage,
+    String? storyId,
   }) {
     return BookCreateState(
       targets: targets ?? this.targets,
@@ -30,7 +33,8 @@ class BookCreateState extends Equatable {
       selectedIndexChapter: selectedIndexChapter ?? this.selectedIndexChapter,
       chapters: chapters ?? this.chapters,
       chapterActive: chapterActive ?? this.chapterActive,
-      currentPage: currentPage ?? this.currentPage
+      currentPage: currentPage ?? this.currentPage,
+      storyId: storyId ?? this.storyId,
     );
   }
   
@@ -41,6 +45,7 @@ class BookCreateState extends Equatable {
     selectedIndexChapter,
     chapters,
     chapterActive,
-    currentPage
+    currentPage,
+    storyId,
   ];
 }
