@@ -19,7 +19,7 @@ class CustomAppbar extends StatelessWidget {
           width: double.infinity,
           child: Row(
             children: [
-              SvgPicture.asset(AppImages.iconLogo, width: 30, height: 30,
+              Image.asset(AppImages.iconLogo, width: 30, height: 30,
               ),
               const SizedBox(width: 15,),
               const Expanded(child: SearchWidget()),
@@ -27,9 +27,11 @@ class CustomAppbar extends StatelessWidget {
               const Icon(Icons.notifications_outlined, size: 30,),
               user != null
               ? CircleAvatar(
+
+                radius: 15,
                 backgroundColor: AppColors.primaryColor,
                 foregroundColor: AppColors.background,
-                child: Text('${user.email?[0].toUpperCase()}${user.email?[1].toUpperCase()}'),)
+                child: Text('${user.email?[0].toUpperCase()}${user.email?[1].toUpperCase()}', style: TextStyle(fontSize: 14),),)
               : const Icon(Icons.account_circle_outlined, size: 30)
             ],
           ),
