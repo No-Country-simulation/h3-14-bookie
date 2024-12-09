@@ -21,10 +21,20 @@ class AppUser {
       authUserUid: data?['authUserUid'],
       name: data?['name'],
       email: data?['email'],
-      readings:
-          data?['readings'] is Iterable ? List.from(data?['readings']) : null,
-      writings:
-          data?['writings'] is Iterable ? List.from(data?['writings']) : null,
+      readings: data?['readings'] is Iterable
+          ? List<Reading>.from(
+              (data?['readings'] as List<dynamic>).map(
+                (reading) => Reading.fromMap(reading as Map<String, dynamic>),
+              ),
+            )
+          : null,
+      writings: data?['writings'] is Iterable
+          ? List<Writing>.from(
+              (data?['writings'] as List<dynamic>).map(
+                (writing) => Writing.fromMap(writing as Map<String, dynamic>),
+              ),
+            )
+          : null,
     );
   }
 
@@ -33,8 +43,10 @@ class AppUser {
       if (authUserUid != null) "authUserUid": authUserUid,
       if (name != null) "name": name,
       if (email != null) "email": email,
-      if (readings != null) "readings": readings,
-      if (writings != null) "writings": writings,
+      if (readings != null)
+        "readings": readings?.map((reading) => reading.toFirestore()).toList(),
+      if (writings != null)
+        "writings": writings?.map((writing) => writing.toFirestore()).toList(),
     };
   }
 }

@@ -31,6 +31,30 @@ class ChapterServiceImpl implements IChapterService {
     }).toList();
   }
 
+  @override
+  Future<Chapter> getChapterById(String chapterUid) async {
+    final doc = await _chapterRef.doc(chapterUid).get();
+    return doc.data() as Chapter;
+  }
+
+  @override
+  Future<List<Chapter>> getChaptersByStoryUid(String storyUid) async {
+    List<Chapter> chapters = await getChapters();
+    return chapters.where((chapter) => chapter.storyUid == storyUid).toList();
+  }
+
+  @override
+  Future<ChapterDto> convertToChapterDto(Chapter chapter) async {
+    return ChapterDto(
+      storyUid: chapter.storyUid,
+      title: chapter.title ?? '',
+      pages: chapter.pages ?? [],
+      placeName: chapter.location?.place ?? '',
+      lat: chapter.location?.lat ?? 0.0,
+      long: chapter.location?.long ?? 0.0,
+    );
+  }
+
   /// Create a chapter and add it to the story
   /// Return the chapter uid if success
   /// Return error message if failed
@@ -72,5 +96,15 @@ class ChapterServiceImpl implements IChapterService {
       return 1;
     }
     return story.chaptersUid!.length + 1;
+  }
+
+  @override
+  Future<bool> deleteChaptersByStoryUid(String storyUid) async {
+    QuerySnapshot querySnapshot =
+        await _chapterRef.where('storyUid', isEqualTo: storyUid).get();
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+      await _chapterRef.doc(doc.id).delete();
+    }
+    return true;
   }
 }

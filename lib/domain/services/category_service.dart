@@ -10,6 +10,10 @@ interface class ICategoryService {
     return Future(() => Category(name: 'Default Category'));
   }
 
+  Future<String> getCategoryUidByName(String categoryName) async {
+    return '';
+  }
+
   Future<String> createCategory(String categoryName) async {
     return '';
   }

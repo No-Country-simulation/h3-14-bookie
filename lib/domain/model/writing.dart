@@ -14,6 +14,13 @@ class Writing {
     return Writing(storyId: data?['storyId'], isDraft: data?['isDraft']);
   }
 
+  factory Writing.fromMap(Map<String, dynamic> data) {
+    return Writing(
+      isDraft: data['isDraft'] ?? false,
+      storyId: data['storyId'] ?? '',
+    );
+  }
+
   Map<String, dynamic> toFirestore() {
     return {
       if (storyId != null) "storyId": storyId,

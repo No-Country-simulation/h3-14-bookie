@@ -1,10 +1,21 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
+import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
 
 interface class IStoryService {
-  Stream<QuerySnapshot> getStories() {
-    return Stream.empty();
+  Future<List<Story>> getStories() async {
+    return [];
+  }
+
+  Future<List<Story>> getStoriesWithFilter(
+      String filter, CategoryDto? category) async {
+    return [];
+  }
+
+  Future<List<StoryResponseDto>> getStoriesResponseByStoryUid(
+      List<String> storiesUid) async {
+    return [];
   }
 
   Future<String> createStory(StoryDto storyDto) async {
@@ -16,6 +27,10 @@ interface class IStoryService {
   }
 
   Future<bool> addChapterToStory(String storyUid, String chapterUid) async {
+    return false;
+  }
+
+  Future<bool> deleteAllChaptersInStory(String storyUid) async {
     return false;
   }
 }
