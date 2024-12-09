@@ -108,8 +108,8 @@ Nota: Asegúrate de tener Flutter y Dart correctamente instalados.
 
 ### 🚀 Recursos del Proyecto
 - [📂 GitHub - Bookie H3-14](https://github.com/No-Country-simulation/h3-14-bookie)  
-- [📦 Bookies.apk](#)  
-- [🌐 Deploy](#)  
+- [📦 Bookies.apk](https://drive.google.com/file/d/1bCATYYc--dNHh52u-TiinV5950EhJh1O/view?usp=sharing)  
+- [🌐 Deploy](https://drive.google.com/file/d/1zk-5BFwdwsXxkG92-38miULo5tt3vqJi/view?usp=sharing)  
 
 ---
 
@@ -128,6 +128,6 @@ Nota: Asegúrate de tener Flutter y Dart correctamente instalados.
 ---
 
 ### 🎥 Video de Demostración de Funcionalidades
-- [📹 Video Demostrativo](#)  
+- [📹 Video Demostrativo](https://drive.google.com/file/d/179tlA3urLot6doZQjgKzzIvzdCSS0CEH/view?usp=sharing)  
 
 
