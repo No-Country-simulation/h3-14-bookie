@@ -15,11 +15,14 @@ class ReadingServiceImpl implements IReadingService {
   ReadingServiceImpl();
 
   @override
-  Future<List<Reading>> getUserReadings(bool inLibrary) async {
+  Future<List<Reading>> getUserReadings(bool? inLibrary) async {
     final appUser = await appUserService
         .getAppUserByAuthUserUid(FirebaseAuth.instance.currentUser?.uid ?? "");
     if (appUser == null) {
       throw Exception('AppUser not found');
+    }
+    if (inLibrary == null) {
+      return appUser.readings ?? [];
     }
     final readings = appUser.readings;
     return readings
