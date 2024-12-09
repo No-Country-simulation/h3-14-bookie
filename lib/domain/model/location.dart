@@ -19,6 +19,14 @@ class Location {
     );
   }
 
+  factory Location.fromMap(Map<String, dynamic> data) {
+    return Location(
+      place: data['place'],
+      lat: data['lat'],
+      long: data['long'],
+    );
+  }
+
   Map<String, dynamic> toFirestore() {
     return {
       if (place != null) "place": place,
