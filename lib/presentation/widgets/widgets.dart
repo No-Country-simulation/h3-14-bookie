@@ -16,3 +16,4 @@ export 'shared/custom_title_appbar.dart';
 export 'book/block_content.dart';
 export 'home/book_read_widget.dart';
 export 'shared/custom_chip_select.dart';
+export 'home/book_card_widget.dart';

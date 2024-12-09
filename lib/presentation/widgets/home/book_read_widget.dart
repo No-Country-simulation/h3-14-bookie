@@ -52,7 +52,9 @@ class BookReadWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             const SizedBox(height: 7,),
-            const Row(
+            const Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              runAlignment: WrapAlignment.spaceBetween,
               children: [
                 Icon(Icons.book, size: 24, color: AppColors.primaryColor,),
                 SizedBox(width: 5),

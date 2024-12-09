@@ -61,8 +61,9 @@ class BookWidget extends StatelessWidget {
             const SizedBox(height: 3,),
             const StarRating(calification: 4),
             const SizedBox(height: 3,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              runAlignment: WrapAlignment.spaceBetween,
               children: [
                 IconLabelWidget(
                   iconSize: 20,
