@@ -45,7 +45,7 @@ class _LoginState extends State<Login> {
                 child: Text(
                   'Inicio de sesión',
                   style: GoogleFonts.inter(
-                    fontSize: 28,
+                    fontSize: 35,
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
@@ -57,7 +57,7 @@ class _LoginState extends State<Login> {
                 child: Text(
                   'Para comenzar, ingresa a tu cuenta.',
                   style: GoogleFonts.inter(
-                    fontSize: 16,
+                    fontSize: 20,
                     color: Colors.black54,
                   ),
                   textAlign: TextAlign.center,
@@ -171,10 +171,10 @@ class _LoginState extends State<Login> {
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF006494),
             foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 47),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(24),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
             elevation: 0,
           ),
           onPressed: () async {

@@ -36,12 +36,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              Text(
-                '¿Olvidaste tu contraseña?',
-                style: GoogleFonts.inter(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
+              Center(
+                child: Text(
+                  '¿Olvidaste tu contraseña?',
+                  style: GoogleFonts.inter(
+                    fontSize: 35,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -70,10 +72,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF006494),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 47),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(24),
                   ),
-                  minimumSize: const Size(double.infinity, 56),
+                  elevation: 0,
                 ),
                 onPressed: () {
                   Navigator.push(

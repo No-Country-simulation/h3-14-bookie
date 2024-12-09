@@ -22,18 +22,18 @@ class UserCreated extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const Icon(
                 Icons.mail_outline,
-                size: 80,
+                size: 250,
                 color: Color(0xFF006494),
               ),
               const SizedBox(height: 24),
               Text(
                 'Registro de usuario completado',
                 style: GoogleFonts.inter(
-                  fontSize: 24,
+                  fontSize: 30,
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
                 ),
@@ -48,14 +48,16 @@ class UserCreated extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 220),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF006494),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 47),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(24),
                   ),
-                  minimumSize: const Size(double.infinity, 56),
+                  elevation: 0,
                 ),
                 onPressed: () {
                   Navigator.pushReplacement(
@@ -64,7 +66,7 @@ class UserCreated extends StatelessWidget {
                   );
                 },
                 child: const Text(
-                  'Ingresar código de validación',
+                  'Iniciar sesión',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,

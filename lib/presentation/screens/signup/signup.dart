@@ -23,6 +23,7 @@ class _SignupState extends State<Signup> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,23 +45,27 @@ class _SignupState extends State<Signup> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              Text(
-                'Registro',
-                style: GoogleFonts.inter(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
+              Center(
+                child: Text(
+                  'Registro',
+                  style: GoogleFonts.inter(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Para comenzar, crea tu cuenta.',
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: Colors.black87,
+              Center(
+                child: Text(
+                  'Para comenzar, crea tu cuenta.',
+                  style: GoogleFonts.inter(
+                    fontSize: 20,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 80),
               _signupForm(context),
             ],
           ),
@@ -139,14 +144,16 @@ class _SignupState extends State<Signup> {
             ),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 50),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF006494),
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 47),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(24),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            elevation: 0,
           ),
           onPressed: () async {
             // Validar que todos los campos estén llenos
@@ -166,27 +173,41 @@ class _SignupState extends State<Signup> {
             }
 
             try {
+              // Deshabilitar el botón mientras se procesa
+              setState(() {
+                _isLoading = true;
+              });
+
+              // Realizar el registro
               await AuthService().signup(
-                email: _emailController.text,
-                password: _passwordController.text,
-                name: _nameController.text,
-                username: _userController.text,
+                email: _emailController.text.trim(),
+                password: _passwordController.text.trim(),
+                name: _nameController.text.trim(),
+                username: _userController.text.trim(),
               );
+
               await addUser(
-                _emailController.text,
-                _nameController.text,
-                _passwordController.text,
-                _userController.text,
+                _emailController.text.trim(),
+                _nameController.text.trim(),
+                _passwordController.text.trim(),
+                _userController.text.trim(),
               );
 
               if (context.mounted) {
-                Navigator.pushReplacement(
+                // Navegar a la pantalla de usuario creado
+                await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const UserCreated()),
                 );
               }
             } catch (e) {
-              // El error ya se maneja en AuthService
+            } finally {
+              // Asegurarse de que el botón se habilite nuevamente
+              if (mounted) {
+                setState(() {
+                  _isLoading = false;
+                });
+              }
             }
           },
           child: const Text(
