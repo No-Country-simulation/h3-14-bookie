@@ -105,8 +105,29 @@ Nota: Asegúrate de tener Flutter y Dart correctamente instalados.
 ---
 
 ## **🔗 Enlaces Relevantes**  
-- [Repositorio en GitHub](https://github.com/No-Country-simulation/h3-14-bookie)
-- [Prototipo en Figma](https://www.figma.com/proto/hps5pgUhOIUXp7aydqOWMq/Bookie?page-id=0%3A1&node-id=145-3121&node-type=canvas&viewport=388%2C312%2C0.07&t=5nFk2UPSgdSaPgcI-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=145%3A3121)
-- [Video demostrativo](#Subir)  
-- [Documentación oficial](https://drive.google.com/drive/folders/1Y8Cqw8kKARASbGS59DPaMGM3kdfGq6Ll?usp=sharing)
-- [Deploy](https://drive.google.com/drive/folders/1HnPpLkT4QMea-eRRiRE2wNXBrBj4V3PY?usp=drive_link)
+
+### 🚀 Recursos del Proyecto
+- [📂 GitHub - Bookie H3-14](https://github.com/No-Country-simulation/h3-14-bookie)  
+- [📦 Bookies.apk](#)  
+- [🌐 Deploy](#)  
+
+---
+
+### 📂 Documentación Técnica
+- [📐 Arquitectura del Proyecto](https://drive.google.com/file/d/1lbZnY2yip733Y2-2KuJf8wX5E7vyLleJ/view?usp=sharing)  
+- [⚙️ Funcionalidad y Escalabilidad](https://drive.google.com/file/d/14C4r3dNNaShBE32U1OWWqu8tNeZq7E_7/view?usp=sharing)  
+- [📖 Manual de Usuario](https://drive.google.com/file/d/1WRW8W_cTPz_4zbHcmuC9-zlAHKAP6SGg/view?usp=sharing)  
+
+---
+
+### 🎨 Documentación UX/UI
+- [🖥️ Presentación UX/UI](https://drive.google.com/file/d/1QZFzSYgOqMpl80M-GL0YbiS_DLO9b4YB/view?usp=sharing)  
+- [🎨 Proyecto de Figma](https://www.figma.com/design/hps5pgUhOIUXp7aydqOWMq/Bookie?node-id=0-1&t=1VGHTlsV5MuTjeJ1-1)  
+- [📱 Prototipo Bookie - H3-14](https://www.figma.com/proto/hps5pgUhOIUXp7aydqOWMq/Bookie?page-id=0%3A1&node-id=145-3121&node-type=frame&viewport=489%2C-565%2C0.1&t=R5z4HCfdhjc9hyDD-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=145%3A3121&show-proto-sidebar=1)  
+
+---
+
+### 🎥 Video de Demostración de Funcionalidades
+- [📹 Video Demostrativo](#)  
+
+
