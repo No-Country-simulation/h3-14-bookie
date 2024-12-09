@@ -19,7 +19,7 @@ class BookCategoriesScreen extends StatelessWidget {
             return SingleChildScrollView(
               child: Column(
                 children: state.categories.map((c) {
-                  return _CustomChipSelect(
+                  return CustomChipSelect(
                     label: c.name,
                     active: c.isActive,
                     onTap: (){
@@ -30,49 +30,6 @@ class BookCategoriesScreen extends StatelessWidget {
               ),
             );
           },
-        ),
-      ),
-    );
-  }
-}
-
-class _CustomChipSelect extends StatelessWidget {
-  final String label;
-  final bool active;
-  final VoidCallback onTap;
-  const _CustomChipSelect({required this.label, required this.active, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-        decoration: BoxDecoration(
-            border: Border.all(color: AppColors.primaryColor),
-            borderRadius: BorderRadius.circular(30.0),
-            color: active ? AppColors.secondaryColor : null),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style:
-                  const TextStyle(fontSize: 16.0, color: AppColors.primaryColor),
-              textAlign: TextAlign.center,
-            ),
-            if (active) ...[
-              const SizedBox(
-                width: 10,
-              ),
-              const Icon(
-                Icons.check,
-                color: AppColors.primaryColor,
-              )
-            ]
-          ],
         ),
       ),
     );

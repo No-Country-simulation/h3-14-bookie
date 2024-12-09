@@ -1,5 +1,7 @@
 // Este código es un proveedor de ubicación que:
 // 1. Importa los paquetes necesarios para manejar ubicación y mapas de Google
+import 'dart:math';
+
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -40,5 +42,31 @@ class LocationProvider {
     }
 
     return null; // Si no se pudo obtener la ubicación, retorna null
+  }
+
+  Future<double?> haversineDistance(LatLng coord) async {
+    const earthRadius = 6371000; // Radio de la Tierra en metros
+    final position = await getCurrentLocation();
+    if(position == null){
+      return null;
+    }
+    final lat1 = position.latitude * pi / 180;
+    final lon1 = position.longitude * pi / 180;
+    final lat2 = coord.latitude * pi / 180;
+    final lon2 = coord.longitude * pi / 180;
+    final dLat = lat2 - lat1;
+    final dLon = lon2 - lon1;
+    final a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(lat1) * cos(lat2) * sin(dLon / 2) * sin(dLon / 2);
+    final c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    return earthRadius * c;
+  }
+
+  Future<bool> isWithinDistance(LatLng coord, double distanceInMeters) async {
+    final distance = await haversineDistance(coord);
+    if(distance == null){
+      return false;
+    }
+    return distance <= distanceInMeters;
   }
 }

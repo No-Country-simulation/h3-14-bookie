@@ -83,11 +83,11 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
       body: PopScope(
         canPop: true,
         onPopInvokedWithResult: (didPop, result) {
-          bookCreateBloc.add(SaveChapterActive(
-                            chapter: bookCreateBloc.state.chapterActive.copyWith(
-                              placeName: _placeController.text,
-                              titleChapter: _titleController.text,
-                            )));
+          // bookCreateBloc.add(SaveChapterActive(
+          //                   chapter: bookCreateBloc.state.chapterActive.copyWith(
+          //                     placeName: _placeController.text,
+          //                     titleChapter: _titleController.text,
+          //                   )));
           bookCreateBloc.add(const CreateChapterEvent());
           context.go('/home/3');
         },
@@ -283,13 +283,16 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                       },
                       thirdOption: true,
                       thirdOptionAction: () async {
-                        bookCreateBloc.add(SaveChapterActive(
-                            chapter: bookCreateBloc.state.chapterActive.copyWith(
-                              placeName: _placeController.text,
-                              titleChapter: _titleController.text,
-                            )));
+                        // bookCreateBloc.add(SaveChapterActive(
+                        //     chapter: bookCreateBloc.state.chapterActive.copyWith(
+                        //       placeName: _placeController.text,
+                        //       titleChapter: _titleController.text,
+                        //     )));
                         // await Future.delayed(Duration(seconds: 1));
                         bookCreateBloc.add(const AddChapterEvent());
+                        setState(() {
+                          blockContent = true;
+                        });
                       },
                     )
                   ],
