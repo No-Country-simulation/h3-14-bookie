@@ -6,17 +6,17 @@ import 'package:h3_14_bookie/domain/entities/book_chapter_entity.dart';
 import 'package:h3_14_bookie/domain/entities/category_user_entity.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
-import 'package:h3_14_bookie/domain/services/implement/category_service_impl.dart';
-import 'package:h3_14_bookie/domain/services/implement/chapter_service_impl.dart';
-import 'package:h3_14_bookie/domain/services/implement/story_service_impl.dart';
+import 'package:h3_14_bookie/domain/services/category_service.dart';
+import 'package:h3_14_bookie/domain/services/chapter_service.dart';
+import 'package:h3_14_bookie/domain/services/story_service.dart';
 
 part 'book_create_event.dart';
 part 'book_create_state.dart';
 
 class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
-  final StoryServiceImpl storyService;
-  final CategoryServiceImpl categoryService;
-  final ChapterServiceImpl chapterService;
+  final IStoryService storyService;
+  final ICategoryService categoryService;
+  final IChapterService chapterService;
   BookCreateBloc({
     required this.storyService,
     required this.categoryService,
@@ -112,8 +112,10 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
       titleChapter: '',
       pages: const ['']
     );
+    List<BookChapterEntity> list = List.from(state.chapters);
+    list.add(chapter);
     emit(state.copyWith(
-      chapters: [...state.chapters,chapter],
+      chapters: list,
       selectedIndexChapter: state.chapters.length + 1,
       chapterActive: chapter,
     ));

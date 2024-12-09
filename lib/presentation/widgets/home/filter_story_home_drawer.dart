@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/presentation/widgets/shared/border_layout.dart';
 
-class CategoriesDrawer extends StatelessWidget {
-  const CategoriesDrawer({super.key});
+class FilterStoryHomeDrawer extends StatelessWidget {
+  const FilterStoryHomeDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {

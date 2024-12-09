@@ -62,6 +62,11 @@ final appRouter = GoRouter(
                   name: BookCategoriesScreen.name,
                   builder: (context, state) => const BookCategoriesScreen(),
                 ),
+                GoRoute(
+                  path: '/chapter-edit',
+                  name: ChapterEditScreen.name,
+                  builder: (context, state) => const ChapterEditScreen(),
+                ),
               ]),
         ]),
     // Ruta de inicio de sesión

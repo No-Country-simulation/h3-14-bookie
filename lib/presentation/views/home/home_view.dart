@@ -26,7 +26,7 @@ class HomeView extends StatelessWidget {
                       fontWeight: FontWeight.bold
                     ),),
                     IconButton(onPressed: (){
-                      EndDrawerWidget.instance.body = const CategoriesDrawer();
+                      EndDrawerWidget.instance.body = const FilterStoryHomeDrawer();
                       locator<GlobalKey<ScaffoldState>>().currentState!.openEndDrawer();
                     }, icon: const Icon(Icons.sort, size: 30))
                   ],

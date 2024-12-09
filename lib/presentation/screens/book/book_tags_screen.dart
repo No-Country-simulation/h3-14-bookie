@@ -46,6 +46,7 @@ class BookTagsScreen extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   context.read<BookCreateBloc>().add(AddTargetEvent(target: textController.text));
+                  textController.text = '';
                 },
                 style: ButtonStyle(
                     padding: const WidgetStatePropertyAll(EdgeInsets.all(10)),

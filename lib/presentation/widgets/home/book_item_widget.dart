@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
+enum BookItemMenuEnum { unposting, posting, edit, delete }
+
 class BookItemWidget extends StatelessWidget {
-  const BookItemWidget({super.key});
+  final bool isDraft;
+  const BookItemWidget({super.key, this.isDraft = false});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        tileColor: isDraft ? AppColors.secondaryColor : null,
         contentPadding: const EdgeInsets.symmetric(horizontal: 8),
         shape:
             ContinuousRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -36,10 +41,38 @@ class BookItemWidget extends StatelessWidget {
           ],
         ),
         trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            GestureDetector(
-              onTap: () {},
-              child: const Icon(Icons.more_vert),
+            PopupMenuButton<BookItemMenuEnum>(
+              color: Colors.white,
+              splashRadius: 25,
+              // shape: BeveledRectangleBorder(
+              //   borderRadius: BorderRadius.circular(10)
+              // ),
+              onSelected: (BookItemMenuEnum item) {
+                
+              },
+              itemBuilder: (BuildContext context) =>
+                  <PopupMenuEntry<BookItemMenuEnum>>[
+                if(!isDraft)
+                const PopupMenuItem<BookItemMenuEnum>(
+                  value: BookItemMenuEnum.unposting,
+                  child: Text('Pausar publicación'),
+                ),
+                if(isDraft)
+                const PopupMenuItem<BookItemMenuEnum>(
+                  value: BookItemMenuEnum.posting,
+                  child: Text('Publicar borrador'),
+                ),
+                const PopupMenuItem<BookItemMenuEnum>(
+                  value: BookItemMenuEnum.edit,
+                  child: Text('Editar información'),
+                ),
+                const PopupMenuItem<BookItemMenuEnum>(
+                  value: BookItemMenuEnum.delete,
+                  child: Text('Eliminar'),
+                ),
+              ],
             ),
           ],
         ),
