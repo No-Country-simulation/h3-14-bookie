@@ -5,15 +5,25 @@ import 'package:h3_14_bookie/domain/services/auth_service.dart';
 import 'package:h3_14_bookie/domain/services/firebase_service.dart';
 import 'package:h3_14_bookie/presentation/screens/login/login.dart';
 import 'package:h3_14_bookie/presentation/screens/signup/user_created.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-class Signup extends StatelessWidget {
-  Signup({super.key});
+class Signup extends StatefulWidget {
   static const String name = 'Signup';
 
+  const Signup({super.key});
+
+  @override
+  State<Signup> createState() => _SignupState();
+}
+
+class _SignupState extends State<Signup> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -35,23 +45,27 @@ class Signup extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              Text(
-                'Registro',
-                style: GoogleFonts.inter(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
+              Center(
+                child: Text(
+                  'Registro',
+                  style: GoogleFonts.inter(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Para comenzar, crea tu cuenta.',
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: Colors.black87,
+              Center(
+                child: Text(
+                  'Para comenzar, crea tu cuenta.',
+                  style: GoogleFonts.inter(
+                    fontSize: 20,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 80),
               _signupForm(context),
             ],
           ),
@@ -108,7 +122,7 @@ class Signup extends StatelessWidget {
         const SizedBox(height: 16),
         TextField(
           controller: _passwordController,
-          obscureText: true,
+          obscureText: _obscurePassword,
           decoration: InputDecoration(
             hintText: 'Contraseña',
             filled: true,
@@ -119,42 +133,81 @@ class Signup extends StatelessWidget {
             ),
             contentPadding: const EdgeInsets.all(16),
             suffixIcon: IconButton(
-              icon: const Icon(Icons.visibility_off),
-              onPressed: () {},
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+              ),
+              onPressed: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
             ),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 50),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF006494),
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 47),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(24),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            elevation: 0,
           ),
           onPressed: () async {
+            // Validar que todos los campos estén llenos
+            if (_nameController.text.trim().isEmpty ||
+                _emailController.text.trim().isEmpty ||
+                _userController.text.trim().isEmpty ||
+                _passwordController.text.trim().isEmpty) {
+              Fluttertoast.showToast(
+                msg: 'Todos los campos son obligatorios',
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.SNACKBAR,
+                backgroundColor: Colors.black54,
+                textColor: Colors.white,
+                fontSize: 14.0,
+              );
+              return;
+            }
+
             try {
+              // Deshabilitar el botón mientras se procesa
+              setState(() {
+                _isLoading = true;
+              });
+
+              // Realizar el registro
+              await AuthService().signup(
+                email: _emailController.text.trim(),
+                password: _passwordController.text.trim(),
+                name: _nameController.text.trim(),
+                username: _userController.text.trim(),
+              );
+
               await addUser(
-                _emailController.text,
-                _nameController.text,
-                _passwordController.text,
-                _userController.text,
+                _emailController.text.trim(),
+                _nameController.text.trim(),
+                _passwordController.text.trim(),
+                _userController.text.trim(),
               );
 
               if (context.mounted) {
-                Navigator.pushReplacement(
+                // Navegar a la pantalla de usuario creado
+                await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const UserCreated()),
                 );
               }
-              await AuthService().signup(
-                email: _emailController.text,
-                password: _passwordController.text,
-                // context: context,
-              );
             } catch (e) {
-              // Manejar el error
+            } finally {
+              // Asegurarse de que el botón se habilite nuevamente
+              if (mounted) {
+                setState(() {
+                  _isLoading = false;
+                });
+              }
             }
           },
           child: const Text(

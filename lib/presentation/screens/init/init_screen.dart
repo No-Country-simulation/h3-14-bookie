@@ -23,7 +23,7 @@ class InitScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               children: [
-                const Spacer(flex: 2),
+                const SizedBox(height: 110),
                 Image.asset(
                   'assets/images/BOOKIE_name.png',
                   height: 80,
@@ -70,9 +70,8 @@ class InitScreen extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 48,
-        height: 48,
-        padding: const EdgeInsets.all(12),
+        width: 47,
+        height: 47,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
@@ -84,7 +83,7 @@ class InitScreen extends StatelessWidget {
             ),
           ],
         ),
-        child: Image.asset(iconPath),
+        child: Image.asset(iconPath, fit: BoxFit.cover),
       ),
     );
   }
@@ -94,9 +93,9 @@ class InitScreen extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF006494),
         foregroundColor: Colors.white,
-        minimumSize: const Size(double.infinity, 56),
+        minimumSize: const Size(double.infinity, 47),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(24),
         ),
         elevation: 0,
       ),
@@ -121,9 +120,9 @@ class InitScreen extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF006494),
         foregroundColor: Colors.white,
-        minimumSize: const Size(double.infinity, 56),
+        minimumSize: const Size(double.infinity, 47),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(24),
         ),
         elevation: 0,
       ),
