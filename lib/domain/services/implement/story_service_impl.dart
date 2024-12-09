@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:h3_14_bookie/domain/model/category.dart';
+import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
@@ -31,6 +32,27 @@ class StoryServiceImpl implements IStoryService {
   Future<List<Story>> getStories() async {
     final docs = await _storyRef.get();
     return docs.docs.map((doc) => doc.data() as Story).toList();
+  }
+
+  @override
+  Future<List<Story>> getStoriesWithFilter(
+      String filter, CategoryDto? category) async {
+    var stories = await getStories();
+    if (category != null) {
+      stories = stories
+          .where(
+              (story) => story.categories.any((c) => c.name == category.name))
+          .toList();
+    }
+
+    return stories.where((story) {
+      final containsInTitle =
+          story.title?.toLowerCase().contains(filter.toLowerCase()) ?? false;
+      final containsInLabels = story.labels?.any(
+              (label) => label.toLowerCase().contains(filter.toLowerCase())) ??
+          false;
+      return containsInTitle || containsInLabels;
+    }).toList();
   }
 
   @override

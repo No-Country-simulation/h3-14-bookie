@@ -1,9 +1,15 @@
+import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
 
 interface class IStoryService {
   Future<List<Story>> getStories() async {
+    return [];
+  }
+
+  Future<List<Story>> getStoriesWithFilter(
+      String filter, CategoryDto? category) async {
     return [];
   }
 
