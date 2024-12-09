@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:h3_14_bookie/domain/model/category.dart';
-import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
