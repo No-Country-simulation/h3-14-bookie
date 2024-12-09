@@ -150,81 +150,23 @@ class AuthService {
     required BuildContext context,
   }) async {
     try {
-      // Validar campos vacíos
-      if (email.trim().isEmpty || password.trim().isEmpty) {
-        throw FirebaseAuthException(
-          code: 'empty-fields',
-          message: 'Todos los campos son obligatorios.',
-        );
-      }
-
-      // Validar formato de email
-      final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-      if (!emailRegExp.hasMatch(email)) {
-        throw FirebaseAuthException(
-          code: 'invalid-email-format',
-          message: 'El formato del correo electrónico no es válido.',
-        );
-      }
-
-      // Primero navegamos a la pantalla de carga
+      // Mostrar pantalla de carga
       if (context.mounted) {
         context.go('/loading');
-        // Esperamos un momento para asegurar que la pantalla de carga se muestre
-        await Future.delayed(const Duration(milliseconds: 500));
       }
 
-      // Intentamos el inicio de sesión
-      final userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Esperamos un momento adicional para mostrar la pantalla de carga
-      await Future.delayed(const Duration(seconds: 1));
-
       // La redirección al home la manejará el router automáticamente
-    } on FirebaseAuthException catch (e) {
-      String message = '';
-      switch (e.code) {
-        case 'empty-fields':
-          message = 'Todos los campos son obligatorios.';
-          break;
-        case 'invalid-email-format':
-          message = 'El formato del correo electrónico no es válido.';
-          break;
-        case 'user-not-found':
-          message = 'No existe una cuenta con este correo electrónico.';
-          break;
-        case 'invalid-credential':
-          message = 'Correo electrónico o contraseña incorrectos.';
-          break;
-        case 'too-many-requests':
-          message =
-              'Demasiados intentos fallidos. Por favor, intente más tarde.';
-          break;
-        default:
-          message = 'Error al iniciar sesión. Por favor, intente nuevamente.';
-      }
-
-      // En caso de error, mostramos el mensaje y volvemos a la pantalla de login
+    } catch (e) {
+      // En caso de error, volver a la pantalla de login
       if (context.mounted) {
         context.go('/initScreen');
       }
-
-      Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.SNACKBAR,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
-        fontSize: 14.0,
-      );
-      throw FirebaseAuthException(
-        code: e.code,
-        message: message,
-      );
+      rethrow;
     }
   }
 
