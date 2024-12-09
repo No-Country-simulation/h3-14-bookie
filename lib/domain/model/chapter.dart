@@ -29,7 +29,7 @@ class Chapter {
       pages: data?['pages'] is Iterable ? List.from(data?['pages']) : [],
       isCompleted: data?['isCompleted'],
       location: data?['location'] != null
-          ? Location.fromFirestore(data?['location'], options)
+          ? Location.fromMap(data?['location'] as Map<String, dynamic>)
           : null,
     );
   }
