@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:h3_14_bookie/domain/services/auth_service.dart';
 import 'package:h3_14_bookie/presentation/screens/password/recovery_method_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -100,26 +102,73 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   void _handleContinue() async {
-    if (_emailController.text.isEmpty) return;
+    final email = _emailController.text.trim();
+
+    if (email.isEmpty) {
+      Fluttertoast.showToast(
+        msg: 'Por favor ingresa tu correo electrónico',
+        backgroundColor: Colors.black54,
+        textColor: Colors.white,
+        toastLength: Toast.LENGTH_LONG,
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
 
     try {
-      await AuthService().verifyEmail(_emailController.text);
+      // Intentar verificar el email
+      final emailExists = await AuthService().verifyEmail(email);
+
       if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RecoveryMethodScreen(
-              email: _emailController.text,
+        if (emailExists) {
+          // Si el email existe, navegamos a la pantalla de recuperación
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RecoveryMethodScreen(email: email),
             ),
-          ),
-        );
+          );
+        }
       }
+    } on FirebaseAuthException catch (e) {
+      // Manejar errores específicos de Firebase
+      String errorMessage;
+      switch (e.code) {
+        case 'user-not-found':
+          errorMessage = 'No existe una cuenta con este correo electrónico';
+          break;
+        case 'invalid-email':
+          errorMessage = 'El formato del correo electrónico no es válido';
+          break;
+        case 'too-many-requests':
+          errorMessage = 'Demasiados intentos. Por favor, intenta más tarde';
+          break;
+        default:
+          errorMessage = 'Ha ocurrido un error. Por favor, intenta nuevamente';
+      }
+
+      Fluttertoast.showToast(
+        msg: errorMessage,
+        backgroundColor: Colors.black54,
+        textColor: Colors.white,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
     } catch (e) {
-      // Manejar error
+      // Manejar otros errores inesperados
+      print('Error inesperado: $e');
+      Fluttertoast.showToast(
+        msg: 'Ha ocurrido un error inesperado',
+        backgroundColor: Colors.black54,
+        textColor: Colors.white,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 }

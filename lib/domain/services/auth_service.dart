@@ -235,19 +235,51 @@ class AuthService {
     }
   }
 
-  Future<void> verifyEmail(String email) async {
+  Future<bool> verifyEmail(String email) async {
     try {
-      // Verificar si el email existe en Firebase
-      final methods =
-          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
-      if (methods.isEmpty) {
+      // Primero verificamos si el email tiene un formato válido
+      if (!email.contains('@') || !email.contains('.')) {
         throw FirebaseAuthException(
-          code: 'user-not-found',
-          message: 'No existe una cuenta con este correo electrónico.',
+          code: 'invalid-email',
+          message: 'El formato del correo electrónico no es válido',
         );
       }
+
+      // Verificar si el email existe usando el servicio de autenticación
+      try {
+        final methods =
+            await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+        print('Métodos de autenticación disponibles: $methods'); // Debug
+
+        // Si no hay métodos de inicio de sesión, el usuario no existe
+        if (methods.isEmpty) {
+          throw FirebaseAuthException(
+            code: 'user-not-found',
+            message: 'No existe una cuenta con este correo electrónico',
+          );
+        }
+
+        // Si llegamos aquí, el usuario existe
+        return true;
+      } on FirebaseException catch (e) {
+        print('Firebase Exception: ${e.code} - ${e.message}');
+        if (e.code == 'invalid-email') {
+          throw FirebaseAuthException(
+            code: 'invalid-email',
+            message: 'El formato del correo electrónico no es válido',
+          );
+        }
+        rethrow;
+      }
     } catch (e) {
-      rethrow;
+      print('Error en verifyEmail: $e');
+      if (e is FirebaseAuthException) {
+        rethrow;
+      }
+      throw FirebaseAuthException(
+        code: 'unknown',
+        message: 'Ha ocurrido un error al verificar el correo electrónico',
+      );
     }
   }
 
