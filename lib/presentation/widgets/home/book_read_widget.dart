@@ -52,16 +52,15 @@ class BookReadWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             const SizedBox(height: 7,),
-            const Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              runAlignment: WrapAlignment.spaceBetween,
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(Icons.book, size: 24, color: AppColors.primaryColor,),
                 SizedBox(width: 5),
                 Text(
                   '13 Capítulos',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     fontFamily: 'Roboto',
                     fontWeight: FontWeight.w500,
                   ),

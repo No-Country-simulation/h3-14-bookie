@@ -18,7 +18,7 @@ class NavigationView extends StatelessWidget {
       child: CustomMapInfoWidget(
         postion: kLake,
         positions: const [
-          LatLng(-34.624781, -58.462809),
+          LatLng(-34.718215, -58.260557),
           LatLng(-34.625955, -58.462272),
           LatLng(-34.624675, -58.466049),
           LatLng(-34.625222, -58.467905),

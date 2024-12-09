@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:h3_14_bookie/config/theme/app_colors.dart';
 
 class BookCardWidget extends StatelessWidget {
   final String imageUrl;
@@ -94,8 +95,11 @@ class BookCardWidget extends StatelessWidget {
             spacing: 8,
             children: categories.map((category) {
               return Chip(
-                label: Text(category),
-                backgroundColor: Colors.blue[100],
+                label: Text(category, style: TextStyle(color: AppColors.primaryColor),),
+                backgroundColor:  AppColors.background,
+                side: BorderSide(
+                  color: AppColors.primaryColor
+                ),
               );
             }).toList(),
           ),
