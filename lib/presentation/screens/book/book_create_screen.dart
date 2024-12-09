@@ -142,9 +142,15 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: placeController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey[200],
                         hintText: 'Ingrese el nombre de la ubicación',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(30.0),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
                   ),
@@ -164,9 +170,15 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: chapterController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey[200],
                         hintText: 'Título del capítulo',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(30.0),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
                   ),
@@ -253,8 +265,15 @@ class TextForm extends StatelessWidget {
           controller: controller,
           maxLines: maxLines,
           decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey[200],
             hintText: hintText,
-            border: const OutlineInputBorder(),
+            border: OutlineInputBorder(
+              
+              borderRadius:
+                  BorderRadius.circular(30.0),
+              borderSide: BorderSide.none,
+            ),
           ),
         ),
         const SizedBox(
