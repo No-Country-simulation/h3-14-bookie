@@ -38,6 +38,12 @@ class ChapterServiceImpl implements IChapterService {
   }
 
   @override
+  Future<List<Chapter>> getChaptersByStoryUid(String storyUid) async {
+    List<Chapter> chapters = await getChapters();
+    return chapters.where((chapter) => chapter.storyUid == storyUid).toList();
+  }
+
+  @override
   Future<ChapterDto> convertToChapterDto(Chapter chapter) async {
     return ChapterDto(
       storyUid: chapter.storyUid,
@@ -90,5 +96,15 @@ class ChapterServiceImpl implements IChapterService {
       return 1;
     }
     return story.chaptersUid!.length + 1;
+  }
+
+  @override
+  Future<bool> deleteChaptersByStoryUid(String storyUid) async {
+    QuerySnapshot querySnapshot =
+        await _chapterRef.where('storyUid', isEqualTo: storyUid).get();
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+      await _chapterRef.doc(doc.id).delete();
+    }
+    return true;
   }
 }

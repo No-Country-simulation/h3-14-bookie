@@ -23,4 +23,8 @@ interface class IStoryService {
   Future<bool> addChapterToStory(String storyUid, String chapterUid) async {
     return false;
   }
+
+  Future<bool> deleteAllChaptersInStory(String storyUid) async {
+    return false;
+  }
 }

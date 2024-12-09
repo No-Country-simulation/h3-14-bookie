@@ -116,4 +116,15 @@ class StoryServiceImpl implements IStoryService {
     await _storyRef.doc(storyUid).update(story.toFirestore());
     return true;
   }
+
+  @override
+  Future<bool> deleteAllChaptersInStory(String storyUid) async {
+    Story? story = await getStoryById(storyUid);
+    if (story == null) {
+      return false;
+    }
+    story.chaptersUid?.clear();
+    await _storyRef.doc(storyUid).update(story.toFirestore());
+    return true;
+  }
 }

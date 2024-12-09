@@ -9,4 +9,8 @@ interface class IWritingService {
   Future<List<WritingDto>> getMyWritings(String? draftOrPublished) async {
     throw UnimplementedError();
   }
+
+  Future<bool> deleteAllChaptersInWriting(String storyUid) async {
+    return false;
+  }
 }

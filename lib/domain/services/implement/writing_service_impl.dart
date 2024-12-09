@@ -68,4 +68,10 @@ class WritingServiceImpl implements IWritingService {
     }));
     return writingDtos;
   }
+
+  @override
+  Future<bool> deleteAllChaptersInWriting(String storyUid) async {
+    bool success = await storyService.deleteAllChaptersInStory(storyUid);
+    return success;
+  }
 }

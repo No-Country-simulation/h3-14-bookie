@@ -9,7 +9,6 @@ const String APP_USER_COLLECTION_REF = "appuser";
 
 class AppUserServiceImpl implements IAppUserService {
   final db = FirebaseFirestore.instance;
-
   late final CollectionReference _appUserRef;
 
   AppUserServiceImpl() {
