@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:h3_14_bookie/domain/model/app_user.dart';
 import 'package:h3_14_bookie/domain/model/dto/user_dto.dart';
+import 'package:h3_14_bookie/domain/model/reading.dart';
 import 'package:h3_14_bookie/domain/model/writing.dart';
 import 'package:h3_14_bookie/domain/services/app_user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -88,9 +89,24 @@ class AppUserServiceImpl implements IAppUserService {
   }
 
   @override
-  Future<void> addNewReading(String storyId, bool inLibrary) {
-    // TODO: implement addNewReading
-    throw UnimplementedError();
+  Future<bool> addNewReading(String storyId, bool inLibrary) async {
+    final authUserUid = FirebaseAuth.instance.currentUser?.uid;
+    if (authUserUid == null) {
+      throw Exception('User not logged in');
+    }
+    final appUser = await getAppUserByAuthUserUid(authUserUid);
+    if (appUser == null) {
+      throw Exception('App user not found');
+    }
+    final readings = appUser.readings ?? [];
+    final reading = Reading(storyId: storyId, inLibrary: inLibrary);
+    readings.add(reading);
+    final appUserDoc =
+        await _appUserRef.where('authUserUid', isEqualTo: authUserUid).get();
+    final appUserDocId = appUserDoc.docs.first.id;
+    final readingMaps = readings.map((r) => r.toFirestore()).toList();
+    await _appUserRef.doc(appUserDocId).update({"readings": readingMaps});
+    return true;
   }
 
   @override
