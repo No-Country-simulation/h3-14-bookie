@@ -11,6 +11,10 @@ interface class IAppUserService {
     return null;
   }
 
+  Future<AppUser?> getAppUserByAuthUserUid(String authUserUid) async {
+    return null;
+  }
+
   Future<void> createAppUser(UserDto newUser) async {}
 
   Future<void> updateUser(String uid, String name, String email) async {}

@@ -1,4 +1,3 @@
-import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Reading {
@@ -19,6 +18,16 @@ class Reading {
           ? List.from(data?['chapterUids'])
           : null,
       inLibrary: data?['inLibrary'],
+    );
+  }
+
+  factory Reading.fromMap(Map<String, dynamic> data) {
+    return Reading(
+      storyId: data['storyId'] ?? '',
+      chapterUids: data['chapterUids'] is Iterable
+          ? List.from(data['chapterUids'])
+          : null,
+      inLibrary: data['inLibrary'],
     );
   }
 

@@ -66,7 +66,8 @@ class StoryServiceImpl implements IStoryService {
     return StoryResponseDto(
         storyUid,
         story.title ?? '',
-        (await appUserService.getAppUserById(story.authorUid!))?.name ?? '',
+        (await appUserService.getAppUserById(story.authorUid ?? ''))?.name ??
+            '',
         story.cover ?? '',
         story.synopsis ?? '',
         story.labels?.whereType<String>().toList() ?? [],
