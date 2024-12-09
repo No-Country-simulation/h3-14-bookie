@@ -167,22 +167,24 @@ class AuthService {
         );
       }
 
-      // Validar longitud mínima de contraseña
-      if (password.length < 6) {
-        throw FirebaseAuthException(
-          code: 'weak-password',
-          message: 'La contraseña debe tener al menos 6 caracteres.',
-        );
+      // Primero navegamos a la pantalla de carga
+      if (context.mounted) {
+        context.go('/loading');
+        // Esperamos un momento para asegurar que la pantalla de carga se muestre
+        await Future.delayed(const Duration(milliseconds: 500));
       }
 
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      // Intentamos el inicio de sesión
+      final userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      if (context.mounted) {
-        context.go('/home/0');
-      }
+      // Esperamos un momento adicional para mostrar la pantalla de carga
+      await Future.delayed(const Duration(seconds: 1));
+
+      // La redirección al home la manejará el router automáticamente
     } on FirebaseAuthException catch (e) {
       String message = '';
       switch (e.code) {
@@ -202,15 +204,13 @@ class AuthService {
           message =
               'Demasiados intentos fallidos. Por favor, intente más tarde.';
           break;
-        case 'user-disabled':
-          message = 'Esta cuenta ha sido deshabilitada.';
-          break;
-        case 'operation-not-allowed':
-          message =
-              'El inicio de sesión con correo y contraseña no está habilitado.';
-          break;
         default:
           message = 'Error al iniciar sesión. Por favor, intente nuevamente.';
+      }
+
+      // En caso de error, mostramos el mensaje y volvemos a la pantalla de login
+      if (context.mounted) {
+        context.go('/initScreen');
       }
 
       Fluttertoast.showToast(
