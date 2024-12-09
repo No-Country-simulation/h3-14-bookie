@@ -6,8 +6,6 @@ import 'package:h3_14_bookie/domain/services/implement/app_user_service_impl.dar
 import 'package:h3_14_bookie/domain/services/reading_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-const String READING_COLLECTION_REF = "readings";
-
 class ReadingServiceImpl implements IReadingService {
   final db = FirebaseFirestore.instance;
   final IAppUserService appUserService = AppUserServiceImpl();
@@ -29,5 +27,37 @@ class ReadingServiceImpl implements IReadingService {
             ?.where((reading) => reading.inLibrary == inLibrary)
             .toList() ??
         [];
+  }
+
+  @override
+  Future<bool> updateInLibrary(String storyId, bool inLibrary) async {
+    final readings = await getUserReadings(null);
+    if (readings.isEmpty) {
+      return false;
+    }
+
+    final readingToUpdate = readings.firstWhere(
+      (reading) => reading.storyId == storyId,
+      orElse: () => throw Exception('Reading not found'),
+    );
+
+    final updatedReading =
+        Reading(storyId: readingToUpdate.storyId, inLibrary: inLibrary);
+
+    final readingIndex = readings.indexOf(readingToUpdate);
+    readings[readingIndex] = updatedReading;
+
+    final readingMaps = readings.map((r) => r.toFirestore()).toList();
+
+    final appUserDoc = await db
+        .collection(APP_USER_COLLECTION_REF)
+        .where('authUserUid', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .get();
+
+    await appUserDoc.docs.first.reference.update({
+      "readings": readingMaps,
+    });
+
+    return true;
   }
 }

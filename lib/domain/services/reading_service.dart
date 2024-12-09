@@ -6,4 +6,8 @@ interface class IReadingService {
   Future<List<Reading>> getUserReadings(bool inLibrary) async {
     throw UnimplementedError();
   }
+
+  Future<bool> updateInLibrary(String storyId, bool inLibrary) async {
+    throw UnimplementedError();
+  }
 }
