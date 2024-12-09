@@ -15,20 +15,10 @@ class LoadingScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // SvgPicture.asset(
-              //   'assets/images/loading.svg',
-              //   height: 250,
-              //   // Opcional: puedes agregar más propiedades para personalizar el SVG
-              //   // color: Color(0xFF006494), // Si quieres colorear el SVG
-              //   // semanticsLabel: 'Bookie Logo',
-
-              // ),
-
               Image.asset(
                 'assets/images/loading.png',
                 height: 250,
               ),
-
               const SizedBox(height: 40),
               Text(
                 'Ingresando',
