@@ -5,15 +5,24 @@ import 'package:h3_14_bookie/domain/services/auth_service.dart';
 import 'package:h3_14_bookie/domain/services/firebase_service.dart';
 import 'package:h3_14_bookie/presentation/screens/login/login.dart';
 import 'package:h3_14_bookie/presentation/screens/signup/user_created.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-class Signup extends StatelessWidget {
-  Signup({super.key});
+class Signup extends StatefulWidget {
   static const String name = 'Signup';
 
+  const Signup({super.key});
+
+  @override
+  State<Signup> createState() => _SignupState();
+}
+
+class _SignupState extends State<Signup> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +117,7 @@ class Signup extends StatelessWidget {
         const SizedBox(height: 16),
         TextField(
           controller: _passwordController,
-          obscureText: true,
+          obscureText: _obscurePassword,
           decoration: InputDecoration(
             hintText: 'Contraseña',
             filled: true,
@@ -119,8 +128,14 @@ class Signup extends StatelessWidget {
             ),
             contentPadding: const EdgeInsets.all(16),
             suffixIcon: IconButton(
-              icon: const Icon(Icons.visibility_off),
-              onPressed: () {},
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+              ),
+              onPressed: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
             ),
           ),
         ),
@@ -134,7 +149,29 @@ class Signup extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
           onPressed: () async {
+            // Validar que todos los campos estén llenos
+            if (_nameController.text.trim().isEmpty ||
+                _emailController.text.trim().isEmpty ||
+                _userController.text.trim().isEmpty ||
+                _passwordController.text.trim().isEmpty) {
+              Fluttertoast.showToast(
+                msg: 'Todos los campos son obligatorios',
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.SNACKBAR,
+                backgroundColor: Colors.black54,
+                textColor: Colors.white,
+                fontSize: 14.0,
+              );
+              return;
+            }
+
             try {
+              await AuthService().signup(
+                email: _emailController.text,
+                password: _passwordController.text,
+                name: _nameController.text,
+                username: _userController.text,
+              );
               await addUser(
                 _emailController.text,
                 _nameController.text,
@@ -148,13 +185,8 @@ class Signup extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const UserCreated()),
                 );
               }
-              await AuthService().signup(
-                email: _emailController.text,
-                password: _passwordController.text,
-                // context: context,
-              );
             } catch (e) {
-              // Manejar el error
+              // El error ya se maneja en AuthService
             }
           },
           child: const Text(

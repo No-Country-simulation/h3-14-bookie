@@ -75,8 +75,8 @@ class _LoginState extends State<Login> {
       children: [
         _socialButton(
           'assets/images/google_icon.png',
-          onTap: () {
-            // Implementar login con Google
+          onTap: () async {
+            await AuthService().signInWithGoogle(context);
           },
         ),
         const SizedBox(width: 16),
