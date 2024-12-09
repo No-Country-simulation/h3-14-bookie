@@ -87,21 +87,24 @@ class BookReadScreen extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                Stack(
-                  children: [
-                    const SingleChildScrollView(
-                      child: Text(
-                        'La noche era más oscura de lo habitual cuando Valeria cruzó la verja de hierro que rodeaba la famosa Mansión de los Susurros. El viento helado parecía cargar una advertencia, pero ella lo ignoró, decidida a desentrañar los secretos de aquel lugar. La puerta principal, decorada con figuras grotescas, pasó con un chirrido que resonó en el vacío. El vestíbulo era imponente, con un gran candelabro cubierto de telarañas suspendido en el techo. Valeria avanzó despacio, su linterna iluminando las paredes adornadas con retratos antiguos cuyos ojos parecían seguirla. La atmósfera era densa, como si algo invisible la rodeara. Mientras grababa sus observaciones, el espejo del vestíbulo captó su atención. Era un objeto enorme, con un marco de madera tallada en formas retorcidas. Cuando se dirige la linterna hacia él, vio una figura oscura detrás de su reflejo. Se giró rápidamente, pero no había nadie.',
-                        textAlign: TextAlign.justify,
+                SizedBox(
+                  height: size.height*0.4,
+                  child: Stack(
+                    children: [
+                      const SingleChildScrollView(
+                        child: Text(
+                          'La noche era más oscura de lo habitual cuando Valeria cruzó la verja de hierro que rodeaba la famosa Mansión de los Susurros. El viento helado parecía cargar una advertencia, pero ella lo ignoró, decidida a desentrañar los secretos de aquel lugar. La puerta principal, decorada con figuras grotescas, pasó con un chirrido que resonó en el vacío. El vestíbulo era imponente, con un gran candelabro cubierto de telarañas suspendido en el techo. Valeria avanzó despacio, su linterna iluminando las paredes adornadas con retratos antiguos cuyos ojos parecían seguirla. La atmósfera era densa, como si algo invisible la rodeara. Mientras grababa sus observaciones, el espejo del vestíbulo captó su atención. Era un objeto enorme, con un marco de madera tallada en formas retorcidas. Cuando se dirige la linterna hacia él, vio una figura oscura detrás de su reflejo. Se giró rápidamente, pero no había nadie.',
+                          textAlign: TextAlign.justify,
+                        ),
                       ),
-                    ),
-                    if(blockContent)
-                    BlockContent(
-                      factorHeight: 0.4,
-                      message:
-                          'Esta historia aún no puede ser leída porque aun no se encuentra en la ubicación.',
-                    ),
-                  ],
+                      if(blockContent)
+                      BlockContent(
+                        factorHeight: 0.4,
+                        message:
+                            'Esta historia aún no puede ser leída porque aun no se encuentra en la ubicación.',
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

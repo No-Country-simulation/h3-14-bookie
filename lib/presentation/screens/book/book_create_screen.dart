@@ -38,7 +38,7 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
     final bookCreateBloc = context.read<BookCreateBloc>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agregando Historia'),
+        title: const Text('Nueva Historia'),
         centerTitle: true,
         bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
@@ -115,7 +115,7 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
               ButtonAddForm(
                   label: 'Etiquetas',
                   message:
-                      'Utiliza palabras clave para que el lecntor encunetre tu historia',
+                      'Utiliza palabras clave para que el lector encuentre tu historia',
                   onTap: () {
                     context.go('/home/3/book-create/tags');
                   },
