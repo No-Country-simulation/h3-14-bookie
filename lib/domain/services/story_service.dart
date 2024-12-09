@@ -7,7 +7,8 @@ interface class IStoryService {
     return [];
   }
 
-  Future<List<StoryResponseDto>> getMyStories(String? draftOrPublished) async {
+  Future<List<StoryResponseDto>> getStoriesResponseByStoryUid(
+      List<String> storiesUid) async {
     return [];
   }
 

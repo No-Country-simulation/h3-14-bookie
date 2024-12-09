@@ -31,6 +31,24 @@ class ChapterServiceImpl implements IChapterService {
     }).toList();
   }
 
+  @override
+  Future<Chapter> getChapterById(String chapterUid) async {
+    final doc = await _chapterRef.doc(chapterUid).get();
+    return doc.data() as Chapter;
+  }
+
+  @override
+  Future<ChapterDto> convertToChapterDto(Chapter chapter) async {
+    return ChapterDto(
+      storyUid: chapter.storyUid,
+      title: chapter.title ?? '',
+      pages: chapter.pages ?? [],
+      placeName: chapter.location?.place ?? '',
+      lat: chapter.location?.lat ?? 0.0,
+      long: chapter.location?.long ?? 0.0,
+    );
+  }
+
   /// Create a chapter and add it to the story
   /// Return the chapter uid if success
   /// Return error message if failed

@@ -38,6 +38,16 @@ class CategoryServiceImpl implements ICategoryService {
   }
 
   @override
+  Future<String> getCategoryUidByName(String categoryName) async {
+    final docs =
+        await _categoryRef.where('name', isEqualTo: categoryName).get();
+    if (docs.docs.isEmpty) {
+      return await createCategory(categoryName);
+    }
+    return docs.docs.first.id;
+  }
+
+  @override
   Future<String> createCategory(String categoryName) async {
     Category category = Category(name: categoryName);
     final docRef = await _categoryRef.add(category);

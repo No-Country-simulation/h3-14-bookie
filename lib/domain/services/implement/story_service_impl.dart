@@ -34,36 +34,27 @@ class StoryServiceImpl implements IStoryService {
     return docs.docs.map((doc) => doc.data() as Story).toList();
   }
 
-  /// Get the stories of the current user
-  /// If [draftOrPublished] is null, return all stories
-  /// If [draftOrPublished] is "draft", return all draft stories
-  /// If [draftOrPublished] is "published", return all published stories
   @override
-  Future<List<StoryResponseDto>> getMyStories(String? draftOrPublished) async {
-    final authorUid = FirebaseAuth.instance.currentUser?.uid;
-    if (authorUid == null) {
-      throw Exception('User not found');
-    }
-    final writings = await appUserService.getAuthorWritings(authorUid);
-    final filteredWritings = draftOrPublished != null
-        ? draftOrPublished == "draft"
-            ? writings.where((writing) => writing.isDraft == true)
-            : writings.where((writing) => writing.isDraft == false)
-        : writings;
+  Future<List<StoryResponseDto>> getStoriesResponseByStoryUid(
+      List<String> storiesUid) async {
     final storiesResponseDtos =
-        await Future.wait(filteredWritings.map((writing) async {
-      final story = await getStoryById(writing.storyId!);
+        await Future.wait(storiesUid.map((storyUid) async {
+      final story = await getStoryById(storyUid);
       if (story == null) {
         throw Exception('Story not found');
       }
-      return convertToStoryResponseDto(writing.storyId!, story);
-    }));
+      return convertToStoryResponseDto(storyUid, story);
+    }).toList());
     return storiesResponseDtos;
   }
 
   Future<StoryResponseDto> convertToStoryResponseDto(
       String storyUid, Story story) async {
-    return StoryResponseDto(
+    List<String> categoriesUid = await Future.wait(story.categories.map(
+        (category) =>
+            categoryService.getCategoryUidByName(category.name ?? '')));
+
+    StoryResponseDto storyResponseDto = StoryResponseDto(
         storyUid,
         story.title ?? '',
         (await appUserService.getAppUserById(story.authorUid ?? ''))?.name ??
@@ -71,11 +62,12 @@ class StoryServiceImpl implements IStoryService {
         story.cover ?? '',
         story.synopsis ?? '',
         story.labels?.whereType<String>().toList() ?? [],
-        (story.categories).map((category) => category.name ?? '').toList(),
+        categoriesUid,
         story.rate ?? 0,
         story.readings ?? 0,
         story.storyTimeInMin ?? 0,
         story.chaptersUid?.toList() ?? []);
+    return storyResponseDto;
   }
 
   @override
