@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/edit_view/edit_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/location/location_provider.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
@@ -55,6 +56,26 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
     final CameraPosition kLake = const CameraPosition(
         bearing: 0, target: LatLng(-34.625946, -58.463903), tilt: 0, zoom: 14);
 
+
+    bool validate(){
+      if(_titleController.text.isEmpty || _placeController.text.isEmpty){
+        Fluttertoast.showToast(msg: 'El título y nombre de la ubicación, son obligatorios.',
+        backgroundColor: Colors.red);
+        return false;
+      }
+      if(blockContent){
+        Fluttertoast.showToast(msg: 'Es obligatorio elegir una ubicación.',
+        backgroundColor: Colors.red);
+        return false;
+      }
+      if(_textController.text.isEmpty){
+        Fluttertoast.showToast(msg: 'Es obligatorio tener una historia.',
+        backgroundColor: Colors.red);
+        return false;
+      }
+      return true;
+    }
+
     return Scaffold(
       key: keyScaffold,
       appBar: AppBar(
@@ -83,12 +104,17 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
       body: PopScope(
         canPop: true,
         onPopInvokedWithResult: (didPop, result) {
-          // bookCreateBloc.add(SaveChapterActive(
-          //                   chapter: bookCreateBloc.state.chapterActive.copyWith(
-          //                     placeName: _placeController.text,
-          //                     titleChapter: _titleController.text,
-          //                   )));
+          if(!validate()){
+            return;
+          }
+          bookCreateBloc.add(SaveChapterActive(
+            chapter: bookCreateBloc.state.chapterActive.copyWith(
+            placeName: _placeController.text,
+            titleChapter: _titleController.text,
+          )));
           bookCreateBloc.add(const CreateChapterEvent());
+          Fluttertoast.showToast(msg: 'Cambios guardados.');
+          context.read<EditViewBloc>().add(const GetStories());
           context.go('/home/3');
         },
         child: BorderLayout(
@@ -240,7 +266,6 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                               child: TextFormField(
                                 maxLines: 10,
                                 controller: _textController,
-                                // initialValue: state.chapterActive.pages[state.currentPage],
                                 onChanged: (value) {
                                   List<String> list =
                                       List.from(state.chapterActive.pages);
@@ -270,6 +295,9 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                       adding: true,
                       activeLabels: true,
                       addingAction: () {
+                        if(!validate()){
+                          return;
+                        }
                         bookCreateBloc.add(UpdateChapterActive(
                             chapter: state.chapterActive.copyWith(
                                 pages: [...state.chapterActive.pages, '']),
@@ -283,12 +311,14 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                       },
                       thirdOption: true,
                       thirdOptionAction: () async {
-                        // bookCreateBloc.add(SaveChapterActive(
-                        //     chapter: bookCreateBloc.state.chapterActive.copyWith(
-                        //       placeName: _placeController.text,
-                        //       titleChapter: _titleController.text,
-                        //     )));
-                        // await Future.delayed(Duration(seconds: 1));
+                        if(!validate()){
+                          return;
+                        }
+                        bookCreateBloc.add(SaveChapterActive(
+                            chapter: bookCreateBloc.state.chapterActive.copyWith(
+                              placeName: _placeController.text,
+                              titleChapter: _titleController.text,
+                            )));
                         bookCreateBloc.add(const AddChapterEvent());
                         setState(() {
                           blockContent = true;

@@ -8,6 +8,7 @@ import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
 import 'package:h3_14_bookie/domain/services/category_service.dart';
 import 'package:h3_14_bookie/domain/services/chapter_service.dart';
+import 'package:h3_14_bookie/domain/services/image_service.dart';
 import 'package:h3_14_bookie/domain/services/story_service.dart';
 
 part 'book_create_event.dart';
@@ -17,10 +18,12 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
   final IStoryService storyService;
   final ICategoryService categoryService;
   final IChapterService chapterService;
+  final IImageService imageService;
   BookCreateBloc({
     required this.storyService,
     required this.categoryService,
-    required this.chapterService
+    required this.chapterService,
+    required this.imageService,
   }) : super(const BookCreateState()) {
     on<AddTargetEvent>(_onAddTargetEvent);
     on<InitCategoriesEvent>(_onInitCategoriesEvent);
@@ -32,6 +35,7 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
     on<AddChapterEvent>(_onAddChapterEvent);
     on<CreateStoryEvent>(_onCreateStoryEvent);
     on<CreateChapterEvent>(_onCreateChapterEvent);
+    on<UploadCover>(_onUploadCover);
   }
 
   void _onAddTargetEvent(AddTargetEvent event, Emitter<BookCreateState> emit) {
@@ -145,6 +149,15 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
         ));
       }
     }catch(e) {
+      Fluttertoast.showToast(msg: '$e');
+    }
+  }
+
+  Future<void> _onUploadCover(UploadCover event, Emitter<BookCreateState> emit) async {
+    try{
+      final url = await imageService.uploadImage(event.path);
+      event.whenComplete(url);
+    } catch (e) {
       Fluttertoast.showToast(msg: '$e');
     }
   }

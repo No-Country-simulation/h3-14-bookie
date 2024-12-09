@@ -73,3 +73,9 @@ class CreateStoryEvent extends BookCreateEvent{
 class CreateChapterEvent extends BookCreateEvent{
   const CreateChapterEvent();
 }
+
+class UploadCover extends BookCreateEvent {
+  final String path;
+  final Function(String url) whenComplete;
+  const UploadCover({required this.path, required this.whenComplete});
+}

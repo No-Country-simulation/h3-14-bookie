@@ -64,7 +64,16 @@ class EditView extends StatelessWidget {
                 ? const Center(child: CircularProgressIndicator(),)
                 : ListView.separated(
                     itemBuilder: (context, index) {
-                      return const BookItemWidget();
+                      final response = state.stories[index];
+                      final info = response.story;
+                      return BookItemWidget(
+                        title: info.title,
+                        isDraft: response.isDraft,
+                        synopsis: info.synopsis,
+                        rate: info.rate,
+                        readings: info.readings,
+                        cover: info.cover,
+                      );
                     },
                     separatorBuilder: (context, index) => const SizedBox(
                           height: 10,

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
@@ -179,21 +180,46 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                     width: size.width * 0.8,
                     child: ElevatedButton(
                       onPressed: () {
-                        // bookCreateBloc.add(CreateStoryEvent(
-                        //   story: StoryDto(
-                        //     title: titleController.text,
-                        //     synopsis: synopsisController.text,
-                        //     categoriesUid: bookCreateBloc.state.categories.where((c)=>c.isActive).map((c)=>c.uid).toList(),
-                        //     labels: bookCreateBloc.state.targets
-                        //   )
-                        // ));
-                        bookCreateBloc.add(
-                          AddInitialChapterEvent(
-                            title: chapterController.text,
-                            placeName: placeController.text
-                          )
-                        );
-                        context.push('/home/3/book-create/chapter-edit');
+                        if(_image == null){
+                          Fluttertoast.showToast(msg: 'Es obligatorio subir una portada.',
+                          backgroundColor: Colors.red);
+                          return;
+                        }
+                        if(titleController.text.isEmpty || synopsisController.text.isEmpty){
+                          Fluttertoast.showToast(msg: 'El Título y la Sinopsis son obligatorios.',
+                          backgroundColor: Colors.red);
+                          return;
+                        }
+                        if(bookCreateBloc.state.categories.isEmpty || bookCreateBloc.state.targets.isEmpty){
+                          Fluttertoast.showToast(msg: 'Debes agregar almenos una etiqueta y una categoría.',
+                          backgroundColor: Colors.red);
+                          return;
+                        }
+                        if(chapterController.text.isEmpty || placeController.text.isEmpty){
+                          Fluttertoast.showToast(msg: 'El título y nombre de la ubicación, son obligatorios.',
+                          backgroundColor: Colors.red);
+                          return;
+                        }
+                        bookCreateBloc.add(UploadCover(
+                          path: _image!.path, whenComplete: (url) {
+                            bookCreateBloc.add(CreateStoryEvent(
+                              story: StoryDto(
+                                title: titleController.text,
+                                synopsis: synopsisController.text,
+                                categoriesUid: bookCreateBloc.state.categories.where((c)=>c.isActive).map((c)=>c.uid).toList(),
+                                labels: bookCreateBloc.state.targets,
+                                cover: url
+                              )
+                            ));
+                            bookCreateBloc.add(
+                              AddInitialChapterEvent(
+                                title: chapterController.text,
+                                placeName: placeController.text
+                              )
+                            );
+                            context.push('/home/3/book-create/chapter-edit');
+                          }
+                        ));
                       },
                       child: const Text('Guardar y Continuar'),
                     ),
