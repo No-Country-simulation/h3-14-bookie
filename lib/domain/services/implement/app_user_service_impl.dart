@@ -21,19 +21,30 @@ class AppUserServiceImpl implements IAppUserService {
   @override
   Future<List<AppUser>> getAppUsers() async {
     final docs = await _appUserRef.get();
-    return docs.docs.map((doc) {
+    List<AppUser> appUsers = docs.docs.map((doc) {
       final appUser = (doc as DocumentSnapshot<AppUser>).data();
       if (appUser == null) {
         throw StateError('AppUser data is null');
       }
       return appUser;
     }).toList();
+    return appUsers;
   }
 
   @override
   Future<AppUser?> getAppUserById(String uid) async {
     final doc = await _appUserRef.doc(uid).get() as DocumentSnapshot<AppUser>;
     return doc.data();
+  }
+
+  @override
+  Future<AppUser?> getAppUserByAuthUserUid(String authUserUid) async {
+    final docs =
+        await _appUserRef.where('authUserUid', isEqualTo: authUserUid).get();
+    return docs.docs.map((doc) {
+      final appUser = (doc as DocumentSnapshot<AppUser>).data();
+      return appUser;
+    }).first;
   }
 
   @override
@@ -64,8 +75,13 @@ class AppUserServiceImpl implements IAppUserService {
         appUserList.firstWhere((appUser) => appUser.authUserUid == authUserUid);
 
     final writings = appUser.writings ?? [];
-    writings.add(Writing(storyId: storyId, isDraft: isDraft));
-    await _appUserRef.doc(authUserUid).update({"writings": writings});
+    final writing = Writing(storyId: storyId, isDraft: isDraft);
+    writings.add(writing);
+    final appUserDoc =
+        await _appUserRef.where('authUserUid', isEqualTo: authUserUid).get();
+    final appUserDocId = appUserDoc.docs.first.id;
+    final writingMaps = writings.map((w) => w.toFirestore()).toList();
+    await _appUserRef.doc(appUserDocId).update({"writings": writingMaps});
   }
 
   @override
