@@ -20,3 +20,10 @@ class ChangeFilter extends EditViewEvent {
     required this.filter
   });
 }
+
+class ChangeStatusBook extends EditViewEvent {
+  final Writing writing;
+  const ChangeStatusBook({
+    required this.writing
+  });
+}

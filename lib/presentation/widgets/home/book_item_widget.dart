@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:h3_14_bookie/config/helpers/validate_uri.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
+import 'package:h3_14_bookie/domain/model/writing.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/edit_view/edit_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
 enum BookItemMenuEnum { unposting, posting, edit, delete }
 
 class BookItemWidget extends StatelessWidget {
+  final String id;
   final bool isDraft;
   final String title;
   final String synopsis;
@@ -15,6 +19,7 @@ class BookItemWidget extends StatelessWidget {
   const BookItemWidget(
       {super.key,
       this.isDraft = false,
+      required this.id,
       required this.title,
       required this.cover,
       required this.synopsis,
@@ -39,9 +44,18 @@ class BookItemWidget extends StatelessWidget {
                   cover,
                   fit: BoxFit.cover,
                   loadingBuilder: (context, child, loadingProgress) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    if (loadingProgress == null) {
+                      return child;
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  (loadingProgress.expectedTotalBytes ?? 1)
+                              : null,
+                        ),
+                      );
+                    }
                   },
                 )
               : null,
@@ -74,7 +88,14 @@ class BookItemWidget extends StatelessWidget {
               // shape: BeveledRectangleBorder(
               //   borderRadius: BorderRadius.circular(10)
               // ),
-              onSelected: (BookItemMenuEnum item) {},
+              onSelected: (BookItemMenuEnum item) {
+                if(BookItemMenuEnum.unposting == item || BookItemMenuEnum.posting == item){
+                  context.read<EditViewBloc>().add(ChangeStatusBook(writing: Writing(
+                    isDraft: !isDraft,
+                    storyId: id
+                  )));
+                }
+              },
               itemBuilder: (BuildContext context) =>
                   <PopupMenuEntry<BookItemMenuEnum>>[
                 if (!isDraft)

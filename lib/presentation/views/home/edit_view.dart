@@ -67,6 +67,7 @@ class EditView extends StatelessWidget {
                       final response = state.stories[index];
                       final info = response.story;
                       return BookItemWidget(
+                        id: info.storyUid,
                         title: info.title,
                         isDraft: response.isDraft,
                         synopsis: info.synopsis,
