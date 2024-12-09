@@ -9,7 +9,6 @@ const String APP_USER_COLLECTION_REF = "appuser";
 
 class AppUserServiceImpl implements IAppUserService {
   final db = FirebaseFirestore.instance;
-
   late final CollectionReference _appUserRef;
 
   AppUserServiceImpl() {
@@ -59,6 +58,33 @@ class AppUserServiceImpl implements IAppUserService {
   @override
   Future<void> updateUser(String uid, String name, String email) async {
     _appUserRef.doc(uid).update({"name": name, "email": email});
+  }
+
+  @override
+  Future<void> updateUserWriting(Writing writing) async {
+    final appUserUid = FirebaseAuth.instance.currentUser?.uid;
+    if (appUserUid == null) {
+      throw Exception('User not logged in');
+    }
+    final appUser = await getAppUserByAuthUserUid(appUserUid);
+    if (appUser == null) {
+      throw Exception('App user not found');
+    }
+    final writings = appUser.writings ?? [];
+    final writingToUpdate =
+        writings.firstWhere((w) => w.storyId == writing.storyId);
+    final updatedWriting =
+        Writing(storyId: writingToUpdate.storyId, isDraft: writing.isDraft);
+
+    final writingIndex = writings.indexOf(writingToUpdate);
+
+    writings[writingIndex] = updatedWriting;
+
+    final writingMaps = writings.map((w) => w.toFirestore()).toList();
+
+    _appUserRef.where('authUserUid', isEqualTo: appUserUid).get().then(
+        (value) =>
+            value.docs.first.reference.update({"writings": writingMaps}));
   }
 
   @override

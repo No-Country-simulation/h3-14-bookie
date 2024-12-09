@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:h3_14_bookie/domain/model/category.dart';
-import 'package:h3_14_bookie/domain/model/chapter.dart';
+import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
@@ -34,36 +34,48 @@ class StoryServiceImpl implements IStoryService {
     return docs.docs.map((doc) => doc.data() as Story).toList();
   }
 
-  /// Get the stories of the current user
-  /// If [draftOrPublished] is null, return all stories
-  /// If [draftOrPublished] is "draft", return all draft stories
-  /// If [draftOrPublished] is "published", return all published stories
   @override
-  Future<List<StoryResponseDto>> getMyStories(String? draftOrPublished) async {
-    final authorUid = FirebaseAuth.instance.currentUser?.uid;
-    if (authorUid == null) {
-      throw Exception('User not found');
+  Future<List<Story>> getStoriesWithFilter(
+      String filter, CategoryDto? category) async {
+    var stories = await getStories();
+    if (category != null) {
+      stories = stories
+          .where(
+              (story) => story.categories.any((c) => c.name == category.name))
+          .toList();
     }
-    final writings = await appUserService.getAuthorWritings(authorUid);
-    final filteredWritings = draftOrPublished != null
-        ? draftOrPublished == "draft"
-            ? writings.where((writing) => writing.isDraft == true)
-            : writings.where((writing) => writing.isDraft == false)
-        : writings;
+
+    return stories.where((story) {
+      final containsInTitle =
+          story.title?.toLowerCase().contains(filter.toLowerCase()) ?? false;
+      final containsInLabels = story.labels?.any(
+              (label) => label.toLowerCase().contains(filter.toLowerCase())) ??
+          false;
+      return containsInTitle || containsInLabels;
+    }).toList();
+  }
+
+  @override
+  Future<List<StoryResponseDto>> getStoriesResponseByStoryUid(
+      List<String> storiesUid) async {
     final storiesResponseDtos =
-        await Future.wait(filteredWritings.map((writing) async {
-      final story = await getStoryById(writing.storyId!);
+        await Future.wait(storiesUid.map((storyUid) async {
+      final story = await getStoryById(storyUid);
       if (story == null) {
         throw Exception('Story not found');
       }
-      return convertToStoryResponseDto(writing.storyId!, story);
-    }));
+      return convertToStoryResponseDto(storyUid, story);
+    }).toList());
     return storiesResponseDtos;
   }
 
   Future<StoryResponseDto> convertToStoryResponseDto(
       String storyUid, Story story) async {
-    return StoryResponseDto(
+    List<String> categoriesUid = await Future.wait(story.categories.map(
+        (category) =>
+            categoryService.getCategoryUidByName(category.name ?? '')));
+
+    StoryResponseDto storyResponseDto = StoryResponseDto(
         storyUid,
         story.title ?? '',
         (await appUserService.getAppUserById(story.authorUid ?? ''))?.name ??
@@ -71,11 +83,12 @@ class StoryServiceImpl implements IStoryService {
         story.cover ?? '',
         story.synopsis ?? '',
         story.labels?.whereType<String>().toList() ?? [],
-        (story.categories).map((category) => category.name ?? '').toList(),
+        categoriesUid,
         story.rate ?? 0,
         story.readings ?? 0,
         story.storyTimeInMin ?? 0,
         story.chaptersUid?.toList() ?? []);
+    return storyResponseDto;
   }
 
   @override
@@ -121,6 +134,17 @@ class StoryServiceImpl implements IStoryService {
     }
 
     story.chaptersUid?.add(chapterUid);
+    await _storyRef.doc(storyUid).update(story.toFirestore());
+    return true;
+  }
+
+  @override
+  Future<bool> deleteAllChaptersInStory(String storyUid) async {
+    Story? story = await getStoryById(storyUid);
+    if (story == null) {
+      return false;
+    }
+    story.chaptersUid?.clear();
     await _storyRef.doc(storyUid).update(story.toFirestore());
     return true;
   }

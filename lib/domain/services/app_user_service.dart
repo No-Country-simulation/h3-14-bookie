@@ -19,6 +19,8 @@ interface class IAppUserService {
 
   Future<void> updateUser(String uid, String name, String email) async {}
 
+  Future<void> updateUserWriting(Writing writing) async {}
+
   Future<void> addNewReading(String storyId, bool inLibrary) async {}
 
   Future<void> addNewWriting(

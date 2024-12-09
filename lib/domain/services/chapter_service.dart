@@ -6,7 +6,23 @@ interface class IChapterService {
     return [];
   }
 
+  Future<Chapter> getChapterById(String chapterUid) async {
+    throw UnimplementedError();
+  }
+
+  Future<List<Chapter>> getChaptersByStoryUid(String storyUid) async {
+    return [];
+  }
+
+  Future<ChapterDto> convertToChapterDto(Chapter chapter) async {
+    throw UnimplementedError();
+  }
+
   Future<String> createChapter(ChapterDto chapterDto) async {
     return Future.value('');
+  }
+
+  Future<bool> deleteChaptersByStoryUid(String storyUid) async {
+    return Future.value(false);
   }
 }
