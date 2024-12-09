@@ -18,18 +18,8 @@ class WritingServiceImpl implements IWritingService {
   final IAppUserService appUserService = AppUserServiceImpl();
   final IStoryService storyService = StoryServiceImpl();
   final IChapterService chapterService = ChapterServiceImpl();
-  late final CollectionReference _writingRef;
 
-  WritingServiceImpl() {
-    _writingRef = db.collection(WRITING_COLLECTION_REF).withConverter<Writing>(
-        fromFirestore: (snapshots, _) => Writing.fromFirestore(snapshots, _),
-        toFirestore: (writing, _) => writing.toFirestore());
-  }
-
-  @override
-  Stream<QuerySnapshot<Object?>> getWritings() {
-    return _writingRef.snapshots();
-  }
+  WritingServiceImpl();
 
   /// Get the writings of the current user
   /// If [draftOrPublished] is null, return all writings
