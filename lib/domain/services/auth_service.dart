@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:h3_14_bookie/domain/model/dto/user_dto.dart';
+import 'package:h3_14_bookie/domain/services/implement/app_user_service_impl.dart';
+import 'package:h3_14_bookie/domain/services/app_user_service.dart';
 import 'package:h3_14_bookie/presentation/screens/home/home.dart';
 import 'package:h3_14_bookie/presentation/screens/login/login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,6 +16,8 @@ class AuthService {
     required String name,
     required String username,
   }) async {
+    final IAppUserService appUserService = AppUserServiceImpl();
+
     try {
       // Validar campos vacíos
       if (email.trim().isEmpty ||
@@ -96,6 +101,12 @@ class AuthService {
 
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
+
+      await appUserService.createAppUser(UserDto(
+        authUserUid: userCredential.user!.uid,
+        name: username,
+        email: email,
+      ));
 
       return userCredential;
     } on FirebaseAuthException catch (e) {
