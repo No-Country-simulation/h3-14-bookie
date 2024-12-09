@@ -144,24 +144,75 @@ class AuthService {
     }
   }
 
-  Future<void> signin(
-      {required String email,
-      required String password,
-      required BuildContext context}) async {
+  Future<void> signin({
+    required String email,
+    required String password,
+    required BuildContext context,
+  }) async {
     try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+      // Validar campos vacíos
+      if (email.trim().isEmpty || password.trim().isEmpty) {
+        throw FirebaseAuthException(
+          code: 'empty-fields',
+          message: 'Todos los campos son obligatorios.',
+        );
+      }
+
+      // Validar formato de email
+      final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+      if (!emailRegExp.hasMatch(email)) {
+        throw FirebaseAuthException(
+          code: 'invalid-email-format',
+          message: 'El formato del correo electrónico no es válido.',
+        );
+      }
+
+      // Validar longitud mínima de contraseña
+      if (password.length < 6) {
+        throw FirebaseAuthException(
+          code: 'weak-password',
+          message: 'La contraseña debe tener al menos 6 caracteres.',
+        );
+      }
+
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
       if (context.mounted) {
         context.go('/home/0');
       }
     } on FirebaseAuthException catch (e) {
       String message = '';
-      if (e.code == 'invalid-email') {
-        message = 'No user found for that email.';
-      } else if (e.code == 'invalid-credential') {
-        message = 'Wrong password provided for that user.';
+      switch (e.code) {
+        case 'empty-fields':
+          message = 'Todos los campos son obligatorios.';
+          break;
+        case 'invalid-email-format':
+          message = 'El formato del correo electrónico no es válido.';
+          break;
+        case 'user-not-found':
+          message = 'No existe una cuenta con este correo electrónico.';
+          break;
+        case 'invalid-credential':
+          message = 'Correo electrónico o contraseña incorrectos.';
+          break;
+        case 'too-many-requests':
+          message =
+              'Demasiados intentos fallidos. Por favor, intente más tarde.';
+          break;
+        case 'user-disabled':
+          message = 'Esta cuenta ha sido deshabilitada.';
+          break;
+        case 'operation-not-allowed':
+          message =
+              'El inicio de sesión con correo y contraseña no está habilitado.';
+          break;
+        default:
+          message = 'Error al iniciar sesión. Por favor, intente nuevamente.';
       }
+
       Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_LONG,
@@ -169,6 +220,10 @@ class AuthService {
         backgroundColor: Colors.black54,
         textColor: Colors.white,
         fontSize: 14.0,
+      );
+      throw FirebaseAuthException(
+        code: e.code,
+        message: message,
       );
     }
   }
@@ -243,9 +298,8 @@ class AuthService {
         context.go('/home/0');
       }
     } on FirebaseAuthException catch (e) {
-      // Manejo detallado de errores de Firebase
       Fluttertoast.showToast(
-        msg: 'Error de Firebase: ${e.code} - ${e.message}',
+        msg: 'Error de autenticación: ${e.message}',
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.SNACKBAR,
         backgroundColor: Colors.red,
@@ -253,9 +307,8 @@ class AuthService {
         fontSize: 14.0,
       );
     } catch (e) {
-      // Manejo general de errores
       Fluttertoast.showToast(
-        msg: 'Error inesperado: $e',
+        msg: 'Error inesperado durante el inicio de sesión',
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.SNACKBAR,
         backgroundColor: Colors.red,

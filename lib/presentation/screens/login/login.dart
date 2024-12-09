@@ -5,6 +5,7 @@ import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/domain/services/auth_service.dart';
 import 'package:h3_14_bookie/presentation/screens/password/forgot_password_screen.dart';
 import 'package:h3_14_bookie/presentation/screens/signup/signup.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Login extends StatefulWidget {
   static const String name = 'Login';
@@ -190,6 +191,20 @@ class _LoginState extends State<Login> {
             elevation: 0,
           ),
           onPressed: () async {
+            // Validar que los campos no estén vacíos
+            if (_emailController.text.trim().isEmpty ||
+                _passwordController.text.trim().isEmpty) {
+              Fluttertoast.showToast(
+                msg: 'Todos los campos son obligatorios',
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.SNACKBAR,
+                backgroundColor: Colors.black54,
+                textColor: Colors.white,
+                fontSize: 14.0,
+              );
+              return;
+            }
+
             try {
               await AuthService().signin(
                 email: _emailController.text,
@@ -197,7 +212,7 @@ class _LoginState extends State<Login> {
                 context: context,
               );
             } catch (e) {
-              // Manejar el error
+              // El error ya se maneja en AuthService
             }
           },
           child: const Text(
