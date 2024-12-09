@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/domain/services/auth_service.dart';
+import 'package:h3_14_bookie/presentation/screens/loading/loading_screen.dart';
 import 'package:h3_14_bookie/presentation/screens/password/forgot_password_screen.dart';
 import 'package:h3_14_bookie/presentation/screens/signup/signup.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Login extends StatefulWidget {
   static const String name = 'Login';
@@ -35,32 +37,38 @@ class _LoginState extends State<Login> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 12),
-              Text(
-                'Inicio de sesión',
-                style: GoogleFonts.inter(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
+              const SizedBox(height: 50),
+              Center(
+                child: Text(
+                  'Inicio de sesión',
+                  style: GoogleFonts.inter(
+                    fontSize: 35,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Para comenzar, ingresa a tu cuenta.',
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: Colors.black87,
+              Center(
+                child: Text(
+                  'Para comenzar, ingresa a tu cuenta.',
+                  style: GoogleFonts.inter(
+                    fontSize: 20,
+                    color: Colors.black54,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 150),
               _socialButtons(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 10),
               _divider(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 10),
               _loginForm(context),
             ],
           ),
@@ -75,11 +83,11 @@ class _LoginState extends State<Login> {
       children: [
         _socialButton(
           'assets/images/google_icon.png',
-          onTap: () {
-            // Implementar login con Google
+          onTap: () async {
+            await AuthService().signInWithGoogle(context);
           },
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 24),
         _socialButton(
           'assets/images/facebook_icon.png',
           onTap: () {
@@ -91,18 +99,23 @@ class _LoginState extends State<Login> {
   }
 
   Widget _socialButton(String iconPath, {required VoidCallback onTap}) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
       child: Container(
-        width: 44,
-        height: 44,
-        padding: const EdgeInsets.all(10),
+        width: 47,
+        height: 47,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        child: Image.asset(iconPath),
+        child: Image.asset(iconPath, fit: BoxFit.cover),
       ),
     );
   }
@@ -115,15 +128,15 @@ class _LoginState extends State<Login> {
           controller: _emailController,
           decoration: InputDecoration(
             hintText: 'Usuario o correo electrónico',
-            hintStyle: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+            hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 16),
             filled: true,
-            fillColor: Colors.grey.shade100,
+            fillColor: Colors.grey.shade50,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           ),
         ),
         const SizedBox(height: 16),
@@ -132,19 +145,19 @@ class _LoginState extends State<Login> {
           obscureText: _obscureText,
           decoration: InputDecoration(
             hintText: 'Contraseña',
-            hintStyle: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+            hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 16),
             filled: true,
-            fillColor: Colors.grey.shade100,
+            fillColor: Colors.grey.shade50,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             suffixIcon: IconButton(
               icon: Icon(
                 _obscureText ? Icons.visibility_off : Icons.visibility,
-                color: Colors.grey,
+                color: Colors.grey.shade600,
               ),
               onPressed: () {
                 setState(() {
@@ -154,9 +167,52 @@ class _LoginState extends State<Login> {
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerRight,
+        const SizedBox(height: 32),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF006494),
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 47),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            elevation: 0,
+          ),
+          onPressed: () async {
+            // Validar que los campos no estén vacíos
+            if (_emailController.text.trim().isEmpty ||
+                _passwordController.text.trim().isEmpty) {
+              Fluttertoast.showToast(
+                msg: 'Todos los campos son obligatorios',
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.SNACKBAR,
+                backgroundColor: Colors.black54,
+                textColor: Colors.white,
+                fontSize: 14.0,
+              );
+              return;
+            }
+
+            try {
+              await AuthService().signin(
+                email: _emailController.text,
+                password: _passwordController.text,
+                context: context,
+              );
+            } catch (e) {
+              // El error ya se maneja en AuthService
+            }
+          },
+          child: const Text(
+            'Iniciar sesión',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Center(
           child: TextButton(
             onPressed: () {
               Navigator.push(
@@ -173,38 +229,8 @@ class _LoginState extends State<Login> {
               '¿Olvidaste tu contraseña?',
               style: TextStyle(
                 color: Colors.blue.shade700,
-                fontSize: 12,
+                fontSize: 14,
               ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF006494),
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            elevation: 0,
-          ),
-          onPressed: () async {
-            try {
-              await AuthService().signin(
-                email: _emailController.text,
-                password: _passwordController.text,
-                context: context,
-              );
-            } catch (e) {
-              // Manejar el error
-            }
-          },
-          child: const Text(
-            'Iniciar sesión',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -248,15 +274,15 @@ class _LoginState extends State<Login> {
   Widget _divider() {
     return Row(
       children: [
-        Expanded(child: Divider(color: Colors.grey.shade300, thickness: 1)),
+        Expanded(child: Divider(color: Colors.grey.shade200, thickness: 1)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'o',
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+            style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
           ),
         ),
-        Expanded(child: Divider(color: Colors.grey.shade300, thickness: 1)),
+        Expanded(child: Divider(color: Colors.grey.shade200, thickness: 1)),
       ],
     );
   }
