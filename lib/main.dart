@@ -1,15 +1,40 @@
 // import 'package:bookie_test/pages/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:h3_14_bookie/presentation/screens/login/login.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/edit_view/edit_view_bloc.dart';
 import 'firebase_options.dart';
+import 'package:h3_14_bookie/config/get_it/locator.dart';
+import 'package:h3_14_bookie/config/router/app_router.dart';
+import 'package:h3_14_bookie/config/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  setupLocator();
+  runApp(const BlocsProviders());
+}
+
+class BlocsProviders extends StatelessWidget {
+  const BlocsProviders({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => locator<BookCreateBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => locator<EditViewBloc>()..add(const GetStories()),
+        ),
+      ],
+      child: const MyApp(),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -17,6 +42,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: Login());
+    return MaterialApp.router(
+      routerConfig: appRouter,
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme().getTheme(),
+    );
   }
 }
