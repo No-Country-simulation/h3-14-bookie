@@ -105,7 +105,6 @@ class StoryServiceImpl implements IStoryService {
         labels: storyDto.labels,
         rate: 0,
         readings: 0);
-    await _storyRef.add(story);
 
     final docRef = await _storyRef.add(story);
     final docSnap = await docRef.get();
