@@ -60,4 +60,39 @@ class ReadingServiceImpl implements IReadingService {
 
     return true;
   }
+
+  @override
+  Future<bool> unlockNewReadingChapter(
+      String storyId, String chapterUid) async {
+    final readings = await getUserReadings(null);
+    if (readings.isEmpty) {
+      return false;
+    }
+    final readingToUpdate = readings.firstWhere(
+      (reading) => reading.storyId == storyId,
+      orElse: () => throw Exception('User is not reading this story'),
+    );
+    final updatedReading = Reading(
+      storyId: readingToUpdate.storyId,
+      readingChaptersUids: [
+        ...(readingToUpdate.readingChaptersUids ?? []),
+        chapterUid
+      ],
+    );
+    final readingIndex = readings.indexOf(readingToUpdate);
+    readings[readingIndex] = updatedReading;
+    final readingMaps = readings.map((r) => r.toFirestore()).toList();
+
+    final appUserDoc = await db
+        .collection(APP_USER_COLLECTION_REF)
+        .where('authUserUid', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .get();
+    if (appUserDoc.docs.isEmpty) {
+      return false;
+    }
+    await appUserDoc.docs.first.reference.update({
+      "readings": readingMaps,
+    });
+    return true;
+  }
 }

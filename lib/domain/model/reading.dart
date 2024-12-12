@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Reading {
   final String? storyId;
-  final List<String>? chapterUids;
+  final List<String>? readingChaptersUids;
   final bool? inLibrary;
 
-  Reading({this.storyId, this.chapterUids, this.inLibrary});
+  Reading({this.storyId, this.readingChaptersUids, this.inLibrary});
 
   factory Reading.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -14,8 +14,8 @@ class Reading {
     final data = snapshot.data();
     return Reading(
       storyId: data?['storyId'],
-      chapterUids: data?['chapterUids'] is Iterable
-          ? List.from(data?['chapterUids'])
+      readingChaptersUids: data?['readingChaptersUids'] is Iterable
+          ? List.from(data?['readingChaptersUids'])
           : null,
       inLibrary: data?['inLibrary'],
     );
@@ -24,8 +24,8 @@ class Reading {
   factory Reading.fromMap(Map<String, dynamic> data) {
     return Reading(
       storyId: data['storyId'] ?? '',
-      chapterUids: data['chapterUids'] is Iterable
-          ? List.from(data['chapterUids'])
+      readingChaptersUids: data['readingChaptersUids'] is Iterable
+          ? List.from(data['readingChaptersUids'])
           : null,
       inLibrary: data['inLibrary'],
     );
@@ -34,7 +34,8 @@ class Reading {
   Map<String, dynamic> toFirestore() {
     return {
       if (storyId != null) "storyId": storyId,
-      if (chapterUids != null) "chapterUids": chapterUids,
+      if (readingChaptersUids != null)
+        "readingChaptersUids": readingChaptersUids,
       if (inLibrary != null) "inLibrary": inLibrary
     };
   }

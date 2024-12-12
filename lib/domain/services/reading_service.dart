@@ -10,4 +10,9 @@ interface class IReadingService {
   Future<bool> updateInLibrary(String storyId, bool inLibrary) async {
     throw UnimplementedError();
   }
+
+  Future<bool> unlockNewReadingChapter(
+      String storyId, String chapterUid) async {
+    throw UnimplementedError();
+  }
 }
