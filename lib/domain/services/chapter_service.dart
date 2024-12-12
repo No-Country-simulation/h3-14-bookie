@@ -10,8 +10,17 @@ interface class IChapterService {
     throw UnimplementedError();
   }
 
+  Future<String> getChapterUidByStoryUidAndChapterNumber(
+      String storyUid, int chapterNumber) async {
+    throw UnimplementedError();
+  }
+
   Future<List<Chapter>> getChaptersByStoryUid(String storyUid) async {
     return [];
+  }
+
+  Future<Chapter> getFirstChapterByStoryUid(String storyUid) async {
+    throw UnimplementedError();
   }
 
   Future<ChapterDto> convertToChapterDto(Chapter chapter) async {
