@@ -30,6 +30,14 @@ interface class IStoryService {
     return false;
   }
 
+  Future<double> rateStory(String storyUid, int rate) async {
+    throw UnimplementedError();
+  }
+
+  Future<double> getStoryRate(String storyUid) async {
+    throw UnimplementedError();
+  }
+
   Future<bool> deleteAllChaptersInStory(String storyUid) async {
     return false;
   }

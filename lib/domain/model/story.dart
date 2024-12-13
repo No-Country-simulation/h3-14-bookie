@@ -7,8 +7,8 @@ class Story {
   final String? cover;
   final String? synopsis;
   final List<String>? labels;
-  final List<Category> categories;
-  final int? rate;
+  final List<Category>? categories;
+  final double? rate;
   final int? readings;
   final int? storyTimeInMin;
   final List<String>? chaptersUid;
@@ -19,7 +19,7 @@ class Story {
       this.cover,
       this.synopsis,
       this.labels,
-      required this.categories,
+      this.categories,
       this.rate,
       this.readings,
       this.storyTimeInMin,
@@ -55,7 +55,8 @@ class Story {
       if (cover != null) "cover": cover,
       if (synopsis != null) "synopsis": synopsis,
       if (labels != null) "labels": labels,
-      "categories": categories.map((category) => category.toFirestore()),
+      if (categories != null)
+        "categories": categories?.map((category) => category.toFirestore()),
       if (rate != null) "rate": rate,
       if (readings != null) "readings": readings,
       if (storyTimeInMin != null) "storyTimeInMin": storyTimeInMin,
