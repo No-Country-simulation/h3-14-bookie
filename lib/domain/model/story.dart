@@ -9,7 +9,7 @@ class Story {
   final List<String>? labels;
   final List<Category>? categories;
   final double? rate;
-  final int? readings;
+  final int? totalReadings;
   final int? storyTimeInMin;
   final List<String>? chaptersUid;
 
@@ -21,7 +21,7 @@ class Story {
       this.labels,
       this.categories,
       this.rate,
-      this.readings,
+      this.totalReadings,
       this.storyTimeInMin,
       this.chaptersUid});
 
@@ -41,7 +41,7 @@ class Story {
                 .map((category) => Category(name: category['name'])))
             : [],
         rate: data?['rate'],
-        readings: data?['readings'],
+        totalReadings: data?['totalReadings'],
         storyTimeInMin: data?['storyTimeInMin'],
         chaptersUid: data?['chaptersUid'] is Iterable
             ? List.from(data?['chaptersUid'])
@@ -58,7 +58,7 @@ class Story {
       if (categories != null)
         "categories": categories?.map((category) => category.toFirestore()),
       if (rate != null) "rate": rate,
-      if (readings != null) "readings": readings,
+      if (totalReadings != null) "totalReadings": totalReadings,
       if (storyTimeInMin != null) "storyTimeInMin": storyTimeInMin,
       if (chaptersUid != null) "chaptersUid": chaptersUid,
     };

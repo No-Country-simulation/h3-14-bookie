@@ -18,12 +18,20 @@ interface class IStoryService {
     return [];
   }
 
+  Future<Story?> getStoryById(String storyUid) {
+    return Future(() => null);
+  }
+
+  Future<int> getStoryTotalReadings(String storyUid) {
+    throw UnimplementedError();
+  }
+
   Future<String> createStory(StoryDto storyDto) async {
     return '';
   }
 
-  Future<Story?> getStoryById(String storyUid) {
-    return Future(() => null);
+  Future<Story> updateStory(String storyUid, Story updatedStory) {
+    throw UnimplementedError();
   }
 
   Future<bool> addChapterToStory(String storyUid, String chapterUid) async {

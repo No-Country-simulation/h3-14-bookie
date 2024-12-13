@@ -1,18 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:h3_14_bookie/domain/model/app_user.dart';
-import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:h3_14_bookie/domain/model/reading.dart';
+import 'package:h3_14_bookie/domain/model/story.dart';
 import 'package:h3_14_bookie/domain/services/app_user_service.dart';
 import 'package:h3_14_bookie/domain/services/chapter_service.dart';
 import 'package:h3_14_bookie/domain/services/implement/app_user_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/implement/chapter_service_impl.dart';
+import 'package:h3_14_bookie/domain/services/implement/story_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/reading_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:h3_14_bookie/domain/services/story_service.dart';
 
 class ReadingServiceImpl implements IReadingService {
   final db = FirebaseFirestore.instance;
   final IAppUserService appUserService = AppUserServiceImpl();
   final IChapterService chapterService = ChapterServiceImpl();
+  final IStoryService storyService = StoryServiceImpl();
 
   ReadingServiceImpl();
 
@@ -57,6 +60,10 @@ class ReadingServiceImpl implements IReadingService {
         AppUser(authUserUid: appUser.authUserUid, readings: readings);
 
     await appUserService.updateAppUser(appUserUpdate);
+
+    final story = await storyService.getStoryById(storyId);
+    await storyService.updateStory(
+        storyId, Story(totalReadings: (story?.totalReadings ?? 0) + 1));
 
     return true;
   }

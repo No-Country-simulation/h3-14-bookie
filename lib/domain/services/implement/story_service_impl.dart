@@ -85,11 +85,20 @@ class StoryServiceImpl implements IStoryService {
         story.synopsis ?? '',
         story.labels?.whereType<String>().toList() ?? [],
         categoriesUid,
-        story.rate ?? 0.0,
-        story.readings ?? 0,
+        story.rate ?? 5.0,
+        story.totalReadings ?? 0,
         story.storyTimeInMin ?? 0,
         story.chaptersUid?.toList() ?? []);
     return storyResponseDto;
+  }
+
+  @override
+  Future<Story?> getStoryById(String storyUid) async {
+    final docSnap = await _storyRef.doc(storyUid).get();
+    if (!docSnap.exists) {
+      throw Exception('Story not found');
+    }
+    return (docSnap as DocumentSnapshot<Story>).data();
   }
 
   @override
@@ -105,7 +114,7 @@ class StoryServiceImpl implements IStoryService {
         categories: categories,
         labels: storyDto.labels,
         rate: 5.0,
-        readings: 0);
+        totalReadings: 0);
 
     final docRef = await _storyRef.add(story);
     final docSnap = await docRef.get();
@@ -115,12 +124,15 @@ class StoryServiceImpl implements IStoryService {
   }
 
   @override
-  Future<Story?> getStoryById(String storyUid) async {
-    final docSnap = await _storyRef.doc(storyUid).get();
-    if (!docSnap.exists) {
-      throw Exception('Story not found');
-    }
-    return (docSnap as DocumentSnapshot<Story>).data();
+  Future<int> getStoryTotalReadings(String storyUid) async {
+    final story = await getStoryById(storyUid);
+    return story?.totalReadings ?? 0;
+  }
+
+  @override
+  Future<Story> updateStory(String storyUid, Story updatedStory) async {
+    await _storyRef.doc(storyUid).update(updatedStory.toFirestore());
+    return updatedStory;
   }
 
   /// Add a chapter to the story
