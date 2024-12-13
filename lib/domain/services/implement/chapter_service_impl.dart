@@ -38,9 +38,25 @@ class ChapterServiceImpl implements IChapterService {
   }
 
   @override
+  Future<String> getChapterUidByStoryUidAndChapterNumber(
+      String storyUid, int chapterNumber) async {
+    final docs = await _chapterRef
+        .where('storyUid', isEqualTo: storyUid)
+        .where('number', isEqualTo: chapterNumber)
+        .get();
+    return docs.docs.first.id;
+  }
+
+  @override
   Future<List<Chapter>> getChaptersByStoryUid(String storyUid) async {
     List<Chapter> chapters = await getChapters();
     return chapters.where((chapter) => chapter.storyUid == storyUid).toList();
+  }
+
+  @override
+  Future<Chapter> getFirstChapterByStoryUid(String storyUid) async {
+    List<Chapter> chapters = await getChaptersByStoryUid(storyUid);
+    return chapters.firstWhere((chapter) => chapter.number == 1);
   }
 
   @override

@@ -40,8 +40,8 @@ class StoryServiceImpl implements IStoryService {
     var stories = await getStories();
     if (category != null) {
       stories = stories
-          .where(
-              (story) => story.categories.any((c) => c.name == category.name))
+          .where((story) =>
+              story.categories?.any((c) => c.name == category.name) ?? false)
           .toList();
     }
 
@@ -71,9 +71,10 @@ class StoryServiceImpl implements IStoryService {
 
   Future<StoryResponseDto> convertToStoryResponseDto(
       String storyUid, Story story) async {
-    List<String> categoriesUid = await Future.wait(story.categories.map(
-        (category) =>
-            categoryService.getCategoryUidByName(category.name ?? '')));
+    List<String> categoriesUid = await Future.wait(story.categories?.map(
+            (category) =>
+                categoryService.getCategoryUidByName(category.name ?? '')) ??
+        []);
 
     StoryResponseDto storyResponseDto = StoryResponseDto(
         storyUid,
@@ -84,11 +85,20 @@ class StoryServiceImpl implements IStoryService {
         story.synopsis ?? '',
         story.labels?.whereType<String>().toList() ?? [],
         categoriesUid,
-        story.rate ?? 0,
-        story.readings ?? 0,
+        story.rate ?? 5.0,
+        story.totalReadings ?? 0,
         story.storyTimeInMin ?? 0,
         story.chaptersUid?.toList() ?? []);
     return storyResponseDto;
+  }
+
+  @override
+  Future<Story?> getStoryById(String storyUid) async {
+    final docSnap = await _storyRef.doc(storyUid).get();
+    if (!docSnap.exists) {
+      throw Exception('Story not found');
+    }
+    return (docSnap as DocumentSnapshot<Story>).data();
   }
 
   @override
@@ -103,8 +113,8 @@ class StoryServiceImpl implements IStoryService {
         synopsis: storyDto.synopsis,
         categories: categories,
         labels: storyDto.labels,
-        rate: 0,
-        readings: 0);
+        rate: 5.0,
+        totalReadings: 0);
 
     final docRef = await _storyRef.add(story);
     final docSnap = await docRef.get();
@@ -114,12 +124,15 @@ class StoryServiceImpl implements IStoryService {
   }
 
   @override
-  Future<Story?> getStoryById(String storyUid) async {
-    final docSnap = await _storyRef.doc(storyUid).get();
-    if (!docSnap.exists) {
-      throw Exception('Story not found');
-    }
-    return (docSnap as DocumentSnapshot<Story>).data();
+  Future<int> getStoryTotalReadings(String storyUid) async {
+    final story = await getStoryById(storyUid);
+    return story?.totalReadings ?? 0;
+  }
+
+  @override
+  Future<Story> updateStory(String storyUid, Story updatedStory) async {
+    await _storyRef.doc(storyUid).update(updatedStory.toFirestore());
+    return updatedStory;
   }
 
   /// Add a chapter to the story
@@ -135,6 +148,27 @@ class StoryServiceImpl implements IStoryService {
     story.chaptersUid?.add(chapterUid);
     await _storyRef.doc(storyUid).update(story.toFirestore());
     return true;
+  }
+
+  /// Rate a story
+  /// Add the rate to the story by averaging the old rate and the new rate
+  /// Return the new rate of the story
+  /// Return -1 if the story is not found
+  @override
+  Future<double> rateStory(String storyUid, int rate) async {
+    final story = await getStoryById(storyUid);
+    if (story == null) {
+      return -1;
+    }
+    final updatedStory = Story(rate: (story.rate ?? 5.0 + rate) / 2);
+    await _storyRef.doc(storyUid).update(updatedStory.toFirestore());
+    return updatedStory.rate ?? -1;
+  }
+
+  @override
+  Future<double> getStoryRate(String storyUid) async {
+    final story = await getStoryById(storyUid);
+    return story?.rate ?? -1;
   }
 
   @override

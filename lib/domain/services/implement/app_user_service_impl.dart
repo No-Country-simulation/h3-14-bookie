@@ -48,6 +48,13 @@ class AppUserServiceImpl implements IAppUserService {
   }
 
   @override
+  Future<String> getAppUserIdByAuthUserUid(String authUserUid) async {
+    final docs =
+        await _appUserRef.where('authUserUid', isEqualTo: authUserUid).get();
+    return docs.docs.first.id;
+  }
+
+  @override
   Future<void> createAppUser(UserDto newUser) async {
     AppUser newAppUser = AppUser(
         authUserUid: newUser.authUserUid,
@@ -59,6 +66,12 @@ class AppUserServiceImpl implements IAppUserService {
   @override
   Future<void> updateUser(String uid, String name, String email) async {
     _appUserRef.doc(uid).update({"name": name, "email": email});
+  }
+
+  @override
+  Future<void> updateAppUser(AppUser appUser) async {
+    final appUserUid = await getAppUserIdByAuthUserUid(appUser.authUserUid!);
+    _appUserRef.doc(appUserUid).update(appUser.toFirestore());
   }
 
   @override
@@ -86,27 +99,6 @@ class AppUserServiceImpl implements IAppUserService {
     _appUserRef.where('authUserUid', isEqualTo: appUserUid).get().then(
         (value) =>
             value.docs.first.reference.update({"writings": writingMaps}));
-  }
-
-  @override
-  Future<bool> addNewReading(String storyId, bool inLibrary) async {
-    final authUserUid = FirebaseAuth.instance.currentUser?.uid;
-    if (authUserUid == null) {
-      throw Exception('User not logged in');
-    }
-    final appUser = await getAppUserByAuthUserUid(authUserUid);
-    if (appUser == null) {
-      throw Exception('App user not found');
-    }
-    final readings = appUser.readings ?? [];
-    final reading = Reading(storyId: storyId, inLibrary: inLibrary);
-    readings.add(reading);
-    final appUserDoc =
-        await _appUserRef.where('authUserUid', isEqualTo: authUserUid).get();
-    final appUserDocId = appUserDoc.docs.first.id;
-    final readingMaps = readings.map((r) => r.toFirestore()).toList();
-    await _appUserRef.doc(appUserDocId).update({"readings": readingMaps});
-    return true;
   }
 
   @override
