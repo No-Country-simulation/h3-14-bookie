@@ -23,6 +23,14 @@ interface class IChapterService {
     throw UnimplementedError();
   }
 
+  Future<List<String>> getChapterPages(String chapterUid) async {
+    throw UnimplementedError();
+  }
+
+  Future<String> getChapterPage(String chapterUid, int pageNumber) async {
+    throw UnimplementedError();
+  }
+
   Future<ChapterDto> convertToChapterDto(Chapter chapter) async {
     throw UnimplementedError();
   }

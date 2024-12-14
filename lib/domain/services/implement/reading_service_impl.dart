@@ -36,6 +36,33 @@ class ReadingServiceImpl implements IReadingService {
         [];
   }
 
+  /// Returns the last page number readed in the mapped chapters of the story
+  /// If the story is not readed, throws an exception
+  @override
+  Future<Map<String, int>> getLastPageInReadedChaptersByStoryId(
+      String storyId) async {
+    final readings = await getUserReadings(null);
+    final reading = readings.firstWhere(
+      (reading) => reading.storyId == storyId,
+      orElse: () => throw Exception('User is not reading this story'),
+    );
+    return reading.lastPageInChapterReaded ?? {};
+  }
+
+  /// Returns the last page number readed in the chapter
+  /// If the chapter is not readed, throws an exception
+  @override
+  Future<int> getLastPageNumberInReadedChapter(
+      String storyId, String chapterUid) async {
+    final lastPageInChaptersReaded =
+        await getLastPageInReadedChaptersByStoryId(storyId);
+    final lastPageInChapterReaded = lastPageInChaptersReaded[chapterUid];
+    if (lastPageInChapterReaded == null) {
+      throw Exception('Chapter not found');
+    }
+    return lastPageInChapterReaded;
+  }
+
   @override
   Future<bool> addNewReading(String storyId, bool inLibrary) async {
     final authUserUid = FirebaseAuth.instance.currentUser?.uid;
@@ -53,7 +80,8 @@ class ReadingServiceImpl implements IReadingService {
     final newReading = Reading(
         storyId: storyId,
         inLibrary: inLibrary,
-        readingChaptersUids: [firstChapterUid]);
+        readingChaptersUids: [firstChapterUid],
+        lastPageInChapterReaded: {firstChapterUid: 1});
     readings.add(newReading);
 
     final appUserUpdate =
@@ -96,6 +124,51 @@ class ReadingServiceImpl implements IReadingService {
     await appUserDoc.docs.first.reference.update({
       "readings": readingMaps,
     });
+
+    return true;
+  }
+
+  /// Saves the last page readed in the chapter
+  /// If the chapter is not readed, throws an exception
+  /// If the page number is out of bounds, throws an exception
+  @override
+  Future<bool> saveLastPageInChapterReaded(
+      String storyId, String chapterUid, int lastPageReaded) async {
+    final readings = await getUserReadings(null);
+    if (readings.isEmpty) {
+      return false;
+    }
+    final readingToUpdate = readings.firstWhere(
+      (reading) => reading.storyId == storyId,
+      orElse: () => throw Exception('User is not reading this story'),
+    );
+
+    try {
+      await chapterService.getChapterPage(chapterUid, lastPageReaded);
+    } catch (e) {
+      throw Exception('Page not found');
+    }
+
+    final updatedReading = Reading(
+      storyId: readingToUpdate.storyId,
+      readingChaptersUids: readingToUpdate.readingChaptersUids,
+      lastPageInChapterReaded: {
+        ...(readingToUpdate.lastPageInChapterReaded ?? {}),
+        chapterUid: lastPageReaded
+      },
+    );
+
+    final readingIndex = readings.indexOf(readingToUpdate);
+    readings[readingIndex] = updatedReading;
+
+    String authUserUid = FirebaseAuth.instance.currentUser?.uid ?? "";
+
+    if (authUserUid == "") {
+      throw Exception('User not logged in');
+    }
+
+    appUserService
+        .updateAppUser(AppUser(authUserUid: authUserUid, readings: readings));
 
     return true;
   }

@@ -4,8 +4,14 @@ class Reading {
   final String? storyId;
   final List<String>? readingChaptersUids;
   final bool? inLibrary;
+  final Map<String, int>?
+      lastPageInChapterReaded; //Stores which page was the last one read in each chapter, mapped by chapterUid
 
-  Reading({this.storyId, this.readingChaptersUids, this.inLibrary});
+  Reading(
+      {this.storyId,
+      this.readingChaptersUids,
+      this.inLibrary,
+      this.lastPageInChapterReaded});
 
   factory Reading.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -18,6 +24,10 @@ class Reading {
           ? List.from(data?['readingChaptersUids'])
           : null,
       inLibrary: data?['inLibrary'],
+      lastPageInChapterReaded:
+          data?['lastPageInChapterReaded'] is Map<String, int>
+              ? Map.from(data?['lastPageInChapterReaded'])
+              : null,
     );
   }
 
@@ -28,6 +38,10 @@ class Reading {
           ? List.from(data['readingChaptersUids'])
           : null,
       inLibrary: data['inLibrary'],
+      lastPageInChapterReaded:
+          data['lastPageInChapterReaded'] is Map<String, int>
+              ? Map.from(data['lastPageInChapterReaded'])
+              : null,
     );
   }
 
@@ -36,7 +50,9 @@ class Reading {
       if (storyId != null) "storyId": storyId,
       if (readingChaptersUids != null)
         "readingChaptersUids": readingChaptersUids,
-      if (inLibrary != null) "inLibrary": inLibrary
+      if (inLibrary != null) "inLibrary": inLibrary,
+      if (lastPageInChapterReaded != null)
+        "lastPageInChapterReaded": lastPageInChapterReaded,
     };
   }
 }

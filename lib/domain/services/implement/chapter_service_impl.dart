@@ -60,6 +60,24 @@ class ChapterServiceImpl implements IChapterService {
   }
 
   @override
+  Future<List<String>> getChapterPages(String chapterUid) async {
+    final chapter = await getChapterById(chapterUid);
+    return chapter.pages ?? [];
+  }
+
+  @override
+  Future<String> getChapterPage(String chapterUid, int pageNumber) async {
+    final chapter = await getChapterById(chapterUid);
+    if (chapter.pages == null || chapter.pages!.isEmpty) {
+      throw Exception('Chapter pages are null or empty');
+    }
+    if (pageNumber < 1 || pageNumber > chapter.pages!.length) {
+      throw Exception('Page number out of bounds');
+    }
+    return chapter.pages![pageNumber - 1];
+  }
+
+  @override
   Future<ChapterDto> convertToChapterDto(Chapter chapter) async {
     return ChapterDto(
       storyUid: chapter.storyUid,
