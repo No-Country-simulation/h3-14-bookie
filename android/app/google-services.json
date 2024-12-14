@@ -1,73 +1,45 @@
 {
   "project_info": {
-    "project_number": "165946365384",
-    "project_id": "bookietest-75f8c",
-    "storage_bucket": "bookietest-75f8c.firebasestorage.app"
+    "project_number": "678793709152",
+    "project_id": "h3-14-bookie",
+    "storage_bucket": "h3-14-bookie.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:165946365384:android:476cda323ac4820eec9cfd",
+        "mobilesdk_app_id": "1:678793709152:android:52afdfcad3a4199c42a505",
         "android_client_info": {
-          "package_name": "com.example.h3_14_bookie"
+          "package_name": "com.bookie.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "165946365384-g4cos4aitcha5hqq56j7feh0472m4fjs.apps.googleusercontent.com",
+          "client_id": "678793709152-tl33qp6nn7uje48nep8gloqo6s87rj2n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bookie.app",
+            "certificate_hash": "520eb582ab049a56bd2d42e8aaeeb9ede1c0cc6b"
+          }
+        },
+        {
+          "client_id": "678793709152-qjv09a4cd5othkoiems8a83leoqg77g3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDypEx8vEzH8w_0iTMydlp0zR2hvcrXb8I"
+          "current_key": "AIzaSyCjB8ag8sJKIDEFEi2P6kfFTwEly2yETao"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "165946365384-g4cos4aitcha5hqq56j7feh0472m4fjs.apps.googleusercontent.com",
+              "client_id": "678793709152-qjv09a4cd5othkoiems8a83leoqg77g3.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "165946365384-958a2foffqhrq7fbfklfje9eq3aultiq.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.flutterBaseApp"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:165946365384:android:35ca982c577bf036ec9cfd",
-        "android_client_info": {
-          "package_name": "com.example.h3_14_bookie"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "165946365384-g4cos4aitcha5hqq56j7feh0472m4fjs.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDypEx8vEzH8w_0iTMydlp0zR2hvcrXb8I"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "165946365384-g4cos4aitcha5hqq56j7feh0472m4fjs.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "165946365384-958a2foffqhrq7fbfklfje9eq3aultiq.apps.googleusercontent.com",
+              "client_id": "678793709152-ru98epv8o2jfq03nt2pa5n55o0uvgrdp.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.example.flutterBaseApp"

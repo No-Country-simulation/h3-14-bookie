@@ -61,25 +61,27 @@ class EditView extends StatelessWidget {
             child: BlocBuilder<EditViewBloc, EditViewState>(
               builder: (context, state) {
                 return state.isLoading
-                ? const Center(child: CircularProgressIndicator(),)
-                : ListView.separated(
-                    itemBuilder: (context, index) {
-                      final response = state.stories[index];
-                      final info = response.story;
-                      return BookItemWidget(
-                        id: info.storyUid,
-                        title: info.title,
-                        isDraft: response.isDraft,
-                        synopsis: info.synopsis,
-                        rate: info.rate,
-                        readings: info.readings,
-                        cover: info.cover,
-                      );
-                    },
-                    separatorBuilder: (context, index) => const SizedBox(
-                          height: 10,
-                        ),
-                    itemCount: state.stories.length);
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ListView.separated(
+                        itemBuilder: (context, index) {
+                          final response = state.stories[index];
+                          final info = response.story;
+                          return BookItemWidget(
+                            id: info.storyUid,
+                            title: info.title,
+                            isDraft: response.isDraft,
+                            synopsis: info.synopsis,
+                            rate: info.rate.toInt(),
+                            readings: info.readings,
+                            cover: info.cover,
+                          );
+                        },
+                        separatorBuilder: (context, index) => const SizedBox(
+                              height: 10,
+                            ),
+                        itemCount: state.stories.length);
               },
             ),
           )
