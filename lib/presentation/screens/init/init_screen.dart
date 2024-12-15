@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/presentation/screens/login/login.dart';
@@ -199,12 +200,47 @@ class _InitScreenState extends State<InitScreen> {
   }
 
   Widget _termsAndConditions() {
-    return const Text(
-      'Al registrarte, aceptas nuestros Términos de uso y Política de Privacidad',
+    return RichText(
       textAlign: TextAlign.center,
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 12,
+      text: TextSpan(
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+        ),
+        children: [
+          const TextSpan(
+            text: 'Al registrarte, aceptas nuestros ',
+          ),
+          TextSpan(
+            text: 'Términos de uso',
+            style: const TextStyle(
+              decoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => TermsScreen()),
+                // );
+              },
+          ),
+          const TextSpan(
+            text: ' y ',
+          ),
+          TextSpan(
+            text: 'Política de Privacidad',
+            style: const TextStyle(
+              decoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => PrivacyScreen()),
+                // );
+              },
+          ),
+        ],
       ),
     );
   }

@@ -66,9 +66,9 @@ class _LoginState extends State<Login> {
               ),
               const SizedBox(height: 150),
               _socialButtons(),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
               _divider(),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
               _loginForm(context),
             ],
           ),
@@ -83,11 +83,11 @@ class _LoginState extends State<Login> {
       children: [
         _socialButton(
           'assets/images/google_icon.png',
-          onTap: () async {
-            await AuthService().signInWithGoogle(context);
+          onTap: () {
+            // Implementar login con Google
           },
         ),
-        const SizedBox(width: 24),
+        const SizedBox(width: 47),
         _socialButton(
           'assets/images/facebook_icon.png',
           onTap: () {
@@ -104,18 +104,38 @@ class _LoginState extends State<Login> {
       child: Container(
         width: 47,
         height: 47,
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withOpacity(0.8),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: const Offset(0, 4), // Cambiado a 4 para sombra más abajo
             ),
           ],
         ),
         child: Image.asset(iconPath, fit: BoxFit.cover),
+      ),
+    );
+  }
+
+  Widget _divider() {
+    return Container(
+      width: 100,
+      child: Row(
+        children: [
+          Expanded(child: Divider(color: Colors.grey.shade500, thickness: 1)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              'O',
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+            ),
+          ),
+          Expanded(child: Divider(color: Colors.grey.shade500, thickness: 1)),
+        ],
       ),
     );
   }
@@ -132,11 +152,19 @@ class _LoginState extends State<Login> {
             filled: true,
             fillColor: Colors.grey.shade50,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade500),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade500),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade400),
             ),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
         ),
         const SizedBox(height: 16),
@@ -149,11 +177,19 @@ class _LoginState extends State<Login> {
             filled: true,
             fillColor: Colors.grey.shade50,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade500),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade500),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade400),
             ),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             suffixIcon: IconButton(
               icon: Icon(
                 _obscureText ? Icons.visibility_off : Icons.visibility,
@@ -268,25 +304,6 @@ class _LoginState extends State<Login> {
           ],
         ),
       ],
-    );
-  }
-
-  Widget _divider() {
-    return Container(
-      width: 100,
-      child: Row(
-        children: [
-          Expanded(child: Divider(color: Colors.grey.shade200, thickness: 1)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'o',
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-            ),
-          ),
-          Expanded(child: Divider(color: Colors.grey.shade200, thickness: 1)),
-        ],
-      ),
     );
   }
 }
