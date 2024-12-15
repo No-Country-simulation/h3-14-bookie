@@ -12,7 +12,7 @@ class HomeStoryDto {
   final int totalReadings;
   final List<ChapterDto> chapters;
 
-  HomeStoryDto({
+  const HomeStoryDto({
     required this.storyUid,
     required this.title,
     required this.authorName,

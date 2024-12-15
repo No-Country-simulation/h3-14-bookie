@@ -1,6 +1,7 @@
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:h3_14_bookie/domain/model/chapter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
+import 'package:h3_14_bookie/domain/model/dto/home_story_dto.dart';
 
 part 'read_view_event.dart';
 part 'read_view_state.dart';
@@ -10,6 +11,7 @@ class ReadViewBloc extends Bloc<ReadViewEvent, ReadViewState> {
     on<ChangeChapters>(_onChangeChapters);
     on<ChangePageChapterSelected>(_onChangePageChapterSelected);
     on<ChangeStoryUidSelected>(_onChangeStoryUidSelected);
+    on<ChangeChapterReadActive>(_onChangeChapterReadActive);
   }
 
   void _onChangeChapters(ChangeChapters event, Emitter<ReadViewState> emit) {
@@ -25,8 +27,18 @@ class ReadViewBloc extends Bloc<ReadViewEvent, ReadViewState> {
   }
 
   void _onChangeStoryUidSelected(ChangeStoryUidSelected event, Emitter<ReadViewState> emit) {
+    final chapters = event.story.chapters;
     emit(state.copyWith(
-      storyId: event.uid
+      story: event.story,
+      chapterActive: chapters.first,
+      chapterList: chapters,
+    ));
+  }
+
+  void _onChangeChapterReadActive(ChangeChapterReadActive event, Emitter<ReadViewState> emit) {
+    int index = state.chapterList.indexWhere((c) => c.storyUid == event.storyId);
+    emit(state.copyWith(
+      chapterActive: state.chapterList[index],
     ));
   }
 }

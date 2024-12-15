@@ -14,17 +14,26 @@ class FavoritesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const CameraPosition cameraPosition = CameraPosition(
-      bearing: 0,
-      target: LatLng(-34.625946, -58.463903),
-      tilt: 60, // Reducido de 80 a 60 para una mejor perspectiva
-      zoom: 5, // Un buen valor para ver calles y edificios claramente
-    );
+    final textStyle = Theme.of(context).textTheme;
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 10), // Espaciado entre AppBar y encabezado
+          BorderLayout(
+            child: Column(
+              children: [
+                Text(
+                  'Mi biblioteca',
+                  style: textStyle.titleLarge!.copyWith(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Divider(),
+                const SizedBox(height: 10), 
+              ],
+            ),
+          ),// Espaciado entre AppBar y encabezado
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(
@@ -68,7 +77,11 @@ class FavoritesView extends StatelessWidget {
           const SizedBox(height: 16),
           BlocBuilder<FavoriteViewBloc, FavoriteViewState>(
             builder: (context, state) {
-              return Padding(
+              return state.listFavorites.isEmpty
+              ? const Padding(
+                padding: EdgeInsets.symmetric(vertical: 60),
+                child: Center(child: Text('Aún no tienes historias en tu biblioteca.'),))
+              : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),
@@ -81,6 +94,7 @@ class FavoritesView extends StatelessWidget {
                     childAspectRatio: 180 / 290,
                   ),
                   itemBuilder: (context, index) {
+                    final story = state.listFavorites[index].reading;
                     return BookWidget(
                       isFavorite: true,
                       story: StoryResponseDto(

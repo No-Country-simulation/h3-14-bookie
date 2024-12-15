@@ -40,11 +40,20 @@ final appRouter = GoRouter(
               },
               routes: [
                 GoRoute(
-                  path: 'read',
+                  path: '/read',
                   name: BookReadScreen.name,
                   builder: (context, state) {
                     return const BookReadScreen();
                   },
+                  routes: [
+                    GoRoute(
+                      path: '/finish-read',
+                      name: BookFinishedReadScreen.name,
+                      builder: (context, state) {
+                        return const BookFinishedReadScreen();
+                      },
+                    )
+                  ]
                 ),
               ]),
           GoRoute(

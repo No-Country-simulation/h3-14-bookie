@@ -9,7 +9,6 @@ class EditView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const targets = ['A', 'B', 'C', 'D'];
     final textStyle = Theme.of(context).textTheme;
     return BorderLayout(
       child: Column(
@@ -62,7 +61,12 @@ class EditView extends StatelessWidget {
               builder: (context, state) {
                 return state.isLoading
                 ? const Center(child: CircularProgressIndicator(),)
-                : ListView.separated(
+                : state.stories.isEmpty
+                  ? const Center(
+                    child: Text(
+                      'Compienta a crear una historia.\n Procisona sobre (+)',
+                      textAlign: TextAlign.center,),)
+                  : ListView.separated(
                     itemBuilder: (context, index) {
                       final response = state.stories[index];
                       final info = response.story;

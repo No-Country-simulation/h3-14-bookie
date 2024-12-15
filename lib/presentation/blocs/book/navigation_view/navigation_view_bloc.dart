@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_story_response_dto.dart';
 import 'package:h3_14_bookie/domain/services/chapter_service.dart';
+import 'package:h3_14_bookie/domain/services/story_service.dart';
 
 part 'navigation_view_event.dart';
 part 'navigation_view_state.dart';
 
 class NavigationViewBloc extends Bloc<NavigationViewEvent, NavigationViewState> {
-  final IChapterService chapterService;
+  final IStoryService storyService;
   NavigationViewBloc({
-    required this.chapterService
+    required this.storyService
   }) : super(const NavigationViewState()) {
     on<GetStoryChapterEvent>(_onGetStoryChapterEvent);
   }
@@ -21,7 +22,7 @@ class NavigationViewBloc extends Bloc<NavigationViewEvent, NavigationViewState> 
       emit(state.copyWith(
         loading: true,
       ));
-      final list = await chapterService.getAllChaptersStory();
+      final list = await storyService.getAllChaptersStory();
       emit(state.copyWith(
         listChapterStory: list,
         loading: false,

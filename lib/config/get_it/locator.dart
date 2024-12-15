@@ -27,7 +27,8 @@ void setupLocator() {
   ));
   locator.registerSingleton(EditViewBloc(
     writingService: WritingServiceImpl(),
-    appUserService: AppUserServiceImpl()
+    appUserService: AppUserServiceImpl(),
+    storyService: StoryServiceImpl(),
   ));
   locator.registerSingleton(HomeViewBloc(
     storyService: StoryServiceImpl(),
@@ -39,6 +40,6 @@ void setupLocator() {
     readingService: ReadingServiceImpl()
   ));
   locator.registerSingleton(NavigationViewBloc(
-    chapterService: ChapterServiceImpl(),
+    storyService: StoryServiceImpl(),
   ));
 }

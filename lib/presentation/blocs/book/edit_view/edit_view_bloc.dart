@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:h3_14_bookie/config/helpers/enums/book_enum.dart';
 import 'package:h3_14_bookie/domain/model/dto/writing_dto.dart';
 import 'package:h3_14_bookie/domain/model/writing.dart';
 import 'package:h3_14_bookie/domain/services/app_user_service.dart';
+import 'package:h3_14_bookie/domain/services/story_service.dart';
 import 'package:h3_14_bookie/domain/services/writing_service.dart';
 
 part 'edit_view_event.dart';
@@ -14,9 +14,11 @@ part 'edit_view_state.dart';
 class EditViewBloc extends Bloc<EditViewEvent, EditViewState> {
   final IWritingService writingService;
   final IAppUserService appUserService;
+  final IStoryService storyService;
   EditViewBloc({
     required this.writingService,
     required this.appUserService,
+    required this.storyService,
   }) : super(const EditViewState()) {
     on<GetStories>(_onGetStories);
     on<ChangeFilter>(_onChangeFilter);
@@ -80,7 +82,7 @@ class EditViewBloc extends Bloc<EditViewEvent, EditViewState> {
       emit(state.copyWith(
         isLoading: true,
       ));
-      await appUserService.deleteUserWriting(FirebaseAuth.instance.currentUser!.uid,event.id);
+      await storyService.deleteStory(event.id);
       add(GetStories(
         draftOrPublish: state.filterSelected == FilterBook.all
           ? null

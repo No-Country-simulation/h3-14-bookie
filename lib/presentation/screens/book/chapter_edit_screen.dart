@@ -124,6 +124,10 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
       body: PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
+
+          if(context.read<BookCreateBloc>().state.storySave){
+            return;
+          }
           ConfirmationDialog.show(
             context,
             question: '¿Estás seguro de que deseas salir sin guardar?',

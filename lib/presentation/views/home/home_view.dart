@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/config/get_it/locator.dart';
-import 'package:h3_14_bookie/presentation/blocs/book/read_view/read_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/blocs/home_view/home_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
@@ -11,7 +10,6 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const targets = ['A', 'B', 'C', 'D'];
     final textStyle = Theme.of(context).textTheme;
     return Column(
       children: [
@@ -45,6 +43,11 @@ class HomeView extends StatelessWidget {
                     return Expanded(
                       child: state.isLoading 
                       ? const Center(child: CircularProgressIndicator(),)
+                      : state.stories.isEmpty
+                      ? const Center(
+                        child: Text(
+                          'No tienes historias en tu biblioteca, \n mueve para descubrir más.',
+                          textAlign: TextAlign.center,),)
                       : GridView.builder(
                         // clipBehavior: Clip.none,
                         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),

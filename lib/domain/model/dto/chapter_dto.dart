@@ -7,7 +7,7 @@ class ChapterDto {
   final double lat;
   final double long;
 
-  ChapterDto({
+  const ChapterDto({
     required this.storyUid,
     this.chapterUid,
     required this.title,

@@ -1,41 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:h3_14_bookie/domain/services/auth_service.dart';
+import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(
-        elevation: 4.0,
-        shadowColor: Colors.black.withOpacity(0.1),
-        title: const Text(
-          "Configuración",
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-            fontFamily: 'Roboto',
-          ),
-        ),
-        centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-        backgroundColor: Colors.white,
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 35.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Column(
+              children: [
+                const SizedBox(height: 10), 
+                Text(
+                  'Configuraciones',
+                  style: textStyle.titleLarge!.copyWith(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Divider(),
+                const SizedBox(height: 10), 
+              ],
+            ),// 
             const SizedBox(height: 40.0),
             const SectionHeader1(title: "Configuración de la aplicación"),
             const SizedBox(height: 30.0),

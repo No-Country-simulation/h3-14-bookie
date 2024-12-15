@@ -102,7 +102,7 @@ class BookWidget extends StatelessWidget {
             ),
             Column(
               children: [
-                const StarRating(calification: 4),
+                StarRating(calification: story.rate),
                 const SizedBox(
                   height: 3,
                 ),
