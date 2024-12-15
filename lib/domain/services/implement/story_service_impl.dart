@@ -164,7 +164,8 @@ class StoryServiceImpl implements IStoryService {
     List<ChapterDto> chaptersDto = await Future.wait(
         chapters.map((chapter) => chapterService.convertToChapterDto(chapter)));
 
-    final author = await appUserService.getAppUserById(story?.authorUid ?? '');
+    final author =
+        await appUserService.getAppUserByAuthUserUid(story?.authorUid ?? '');
     final authorName = author?.name ?? '';
 
     return HomeStoryDto(

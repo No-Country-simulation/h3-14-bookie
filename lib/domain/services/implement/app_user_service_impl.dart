@@ -35,17 +35,33 @@ class AppUserServiceImpl implements IAppUserService {
   @override
   Future<AppUser?> getAppUserById(String uid) async {
     final doc = await _appUserRef.doc(uid).get() as DocumentSnapshot<AppUser>;
-    return doc.data();
+    if (doc.data() == null) {
+      throw StateError('AppUser data is null');
+    }
+    final appUser = doc.data();
+    if (appUser == null) {
+      throw StateError('AppUser data is null');
+    }
+    return appUser;
   }
 
   @override
   Future<AppUser?> getAppUserByAuthUserUid(String authUserUid) async {
     final docs =
         await _appUserRef.where('authUserUid', isEqualTo: authUserUid).get();
-    return docs.docs.map((doc) {
-      final appUser = (doc as DocumentSnapshot<AppUser>).data();
+    if (docs.docs.isEmpty) {
+      throw StateError('AppUser not found');
+    }
+    try {
+      final appUser = docs.docs.first.data() as AppUser?;
+      if (appUser == null) {
+        throw StateError('AppUser data is null');
+      }
       return appUser;
-    }).first;
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 
   @override
