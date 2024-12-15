@@ -26,6 +26,10 @@ interface class IStoryService {
     throw UnimplementedError();
   }
 
+  Future<bool> isThisAReading(String storyUid) {
+    throw UnimplementedError();
+  }
+
   Future<String> createStory(StoryDto storyDto) async {
     return '';
   }

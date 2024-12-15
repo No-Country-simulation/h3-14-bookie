@@ -161,6 +161,17 @@ class StoryServiceImpl implements IStoryService {
   }
 
   @override
+  Future<bool> isThisAReading(String storyUid) async {
+    final appUserUid = FirebaseAuth.instance.currentUser?.uid;
+    if (appUserUid == null) {
+      return false;
+    }
+    final appUser = await appUserService.getAppUserByAuthUserUid(appUserUid);
+    final readings = appUser?.readings ?? [];
+    return readings.any((reading) => reading.storyId == storyUid);
+  }
+
+  @override
   Future<Story> updateStory(String storyUid, Story updatedStory) async {
     await _storyRef.doc(storyUid).update(updatedStory.toFirestore());
     return updatedStory;

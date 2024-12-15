@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:h3_14_bookie/domain/model/app_user.dart';
 import 'package:h3_14_bookie/domain/model/dto/user_dto.dart';
-import 'package:h3_14_bookie/domain/model/reading.dart';
 import 'package:h3_14_bookie/domain/model/writing.dart';
 import 'package:h3_14_bookie/domain/services/app_user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
