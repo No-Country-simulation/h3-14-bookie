@@ -76,8 +76,14 @@ class ReadingServiceImpl implements IReadingService {
     }
     final readings = appUser.readings ?? [];
 
-    final firstChapterUid = await chapterService
-        .getChapterUidByStoryUidAndChapterNumber(storyId, 1);
+    String firstChapterUid = "";
+    try {
+      firstChapterUid = await chapterService
+          .getChapterUidByStoryUidAndChapterNumber(storyId, 1);
+    } catch (e) {
+      throw Exception('Chapter 1 not found');
+    }
+
     final newReading = Reading(
         storyId: storyId,
         inLibrary: inLibrary,
