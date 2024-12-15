@@ -35,25 +35,56 @@ class StoryServiceImpl implements IStoryService {
   }
 
   @override
-  Future<List<Story>> getStoriesWithFilter(
-      String filter, CategoryDto? category) async {
-    var stories = await getStories();
-    if (category != null) {
-      stories = stories
-          .where((story) =>
-              story.categories?.any((c) => c.name == category.name) ?? false)
-          .toList();
-    }
-
-    return stories.where((story) {
-      final containsInTitle =
-          story.title?.toLowerCase().contains(filter.toLowerCase()) ?? false;
-      final containsInLabels = story.labels?.any(
-              (label) => label.toLowerCase().contains(filter.toLowerCase())) ??
-          false;
-      return containsInTitle || containsInLabels;
-    }).toList();
+  Future<List<StoryResponseDto>> getStoriesWithFilter(
+    String filter, CategoryDto? category) async {
+  // Obtener las historias filtradas como antes
+  var stories = await getStories();
+  if (category != null) {
+    stories = stories
+        .where((story) => story.categories!.any((c) => c.name == category.name))
+        .toList();
   }
+
+  stories = stories.where((story) {
+    final containsInTitle =
+        story.title?.toLowerCase().contains(filter.toLowerCase()) ?? false;
+    final containsInLabels = story.labels?.any(
+            (label) => label.toLowerCase().contains(filter.toLowerCase())) ??
+        false;
+    return containsInTitle || containsInLabels;
+  }).toList();
+
+  // Convertir las historias filtradas a StoryResponseDto
+  final storiesResponseDtos = await Future.wait(
+    stories.map((story) async {
+      final docRef = _storyRef.where('title', isEqualTo: story.title).limit(1);
+      final querySnapshot = await docRef.get();
+      final storyUid = querySnapshot.docs.first.id;
+      return await convertToStoryResponseDto(storyUid, story);
+    }),
+  );
+
+  return storiesResponseDtos;
+}
+  // Future<List<Story>> getStoriesWithFilter(
+  //     String filter, CategoryDto? category) async {
+  //   var stories = await getStories();
+  //   if (category != null) {
+  //     stories = stories
+  //         .where(
+  //             (story) => story.categories.any((c) => c.name == category.name))
+  //         .toList();
+  //   }
+
+  //   return stories.where((story) {
+  //     final containsInTitle =
+  //         story.title?.toLowerCase().contains(filter.toLowerCase()) ?? false;
+  //     final containsInLabels = story.labels?.any(
+  //             (label) => label.toLowerCase().contains(filter.toLowerCase())) ??
+  //         false;
+  //     return containsInTitle || containsInLabels;
+  //   }).toList();
+  // }
 
   @override
   Future<List<StoryResponseDto>> getStoriesResponseByStoryUid(

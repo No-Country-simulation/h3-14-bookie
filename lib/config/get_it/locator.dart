@@ -8,6 +8,8 @@ import 'package:h3_14_bookie/domain/services/implement/story_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/implement/writing_service_impl.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/edit_view/edit_view_bloc.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/read_view/read_view_bloc.dart';
+import 'package:h3_14_bookie/presentation/blocs/home_view/home_view_bloc.dart';
 
 GetIt locator = GetIt.instance;
 
@@ -24,4 +26,8 @@ void setupLocator() {
     writingService: WritingServiceImpl(),
     appUserService: AppUserServiceImpl()
   ));
+  locator.registerSingleton(HomeViewBloc(
+    storyService: StoryServiceImpl()
+  ));
+  locator.registerSingleton(ReadViewBloc());
 }

@@ -40,11 +40,15 @@ class SelectChapterDrawer extends StatelessWidget {
                       ),
                       itemBuilder: (context, index) {
                         final title = chapters[index].titleChapter;
+                        final number = chapters[index].number;
                         return OutlinedButton(
                           onPressed: () {
                             // Acción al seleccionar un capítulo
+                            context.read<BookCreateBloc>().add(ChangeChapterActive(number: number));
                           },
                           style: OutlinedButton.styleFrom(
+                            backgroundColor: state.chapterActive.number == number ? AppColors.primaryColor : null,
+                            foregroundColor: state.chapterActive.number == number ? AppColors.background : null,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16.0),
                             ),

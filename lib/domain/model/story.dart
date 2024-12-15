@@ -40,7 +40,11 @@ class Story {
             ? List<Category>.from(data?['categories']
                 .map((category) => Category(name: category['name'])))
             : [],
-        rate: data?['rate'],
+        rate: data?['rate'] != null 
+        ? (data?['rate'] is int 
+            ? (data?['rate'] as int).toDouble() 
+            : data?['rate'] as double)
+        : null,
         totalReadings: data?['totalReadings'],
         storyTimeInMin: data?['storyTimeInMin'],
         chaptersUid: data?['chaptersUid'] is Iterable

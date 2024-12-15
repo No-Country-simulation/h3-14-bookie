@@ -71,7 +71,7 @@ class EditView extends StatelessWidget {
                         title: info.title,
                         isDraft: response.isDraft,
                         synopsis: info.synopsis,
-                        rate: info.rate,
+                        rate: info.rate.toInt(),
                         readings: info.readings,
                         cover: info.cover,
                       );
