@@ -1,26 +1,22 @@
 import 'package:h3_14_bookie/domain/model/Location.dart';
 import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
-import 'package:h3_14_bookie/domain/model/dto/chapter_story_response_dto.dart';
-import 'package:h3_14_bookie/domain/model/reading.dart';
-import 'package:h3_14_bookie/domain/model/story.dart';
 import 'package:h3_14_bookie/domain/services/chapter_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:h3_14_bookie/domain/services/implement/story_service_impl.dart';
-import 'package:h3_14_bookie/domain/services/story_service.dart';
-
-const String CHAPTER_COLLECTION_REF = "chapter";
+import 'package:h3_14_bookie/constants/collection_references.dart';
 
 class ChapterServiceImpl implements IChapterService {
   final db = FirebaseFirestore.instance;
-  final IStoryService _storyService = StoryServiceImpl();
 
   late final CollectionReference _chapterRef;
 
   ChapterServiceImpl() {
-    _chapterRef = db.collection(CHAPTER_COLLECTION_REF).withConverter<Chapter>(
-        fromFirestore: (snapshots, _) => Chapter.fromFirestore(snapshots, _),
-        toFirestore: (chapter, _) => chapter.toFirestore());
+    _chapterRef = db
+        .collection(CollectionReferences.CHAPTER_COLLECTION_REF)
+        .withConverter<Chapter>(
+            fromFirestore: (snapshots, _) =>
+                Chapter.fromFirestore(snapshots, _),
+            toFirestore: (chapter, _) => chapter.toFirestore());
   }
 
   @override
@@ -80,71 +76,12 @@ class ChapterServiceImpl implements IChapterService {
   }
 
   @override
-  Future<List<ChapterStoryResponseDto>> getChaptersStory(
-      String storyUid) async {
-    Story? story = await _storyService.getStoryById(storyUid);
-    if (story == null) {
-      throw Exception('Story not found');
-    }
-    List<Chapter> chapters = await getChaptersByStoryUid(storyUid);
-    if (chapters.isEmpty) {
-      return [];
-    }
-    List<ChapterStoryResponseDto> chaptersStoryResponseDto = [];
-    for (Chapter chapter in chapters) {
-      String chapterUid = await getChapterUidByStoryUidAndChapterNumber(
-          storyUid, chapter.number ?? 0);
-      chaptersStoryResponseDto.add(
-          await convertToChapterStoryResponseDto(chapter, story, chapterUid));
-    }
-    return chaptersStoryResponseDto;
-  }
-
-  @override
-  Future<List<ChapterStoryResponseDto>> getAllChaptersStory() async {
-    List<String> storiesUid = await _storyService.getAllStoriesUid();
-    List<ChapterStoryResponseDto> chaptersStoryResponseDto = [];
-    try {
-      for (String storyUid in storiesUid) {
-        List<ChapterStoryResponseDto> chapters =
-            await getChaptersStory(storyUid);
-        chaptersStoryResponseDto.addAll(chapters);
-      }
-    } catch (e) {
-      print("Error: $e");
-      throw Exception('Error getting chapters');
-    }
-    return chaptersStoryResponseDto;
-  }
-
-  Future<ChapterStoryResponseDto> convertToChapterStoryResponseDto(
-      Chapter chapter, Story story, String chapterUid) async {
-    bool isReading = await _storyService.isThisAReading(chapter.storyUid);
-
-    return ChapterStoryResponseDto(
-      chapterUid: chapterUid,
-      storyUid: chapter.storyUid,
-      title: story.title ?? '',
-      cover: story.cover ?? '',
-      synopsis: story.synopsis ?? '',
-      categories:
-          story.categories?.map((category) => category.name ?? '').toList() ??
-              [],
-      rate: story.rate ?? 0.0,
-      totalReadings: story.totalReadings ?? 0,
-      isReading: isReading,
-      chapterNumber: chapter.number ?? 0,
-      chapterTitle: chapter.title ?? '',
-      placeName: chapter.location?.place ?? '',
-      latitude: chapter.location?.lat ?? 0.0,
-      longitude: chapter.location?.long ?? 0.0,
-    );
-  }
-
-  @override
   Future<ChapterDto> convertToChapterDto(Chapter chapter) async {
+    String chapterUid = await getChapterUidByStoryUidAndChapterNumber(
+        chapter.storyUid, chapter.number ?? 0);
     return ChapterDto(
       storyUid: chapter.storyUid,
+      chapterUid: chapterUid,
       title: chapter.title ?? '',
       pages: chapter.pages ?? [],
       placeName: chapter.location?.place ?? '',
@@ -157,7 +94,7 @@ class ChapterServiceImpl implements IChapterService {
   /// Return the chapter uid if success
   /// Return error message if failed
   @override
-  Future<String> createChapter(ChapterDto chapterDto) async {
+  Future<String> createChapter(ChapterDto chapterDto, int chapterNumber) async {
     Location location = Location(
       place: chapterDto.placeName,
       lat: chapterDto.lat,
@@ -169,31 +106,13 @@ class ChapterServiceImpl implements IChapterService {
       pages: chapterDto.pages,
       isCompleted: false,
       location: location,
-      number: await asignChapterNumber(chapterDto.storyUid),
+      number: chapterNumber,
     );
 
     final docRef = await _chapterRef.add(chapter);
     final docSnap = await docRef.get() as DocumentSnapshot<Chapter>;
 
-    bool success =
-        await _storyService.addChapterToStory(chapterDto.storyUid, docSnap.id);
-
-    if (!success) {
-      return 'Failed to add chapter to story';
-    }
-
     return docSnap.id;
-  }
-
-  Future<int> asignChapterNumber(String storyUid) async {
-    Story? story = await _storyService.getStoryById(storyUid);
-    if (story == null) {
-      return 0;
-    }
-    if (story.chaptersUid == null) {
-      return 1;
-    }
-    return story.chaptersUid!.length + 1;
   }
 
   @override
@@ -204,5 +123,15 @@ class ChapterServiceImpl implements IChapterService {
       await _chapterRef.doc(doc.id).delete();
     }
     return true;
+  }
+
+  @override
+  Future<bool> deleteChapter(String chapterUid) async {
+    try {
+      await _chapterRef.doc(chapterUid).delete();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

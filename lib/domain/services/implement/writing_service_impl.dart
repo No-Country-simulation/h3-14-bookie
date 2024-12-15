@@ -10,8 +10,6 @@ import 'package:h3_14_bookie/domain/services/story_service.dart';
 import 'package:h3_14_bookie/domain/services/writing_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-const String WRITING_COLLECTION_REF = "writings";
-
 class WritingServiceImpl implements IWritingService {
   final db = FirebaseFirestore.instance;
   final IAppUserService appUserService = AppUserServiceImpl();
