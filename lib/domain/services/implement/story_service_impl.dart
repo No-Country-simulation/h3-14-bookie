@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:h3_14_bookie/domain/model/app_user.dart';
 import 'package:h3_14_bookie/domain/model/category.dart';
 import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
@@ -106,7 +105,8 @@ class StoryServiceImpl implements IStoryService {
             _storyRef.where('title', isEqualTo: story.title).limit(1);
         final querySnapshot = await docRef.get();
         final storyUid = querySnapshot.docs.first.id;
-        return await convertToStoryResponseDto(storyUid, story);
+        final inLibrary = await isThisInLibrary(storyUid);
+        return await convertToStoryResponseDto(storyUid, story, inLibrary);
       }),
     );
 
@@ -134,20 +134,20 @@ class StoryServiceImpl implements IStoryService {
 
   @override
   Future<List<StoryResponseDto>> getStoriesResponseByStoryUid(
-      List<String> storiesUid) async {
+      List<String> storiesUid, bool? inLibrary) async {
     final storiesResponseDtos =
         await Future.wait(storiesUid.map((storyUid) async {
       final story = await getStoryById(storyUid);
       if (story == null) {
         throw Exception('Story not found');
       }
-      return convertToStoryResponseDto(storyUid, story);
+      return convertToStoryResponseDto(storyUid, story, inLibrary);
     }).toList());
     return storiesResponseDtos;
   }
 
   Future<StoryResponseDto> convertToStoryResponseDto(
-      String storyUid, Story story) async {
+      String storyUid, Story story, bool? inLibrary) async {
     List<String> categoriesUid = await Future.wait(story.categories?.map(
             (category) =>
                 categoryService.getCategoryUidByName(category.name ?? '')) ??
@@ -166,7 +166,8 @@ class StoryServiceImpl implements IStoryService {
         story.rate ?? 5.0,
         story.totalReadings ?? 0,
         story.storyTimeInMin ?? 0,
-        story.chaptersUid?.toList() ?? []);
+        story.chaptersUid?.toList() ?? [],
+        inLibrary);
     return storyResponseDto;
   }
 
@@ -223,6 +224,18 @@ class StoryServiceImpl implements IStoryService {
     final appUser = await appUserService.getAppUserByAuthUserUid(appUserUid);
     final readings = appUser?.readings ?? [];
     return readings.any((reading) => reading.storyId == storyUid);
+  }
+
+  Future<bool> isThisInLibrary(String storyUid) async {
+    final appUserUid = FirebaseAuth.instance.currentUser?.uid;
+    if (appUserUid == null) {
+      return false;
+    }
+    final appUser = await appUserService.getAppUserByAuthUserUid(appUserUid);
+    final readings = appUser?.readings ?? [];
+    final reading =
+        readings.firstWhere((reading) => reading.storyId == storyUid);
+    return reading.inLibrary ?? false;
   }
 
   @override

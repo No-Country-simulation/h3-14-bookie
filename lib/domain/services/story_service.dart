@@ -21,7 +21,7 @@ interface class IStoryService {
   }
 
   Future<List<StoryResponseDto>> getStoriesResponseByStoryUid(
-      List<String> storiesUid) async {
+      List<String> storiesUid, bool? inLibrary) async {
     return [];
   }
 
