@@ -27,7 +27,7 @@ class FavoriteViewBloc extends Bloc<FavoriteViewEvent, FavoriteViewState> {
       emit(state.copyWith(
         loading: true,
       ));
-      final list = await readingService.getUserReadings(true);
+      final list = await readingService.getUserReadingsResponseDto(true);
       final newList = list.map((r) => BookFavoriteEntity(reading: r, isFavorite: true)).toList();
       emit(state.copyWith(
         listFavorites: newList,

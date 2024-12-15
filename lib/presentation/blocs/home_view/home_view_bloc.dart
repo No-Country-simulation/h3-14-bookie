@@ -43,7 +43,7 @@ class HomeViewBloc extends Bloc<HomeViewEvent, HomeViewState> {
         isLoading: true,
       ));
       final list = await storyService.getStoriesWithFilter(event.filter, event.category);
-      final newList = list.map((s) => BookNearEntity(story: s)).toList();
+      final newList = list.map((s) => BookNearEntity(story: s, isFavorite: s.inLibrary ?? false)).toList();
       emit(state.copyWith(
         stories: newList,
         isLoading: false

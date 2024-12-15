@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:h3_14_bookie/domain/model/reading.dart';
+import 'package:h3_14_bookie/domain/model/dto/reading_response_dto.dart';
 
 class BookFavoriteEntity extends Equatable{
-  final Reading reading;
+  final ReadingResponseDto reading;
   final bool isFavorite;
   const BookFavoriteEntity({
     required this.reading,

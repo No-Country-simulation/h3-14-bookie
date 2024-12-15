@@ -41,9 +41,9 @@ class BookReadWidget extends StatelessWidget {
             ),
             const SizedBox(height: 10,),
             Text('Titulo del libro', style: textStyle.bodyLarge!.copyWith(fontWeight: FontWeight.w700),),
-            Text('Inicio de sinipsis del libro mas largo super largo largo',
+            Text('Inicio de sinopsis del libro mas largo super largo largo',
               style: textStyle.labelLarge!.copyWith(fontWeight: FontWeight.w400),
-              overflow: TextOverflow.ellipsis, maxLines: 2,),
+              overflow: TextOverflow.ellipsis, maxLines: 1,),
             const SizedBox(height: 7,),
             LinearProgressIndicator(
               value: 0.4,

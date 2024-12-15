@@ -98,7 +98,7 @@ class FavoritesView extends StatelessWidget {
                     return BookWidget(
                       isFavorite: true,
                       story: StoryResponseDto(
-                          '', '', '', '', '', [], [], 0, 0, 0, []),
+                          story.storyId, story.title??'(Título)', '', story.cover??'', story.synopsis??'', [], [], 0, 0, 0, [], true),
                       onFavorite: () {
                         context.read<FavoriteViewBloc>().add(ChangeFavoriteStoryFavorites(index: index));
                       },

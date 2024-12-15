@@ -33,7 +33,7 @@ class EditView extends StatelessWidget {
                 segments: const <ButtonSegment<FilterBook>>[
                   ButtonSegment(
                     value: FilterBook.all,
-                    label: Text('Todas'),
+                    label: Text('Todas', style: TextStyle(),),
                   ),
                   ButtonSegment(
                     value: FilterBook.drafts,
@@ -64,7 +64,7 @@ class EditView extends StatelessWidget {
                 : state.stories.isEmpty
                   ? const Center(
                     child: Text(
-                      'Compienta a crear una historia.\n Procisona sobre (+)',
+                      'Apun no tienes histoiras. ¡Empieza ahora!\nToca el botón + para crear tu primera historia.',
                       textAlign: TextAlign.center,),)
                   : ListView.separated(
                     itemBuilder: (context, index) {

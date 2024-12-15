@@ -89,11 +89,11 @@ class BookWidget extends StatelessWidget {
                   maxLines: 1,
                 ),
                 Text(
-                  story.synopsis.isEmpty ? '(Sinipsis del libro)' : story.synopsis,
+                  story.synopsis.isEmpty ? '(Sinópsis del libro)' : story.synopsis,
                   style: textStyle.labelLarge!
                       .copyWith(fontWeight: FontWeight.w400),
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
+                  maxLines: 1,
                 ),
                 const SizedBox(
                   height: 3,

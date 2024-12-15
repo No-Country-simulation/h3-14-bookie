@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/config/get_it/locator.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/favorite_view/favorite_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/blocs/home_view/home_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
@@ -70,6 +71,7 @@ class HomeView extends StatelessWidget {
                                 child: BookWidget(
                                   onFavorite: () {
                                     context.read<HomeViewBloc>().add(ChangeFavoriteStoryHome(index: index));
+                                    context.read<FavoriteViewBloc>().add(const GetListFavorites());
                                   },
                                   story: state.stories[index].story,
                                   isFavorite: state.stories[index].isFavorite,

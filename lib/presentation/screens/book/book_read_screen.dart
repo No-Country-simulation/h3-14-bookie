@@ -70,7 +70,10 @@ class BookReadScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     child: Stack(
                       children: [
-                        InfoRouteMap(),
+                        InfoRouteMap(
+                          centerOnUser: true,
+                          positions: state.chapterList.map((c)=>LatLng(c.lat, c.long)).toList(),
+                        ),
                         if (blockContent)
                           const BlockContent(
                             factorHeight: 0.4,
