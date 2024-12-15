@@ -10,6 +10,7 @@ class StoryResponseDto {
   final int readings;
   final int storyTimeInMin;
   final List<String> chaptersUid;
+  final bool? inLibrary;
 
   StoryResponseDto(
       this.storyUid,
@@ -22,5 +23,6 @@ class StoryResponseDto {
       this.rate,
       this.readings,
       this.storyTimeInMin,
-      this.chaptersUid);
+      this.chaptersUid,
+      this.inLibrary);
 }

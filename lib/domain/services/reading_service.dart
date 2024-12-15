@@ -1,7 +1,13 @@
+import 'package:h3_14_bookie/domain/model/dto/reading_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/reading.dart';
 
 interface class IReadingService {
-  Future<List<Reading>> getUserReadings(bool inLibrary) async {
+  Future<List<Reading>> getUserReadings(bool? inLibrary) async {
+    throw UnimplementedError();
+  }
+
+  Future<List<ReadingResponseDto>> getUserReadingsResponseDto(
+      bool? inLibrary) async {
     throw UnimplementedError();
   }
 

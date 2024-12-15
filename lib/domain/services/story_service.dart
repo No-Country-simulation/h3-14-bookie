@@ -21,7 +21,7 @@ interface class IStoryService {
   }
 
   Future<List<StoryResponseDto>> getStoriesResponseByStoryUid(
-      List<String> storiesUid) async {
+      List<String> storiesUid, bool? inLibrary) async {
     return [];
   }
 
@@ -30,6 +30,10 @@ interface class IStoryService {
   }
 
   Future<int> getStoryTotalReadings(String storyUid) {
+    throw UnimplementedError();
+  }
+
+  Future<List<Story>> getPublishedStories() {
     throw UnimplementedError();
   }
 

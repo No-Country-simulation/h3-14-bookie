@@ -36,7 +36,7 @@ class WritingServiceImpl implements IWritingService {
         : writings;
 
     final storiesResponseDtos = await storyService.getStoriesResponseByStoryUid(
-        filteredWritings.map((writing) => writing.storyId!).toList());
+        filteredWritings.map((writing) => writing.storyId!).toList(), null);
 
     final writingDtos =
         await Future.wait(storiesResponseDtos.map((story) async {
