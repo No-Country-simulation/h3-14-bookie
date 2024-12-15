@@ -3,18 +3,52 @@ import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/presentation/screens/login/login.dart';
 import 'package:h3_14_bookie/presentation/screens/signup/signup.dart';
 
-class InitScreen extends StatelessWidget {
+class InitScreen extends StatefulWidget {
   const InitScreen({super.key});
   static const String name = 'InitScreen';
 
   @override
+  State<InitScreen> createState() => _InitScreenState();
+}
+
+class _InitScreenState extends State<InitScreen> {
+  late Image _backgroundImage;
+  bool _isLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _backgroundImage = Image.asset('assets/images/back_img.png');
+    _backgroundImage.image.resolve(const ImageConfiguration()).addListener(
+      ImageStreamListener((info, synchronousCall) {
+        if (mounted) {
+          setState(() {
+            _isLoaded = true;
+          });
+        }
+      }),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (!_isLoaded) {
+      return Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/splash.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/back_img.png'),
+            image: _backgroundImage.image,
             fit: BoxFit.cover,
           ),
         ),
@@ -25,7 +59,7 @@ class InitScreen extends StatelessWidget {
               children: [
                 const SizedBox(height: 110),
                 Image.asset(
-                  'assets/images/BOOKIE_name.png',
+                  'assets/images/Iconos-png/BOOKIE.png',
                   height: 70,
                 ),
                 const Spacer(flex: 2),
