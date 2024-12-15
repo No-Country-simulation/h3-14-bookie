@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
 
 class StarRating extends StatelessWidget {
-  final int calification;
+  final double calification;
   const StarRating({super.key, required this.calification});
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,9 @@ class StarRating extends StatelessWidget {
             },
           ),
         ),
-        const SizedBox(width: 5,),
+        const SizedBox(
+          width: 5,
+        ),
         Text('$calification')
       ],
     );

@@ -13,7 +13,7 @@ class BookItemWidget extends StatelessWidget {
   final bool isDraft;
   final String title;
   final String synopsis;
-  final int rate;
+  final double rate;
   final int readings;
   final String cover;
   const BookItemWidget(
@@ -89,11 +89,10 @@ class BookItemWidget extends StatelessWidget {
               //   borderRadius: BorderRadius.circular(10)
               // ),
               onSelected: (BookItemMenuEnum item) {
-                if(BookItemMenuEnum.unposting == item || BookItemMenuEnum.posting == item){
-                  context.read<EditViewBloc>().add(ChangeStatusBook(writing: Writing(
-                    isDraft: !isDraft,
-                    storyId: id
-                  )));
+                if (BookItemMenuEnum.unposting == item ||
+                    BookItemMenuEnum.posting == item) {
+                  context.read<EditViewBloc>().add(ChangeStatusBook(
+                      writing: Writing(isDraft: !isDraft, storyId: id)));
                 }
               },
               itemBuilder: (BuildContext context) =>

@@ -24,10 +24,11 @@ class Reading {
           ? List.from(data?['readingChaptersUids'])
           : null,
       inLibrary: data?['inLibrary'],
-      lastPageInChapterReaded:
-          data?['lastPageInChapterReaded'] is Map<String, int>
-              ? Map.from(data?['lastPageInChapterReaded'])
-              : null,
+      lastPageInChapterReaded: data?['lastPageInChapterReaded'] != null
+          ? (data?['lastPageInChapterReaded'] as Map).map(
+              (key, value) => MapEntry(key.toString(), value as int),
+            )
+          : null,
     );
   }
 
@@ -38,10 +39,11 @@ class Reading {
           ? List.from(data['readingChaptersUids'])
           : null,
       inLibrary: data['inLibrary'],
-      lastPageInChapterReaded:
-          data['lastPageInChapterReaded'] is Map<String, int>
-              ? Map.from(data['lastPageInChapterReaded'])
-              : null,
+      lastPageInChapterReaded: data['lastPageInChapterReaded'] != null
+          ? (data['lastPageInChapterReaded'] as Map).map(
+              (key, value) => MapEntry(key.toString(), value as int),
+            )
+          : null,
     );
   }
 
