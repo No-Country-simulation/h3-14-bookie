@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
+import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
 class BookCardWidget extends StatelessWidget {
   final String imageUrl;
@@ -8,6 +10,10 @@ class BookCardWidget extends StatelessWidget {
   final List<String> categories;
   final double rating;
   final int reads;
+  final String placeChapterName;
+  final String titleChapterName;
+  final int numberChapter;
+  final String storyId;
 
   const BookCardWidget({
     super.key,
@@ -17,6 +23,10 @@ class BookCardWidget extends StatelessWidget {
     required this.categories,
     required this.rating,
     required this.reads,
+    required this.placeChapterName,
+    required this.titleChapterName,
+    required this.numberChapter,
+    required this.storyId,
   });
 
   @override
@@ -75,16 +85,21 @@ class BookCardWidget extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 5),
                     Text(
                       synopsis,
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
-                      maxLines: 3,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    const SizedBox(height: 5),
+                    IconLabelWidget(label: placeChapterName, icon: Icons.place_outlined),
+                    const SizedBox(height: 3),
+                    IconLabelWidget(label: 'Capítulo $numberChapter: $titleChapterName',
+                    icon: Icons.list),
                   ],
                 ),
               ),
@@ -95,11 +110,12 @@ class BookCardWidget extends StatelessWidget {
             spacing: 8,
             children: categories.map((category) {
               return Chip(
-                label: Text(category, style: TextStyle(color: AppColors.primaryColor),),
+                label: Text(category, style: const TextStyle(color: AppColors.primaryColor),),
                 backgroundColor:  AppColors.background,
-                side: BorderSide(
-                  color: AppColors.primaryColor
+                side: const BorderSide(
+                  color: AppColors.primaryColor,
                 ),
+                shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(16), ),
               );
             }).toList(),
           ),
@@ -107,23 +123,7 @@ class BookCardWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    rating.toStringAsFixed(1),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+              StarRating(calification: rating),
               Row(
                 children: [
                   const Icon(
@@ -139,6 +139,15 @@ class BookCardWidget extends StatelessWidget {
                       color: Colors.grey,
                     ),
                   ),
+                  const SizedBox(width: 4),
+                  IconButton.filled(
+                    onPressed: (){
+                       context.push('/home/0/book/$storyId');
+                    },
+                    style: const ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(AppColors.primaryColor)
+                    ),
+                    icon: const Icon(Icons.arrow_forward))
                 ],
               ),
             ],

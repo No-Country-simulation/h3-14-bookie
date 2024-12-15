@@ -19,5 +19,5 @@ class FavoriteViewState extends Equatable {
   }
   
   @override
-  List<Object> get props => [listFavorites];
+  List<Object> get props => [listFavorites, loading];
 }

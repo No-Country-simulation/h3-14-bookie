@@ -93,7 +93,7 @@ class BookReadScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(16),
                               child: Stack(
                                 children: [
-                                  CustomMapInfoWidget(
+                                  InfoRouteMap(
                                   ),
                                   if (blockContent)
                                     const BlockContent(

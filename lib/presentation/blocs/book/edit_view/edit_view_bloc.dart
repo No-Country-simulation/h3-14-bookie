@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:h3_14_bookie/config/helpers/enums/book_enum.dart';
@@ -76,17 +77,17 @@ class EditViewBloc extends Bloc<EditViewEvent, EditViewState> {
 
   void _onDeleteCreateBook(DeleteCreateBook event, Emitter<EditViewState> emit) async {
     try{
-    //   emit(state.copyWith(
-    //     isLoading: true,
-    //   ));
-    //   await appUserService.updateUserWriting(event.writing);
-    //   add(GetStories(
-    //   draftOrPublish: state.filterSelected == FilterBook.all
-    //     ? null
-    //     : state.filterSelected == FilterBook.drafts
-    //       ? 'draft'
-    //       : 'publish'
-    // ));
+      emit(state.copyWith(
+        isLoading: true,
+      ));
+      await appUserService.deleteUserWriting(FirebaseAuth.instance.currentUser!.uid,event.id);
+      add(GetStories(
+        draftOrPublish: state.filterSelected == FilterBook.all
+          ? null
+          : state.filterSelected == FilterBook.drafts
+            ? 'draft'
+            : 'publish'
+      ));
     }
     catch(e) {
       Fluttertoast.showToast(msg: '$e');

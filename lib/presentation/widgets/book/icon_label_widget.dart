@@ -28,7 +28,7 @@ class IconLabelWidget extends StatelessWidget {
       children: [
         Icon(icon, size: iconSize, color: AppColors.primaryColor,),
         SizedBox(width: spaceWith ?? 5,),
-        Text(label, style: labelStyle,)
+        Text(label, style: labelStyle, maxLines: 1, overflow: TextOverflow.ellipsis,)
       ],
     );
   }

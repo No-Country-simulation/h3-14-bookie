@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
-import 'package:h3_14_bookie/presentation/blocs/book/bloc/favorite_view_bloc.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/favorite_view/favorite_view_bloc.dart';
 
 import 'package:h3_14_bookie/presentation/widgets/getStructure/get%20structure.dart';
 import 'package:h3_14_bookie/presentation/widgets/home/book_widget.dart';

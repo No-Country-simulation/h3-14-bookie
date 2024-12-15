@@ -207,7 +207,7 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                                 borderRadius: BorderRadius.circular(16),
                                 child: Stack(
                                   children: [
-                                    CustomMapInfoWidget(),
+                                    InfoRouteMap(),
                                     if (blockContent)
                                       GestureDetector(
                                         onTap: () async {

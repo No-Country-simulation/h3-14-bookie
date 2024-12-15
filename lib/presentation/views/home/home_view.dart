@@ -43,7 +43,9 @@ class HomeView extends StatelessWidget {
               BlocBuilder<HomeViewBloc, HomeViewState>(
                   builder: (context, state) {
                     return Expanded(
-                      child: GridView.builder(
+                      child: state.isLoading 
+                      ? const Center(child: CircularProgressIndicator(),)
+                      : GridView.builder(
                         // clipBehavior: Clip.none,
                         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         gridDelegate:

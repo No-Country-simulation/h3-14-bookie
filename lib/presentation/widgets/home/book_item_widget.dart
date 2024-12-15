@@ -94,6 +94,9 @@ class BookItemWidget extends StatelessWidget {
                   context.read<EditViewBloc>().add(ChangeStatusBook(
                       writing: Writing(isDraft: !isDraft, storyId: id)));
                 }
+                if(BookItemMenuEnum.delete == item) {
+                  context.read<EditViewBloc>().add(DeleteCreateBook(id: id));
+                }
               },
               itemBuilder: (BuildContext context) =>
                   <PopupMenuEntry<BookItemMenuEnum>>[

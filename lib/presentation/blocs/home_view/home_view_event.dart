@@ -30,3 +30,7 @@ class ChangeFavoriteStoryHome extends HomeViewEvent {
     required this.index
   });
 }
+
+class InitHomeEvent extends HomeViewEvent{
+  const InitHomeEvent();
+}
