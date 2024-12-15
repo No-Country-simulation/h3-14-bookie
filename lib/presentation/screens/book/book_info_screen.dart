@@ -138,7 +138,7 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        StarRating(calification: story.rate!.toInt()),
+                        StarRating(calification: story.rate!),
                         Row(
                           children: [
                             const Icon(Icons.remove_red_eye_outlined),
