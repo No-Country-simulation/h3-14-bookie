@@ -2,14 +2,12 @@ import 'package:h3_14_bookie/domain/model/Location.dart';
 import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_story_response_dto.dart';
-import 'package:h3_14_bookie/domain/model/reading.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
 import 'package:h3_14_bookie/domain/services/chapter_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:h3_14_bookie/domain/services/implement/story_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/story_service.dart';
-
-const String CHAPTER_COLLECTION_REF = "chapter";
+import 'package:h3_14_bookie/constants/collection_references.dart';
 
 class ChapterServiceImpl implements IChapterService {
   final db = FirebaseFirestore.instance;
@@ -18,9 +16,12 @@ class ChapterServiceImpl implements IChapterService {
   late final CollectionReference _chapterRef;
 
   ChapterServiceImpl() {
-    _chapterRef = db.collection(CHAPTER_COLLECTION_REF).withConverter<Chapter>(
-        fromFirestore: (snapshots, _) => Chapter.fromFirestore(snapshots, _),
-        toFirestore: (chapter, _) => chapter.toFirestore());
+    _chapterRef = db
+        .collection(CollectionReferences.CHAPTER_COLLECTION_REF)
+        .withConverter<Chapter>(
+            fromFirestore: (snapshots, _) =>
+                Chapter.fromFirestore(snapshots, _),
+            toFirestore: (chapter, _) => chapter.toFirestore());
   }
 
   @override

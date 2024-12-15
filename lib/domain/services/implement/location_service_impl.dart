@@ -1,8 +1,7 @@
 import 'package:h3_14_bookie/domain/model/location.dart';
 import 'package:h3_14_bookie/domain/services/location_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-const String LOCATION_COLLECTION_REF = "locations";
+import 'package:h3_14_bookie/constants/collection_references.dart';
 
 class LocationServiceImpl implements ILocationService {
   final db = FirebaseFirestore.instance;
@@ -11,7 +10,7 @@ class LocationServiceImpl implements ILocationService {
 
   LocationServiceImpl() {
     _locationRef = db
-        .collection(LOCATION_COLLECTION_REF)
+        .collection(CollectionReferences.LOCATION_COLLECTION_REF)
         .withConverter<Location>(
             fromFirestore: (snapshots, _) =>
                 Location.fromFirestore(snapshots, _),

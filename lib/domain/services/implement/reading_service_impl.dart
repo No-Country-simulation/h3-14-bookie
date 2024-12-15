@@ -10,6 +10,7 @@ import 'package:h3_14_bookie/domain/services/implement/story_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/reading_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:h3_14_bookie/domain/services/story_service.dart';
+import 'package:h3_14_bookie/constants/collection_references.dart';
 
 class ReadingServiceImpl implements IReadingService {
   final db = FirebaseFirestore.instance;
@@ -117,7 +118,7 @@ class ReadingServiceImpl implements IReadingService {
     final readingMaps = readings.map((r) => r.toFirestore()).toList();
 
     final appUserDoc = await db
-        .collection(APP_USER_COLLECTION_REF)
+        .collection(CollectionReferences.APP_USER_COLLECTION_REF)
         .where('authUserUid', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
         .get();
 
@@ -200,7 +201,7 @@ class ReadingServiceImpl implements IReadingService {
     final readingMaps = readings.map((r) => r.toFirestore()).toList();
 
     final appUserDoc = await db
-        .collection(APP_USER_COLLECTION_REF)
+        .collection(CollectionReferences.APP_USER_COLLECTION_REF)
         .where('authUserUid', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
         .get();
     if (appUserDoc.docs.isEmpty) {

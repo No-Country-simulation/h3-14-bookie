@@ -12,9 +12,7 @@ import 'package:h3_14_bookie/domain/services/implement/label_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/label_service.dart';
 import 'package:h3_14_bookie/domain/services/story_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-const String STORY_COLLECTION_REF = "stories";
-const String CHAPTER_COLLECTION_REF = "chapters";
+import 'package:h3_14_bookie/constants/collection_references.dart';
 
 class StoryServiceImpl implements IStoryService {
   final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -25,11 +23,14 @@ class StoryServiceImpl implements IStoryService {
   late final CollectionReference _chapterRef;
 
   StoryServiceImpl() {
-    _storyRef = db.collection(STORY_COLLECTION_REF).withConverter<Story>(
-        fromFirestore: (snapshots, _) => Story.fromFirestore(snapshots, _),
-        toFirestore: (story, _) => story.toFirestore());
+    _storyRef = db
+        .collection(CollectionReferences.STORY_COLLECTION_REF)
+        .withConverter<Story>(
+            fromFirestore: (snapshots, _) => Story.fromFirestore(snapshots, _),
+            toFirestore: (story, _) => story.toFirestore());
 
-    _chapterRef = db.collection(CHAPTER_COLLECTION_REF);
+    _chapterRef = db.collection(
+        CollectionReferences.CHAPTER_COLLECTION_REF); //Only for delete chapters
   }
 
   @override
@@ -243,18 +244,30 @@ class StoryServiceImpl implements IStoryService {
 
   @override
   Future<bool> deleteStory(String storyUid) async {
+    final currentAuthUser = FirebaseAuth.instance.currentUser;
+    if (currentAuthUser == null) {
+      return false;
+    }
+
+    // 1. Eliminar la story del usuario. Si falla o no es writing del usuario, no continuar
     try {
-      // 1. Eliminar referencias en usuarios
+      await appUserService.deleteUserWriting(currentAuthUser.uid, storyUid);
+    } catch (e) {
+      print(e);
+      return false;
+    }
+
+    try {
+      // 2. Eliminar referencias en usuarios
       final users = await appUserService.getAppUsers();
       for (var user in users) {
         await appUserService.deleteUserReading(user.authUserUid!, storyUid);
-        await appUserService.deleteUserWriting(user.authUserUid!, storyUid);
       }
 
-      // 2. Eliminar chapters relacionados
+      // 3. Eliminar chapters relacionados
       await deleteAllChaptersInStory(storyUid);
 
-      // 3. Eliminar la story
+      // 4. Eliminar la story
       await _storyRef.doc(storyUid).delete();
 
       return true;
