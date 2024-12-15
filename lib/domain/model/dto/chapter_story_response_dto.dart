@@ -10,6 +10,9 @@ class ChapterStoryResponseDto {
   final bool isReading;
   final int chapterNumber;
   final String chapterTitle;
+  final String placeName;
+  final double latitude;
+  final double longitude;
 
   ChapterStoryResponseDto({
     required this.chapterUid,
@@ -23,5 +26,8 @@ class ChapterStoryResponseDto {
     required this.isReading,
     required this.chapterNumber,
     required this.chapterTitle,
+    required this.placeName,
+    required this.latitude,
+    required this.longitude,
   });
 }

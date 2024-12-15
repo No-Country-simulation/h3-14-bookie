@@ -37,6 +37,10 @@ interface class IChapterService {
     throw UnimplementedError();
   }
 
+  Future<List<ChapterStoryResponseDto>> getAllChaptersStory() async {
+    throw UnimplementedError();
+  }
+
   Future<ChapterDto> convertToChapterDto(Chapter chapter) async {
     throw UnimplementedError();
   }

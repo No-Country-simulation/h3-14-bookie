@@ -8,6 +8,10 @@ interface class IStoryService {
     return [];
   }
 
+  Future<List<String>> getAllStoriesUid() async {
+    throw UnimplementedError();
+  }
+
   Future<List<Story>> getStoriesWithFilter(
       String filter, CategoryDto? category) async {
     return [];

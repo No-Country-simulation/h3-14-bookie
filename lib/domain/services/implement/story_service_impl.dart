@@ -39,6 +39,12 @@ class StoryServiceImpl implements IStoryService {
   }
 
   @override
+  Future<List<String>> getAllStoriesUid() async {
+    final docs = await _storyRef.get();
+    return docs.docs.map((doc) => doc.id).toList();
+  }
+
+  @override
   Future<List<Story>> getStoriesWithFilter(
       String filter, CategoryDto? category) async {
     var stories = await getStories();
