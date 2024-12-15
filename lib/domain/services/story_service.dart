@@ -33,6 +33,10 @@ interface class IStoryService {
     throw UnimplementedError();
   }
 
+  Future<List<Story>> getPublishedStories() {
+    throw UnimplementedError();
+  }
+
   Future<HomeStoryDto> getHomeStoryDtoByStoryUid(String storyUid) {
     throw UnimplementedError();
   }

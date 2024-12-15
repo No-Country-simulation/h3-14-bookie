@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:h3_14_bookie/domain/model/app_user.dart';
 import 'package:h3_14_bookie/domain/model/category.dart';
 import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
@@ -50,18 +51,46 @@ class StoryServiceImpl implements IStoryService {
   }
 
   @override
+  Future<List<Story>> getPublishedStories() async {
+    final storiesUid = await getAllStoriesUid();
+    final publishedStoriesUids = await Future.wait(
+      storiesUid.map((storyUid) async {
+        final isPublished = await checkIfStoryIsPublished(storyUid);
+        return isPublished ? storyUid : null;
+      }),
+    );
+
+    final stories = await Future.wait(publishedStoriesUids
+        .where((uid) => uid != null)
+        .map((uid) => getStoryById(uid!)));
+
+    return stories.whereType<Story>().toList();
+  }
+
+  Future<bool> checkIfStoryIsPublished(String storyUid) async {
+    final appUsers = await appUserService.getAppUsers();
+    final authors =
+        appUsers.where((appUser) => appUser.writings != null).toList();
+    return authors.any((author) =>
+        author.writings?.any(
+            (writing) => writing.storyId == storyUid && !writing.isDraft!) ??
+        false);
+  }
+
+  @override
   Future<List<StoryResponseDto>> getStoriesWithFilter(
       String filter, CategoryDto? category) async {
     // Obtener las historias filtradas como antes
-    var stories = await getStories();
+    var publishedStories = await getPublishedStories();
+
     if (category != null) {
-      stories = stories
+      publishedStories = publishedStories
           .where(
               (story) => story.categories!.any((c) => c.name == category.name))
           .toList();
     }
 
-    stories = stories.where((story) {
+    publishedStories = publishedStories.where((story) {
       final containsInTitle =
           story.title?.toLowerCase().contains(filter.toLowerCase()) ?? false;
       final containsInLabels = story.labels?.any(
@@ -72,7 +101,7 @@ class StoryServiceImpl implements IStoryService {
 
     // Convertir las historias filtradas a StoryResponseDto
     final storiesResponseDtos = await Future.wait(
-      stories.map((story) async {
+      publishedStories.map((story) async {
         final docRef =
             _storyRef.where('title', isEqualTo: story.title).limit(1);
         final querySnapshot = await docRef.get();
@@ -127,7 +156,8 @@ class StoryServiceImpl implements IStoryService {
     StoryResponseDto storyResponseDto = StoryResponseDto(
         storyUid,
         story.title ?? '',
-        (await appUserService.getAppUserById(story.authorUid ?? ''))?.name ??
+        (await appUserService.getAppUserByAuthUserUid(story.authorUid ?? ''))
+                ?.name ??
             '',
         story.cover ?? '',
         story.synopsis ?? '',
