@@ -36,7 +36,7 @@ class _InitScreenState extends State<InitScreen> {
       return Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/splash.png'),
+            image: AssetImage('assets/images/back_img.png'),
             fit: BoxFit.cover,
           ),
         ),
@@ -57,14 +57,16 @@ class _InitScreenState extends State<InitScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               children: [
-                const SizedBox(height: 110),
+                const SizedBox(height: 115),
                 Image.asset(
                   'assets/images/Iconos-png/BOOKIE.png',
-                  height: 70,
+                  height: 100,
                 ),
                 const Spacer(flex: 2),
                 _socialButtons(),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
+                _divider(),
+                const SizedBox(height: 16),
                 _loginButton(context),
                 const SizedBox(height: 16),
                 _registerButton(context),
@@ -89,7 +91,7 @@ class _InitScreenState extends State<InitScreen> {
             // Implementar login con Google
           },
         ),
-        const SizedBox(width: 24),
+        const SizedBox(width: 47),
         _socialButton(
           'assets/images/facebook_icon.png',
           onTap: () {
@@ -106,18 +108,38 @@ class _InitScreenState extends State<InitScreen> {
       child: Container(
         width: 47,
         height: 47,
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withOpacity(0.8),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: const Offset(0, 4), // Cambiado a 4 para sombra más abajo
             ),
           ],
         ),
         child: Image.asset(iconPath, fit: BoxFit.cover),
+      ),
+    );
+  }
+
+  Widget _divider() {
+    return Container(
+      width: 100,
+      child: Row(
+        children: [
+          Expanded(child: Divider(color: Colors.grey.shade200, thickness: 1)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              'O',
+              style: TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          ),
+          Expanded(child: Divider(color: Colors.grey.shade200, thickness: 1)),
+        ],
       ),
     );
   }

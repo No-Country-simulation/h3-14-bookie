@@ -272,18 +272,21 @@ class _LoginState extends State<Login> {
   }
 
   Widget _divider() {
-    return Row(
-      children: [
-        Expanded(child: Divider(color: Colors.grey.shade200, thickness: 1)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'o',
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+    return Container(
+      width: 100,
+      child: Row(
+        children: [
+          Expanded(child: Divider(color: Colors.grey.shade200, thickness: 1)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'o',
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+            ),
           ),
-        ),
-        Expanded(child: Divider(color: Colors.grey.shade200, thickness: 1)),
-      ],
+          Expanded(child: Divider(color: Colors.grey.shade200, thickness: 1)),
+        ],
+      ),
     );
   }
 }
