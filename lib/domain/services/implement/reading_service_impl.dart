@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:h3_14_bookie/domain/model/app_user.dart';
+import 'package:h3_14_bookie/domain/model/dto/reading_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/reading.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
 import 'package:h3_14_bookie/domain/services/app_user_service.dart';
@@ -35,6 +36,33 @@ class ReadingServiceImpl implements IReadingService {
             ?.where((reading) => reading.inLibrary == inLibrary)
             .toList() ??
         [];
+  }
+
+  @override
+  Future<List<ReadingResponseDto>> getUserReadingsResponseDto(
+      bool? inLibrary) async {
+    final readings = await getUserReadings(null);
+    final Map<Story, String> storiesMap = {};
+    final stories = await Future.wait(readings.map((reading) async {
+      final story = await storyService.getStoryById(reading.storyId!);
+      storiesMap[story!] = reading.storyId!;
+      return story;
+    }));
+    final readingResponseDto = stories.map((story) => ReadingResponseDto(
+        storiesMap[story]!,
+        inLibrary,
+        story.cover!,
+        story.title,
+        story.synopsis,
+        story.rate,
+        story.totalReadings,
+        readings
+            .firstWhere((reading) => reading.storyId == storiesMap[story])
+            .readingChaptersUids,
+        readings
+            .firstWhere((reading) => reading.storyId == storiesMap[story])
+            .lastPageInChapterReaded));
+    return readingResponseDto.toList();
   }
 
   /// Returns the last page number readed in the mapped chapters of the story
