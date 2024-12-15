@@ -1,8 +1,7 @@
 import 'package:h3_14_bookie/domain/model/label.dart';
 import 'package:h3_14_bookie/domain/services/label_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-const String LABEL_COLLECTION_REF = "labels";
+import 'package:h3_14_bookie/constants/collection_references.dart';
 
 class LabelServiceImpl implements ILabelService {
   final db = FirebaseFirestore.instance;
@@ -10,9 +9,11 @@ class LabelServiceImpl implements ILabelService {
   late final CollectionReference _labelRef;
 
   LabelServiceImpl() {
-    _labelRef = db.collection(LABEL_COLLECTION_REF).withConverter<Label>(
-        fromFirestore: (snapshots, _) => Label.fromFirestore(snapshots, _),
-        toFirestore: (label, _) => label.toFirestore());
+    _labelRef = db
+        .collection(CollectionReferences.LABEL_COLLECTION_REF)
+        .withConverter<Label>(
+            fromFirestore: (snapshots, _) => Label.fromFirestore(snapshots, _),
+            toFirestore: (label, _) => label.toFirestore());
   }
 
   @override
