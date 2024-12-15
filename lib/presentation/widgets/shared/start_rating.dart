@@ -23,7 +23,9 @@ class StarRating extends StatelessWidget {
             },
           ),
         ),
-        const SizedBox(width: 5,),
+        const SizedBox(
+          width: 5,
+        ),
         Text('$calification')
       ],
     );

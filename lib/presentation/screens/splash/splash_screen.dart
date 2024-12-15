@@ -20,31 +20,21 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Configuramos el controlador de la animación
     _controller = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
 
-    // Creamos una animación que va de 0.8 a 1.2 y viceversa
-    _animation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.2),
-        weight: 1,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.2, end: 0.8),
-        weight: 1,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 0.8, end: 1.0),
-        weight: 1,
-      ),
-    ]).animate(CurvedAnimation(
+    // Creamos una animación que va de 0.0 a 1.0 con una curva de ease-out
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeInOut,
+      curve: Curves.easeOut,
     ));
 
-    // Iniciamos la animación
-    _controller.repeat();
+    // Iniciamos la animación una sola vez
+    _controller.forward();
     _navigateToHome();
   }
 

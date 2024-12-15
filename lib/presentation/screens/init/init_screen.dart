@@ -26,7 +26,7 @@ class InitScreen extends StatelessWidget {
                 const SizedBox(height: 110),
                 Image.asset(
                   'assets/images/BOOKIE_name.png',
-                  height: 80,
+                  height: 70,
                 ),
                 const Spacer(flex: 2),
                 _socialButtons(),
