@@ -2,10 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Reading {
   final String? storyId;
-  final List<String>? chapterUids;
+  final List<String>? readingChaptersUids;
   final bool? inLibrary;
+  final Map<String, int>?
+      lastPageInChapterReaded; //Stores which page was the last one read in each chapter, mapped by chapterUid
 
-  Reading({this.storyId, this.chapterUids, this.inLibrary});
+  Reading(
+      {this.storyId,
+      this.readingChaptersUids,
+      this.inLibrary,
+      this.lastPageInChapterReaded});
 
   factory Reading.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -14,28 +20,41 @@ class Reading {
     final data = snapshot.data();
     return Reading(
       storyId: data?['storyId'],
-      chapterUids: data?['chapterUids'] is Iterable
-          ? List.from(data?['chapterUids'])
+      readingChaptersUids: data?['readingChaptersUids'] is Iterable
+          ? List.from(data?['readingChaptersUids'])
           : null,
       inLibrary: data?['inLibrary'],
+      lastPageInChapterReaded: data?['lastPageInChapterReaded'] != null
+          ? (data?['lastPageInChapterReaded'] as Map).map(
+              (key, value) => MapEntry(key.toString(), value as int),
+            )
+          : null,
     );
   }
 
   factory Reading.fromMap(Map<String, dynamic> data) {
     return Reading(
       storyId: data['storyId'] ?? '',
-      chapterUids: data['chapterUids'] is Iterable
-          ? List.from(data['chapterUids'])
+      readingChaptersUids: data['readingChaptersUids'] is Iterable
+          ? List.from(data['readingChaptersUids'])
           : null,
       inLibrary: data['inLibrary'],
+      lastPageInChapterReaded: data['lastPageInChapterReaded'] != null
+          ? (data['lastPageInChapterReaded'] as Map).map(
+              (key, value) => MapEntry(key.toString(), value as int),
+            )
+          : null,
     );
   }
 
   Map<String, dynamic> toFirestore() {
     return {
       if (storyId != null) "storyId": storyId,
-      if (chapterUids != null) "chapterUids": chapterUids,
-      if (inLibrary != null) "inLibrary": inLibrary
+      if (readingChaptersUids != null)
+        "readingChaptersUids": readingChaptersUids,
+      if (inLibrary != null) "inLibrary": inLibrary,
+      if (lastPageInChapterReaded != null)
+        "lastPageInChapterReaded": lastPageInChapterReaded,
     };
   }
 }

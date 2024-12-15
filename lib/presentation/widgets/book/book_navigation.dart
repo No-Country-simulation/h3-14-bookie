@@ -26,7 +26,7 @@ class BookNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w500);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         mainAxisAlignment: thirdOption ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
         children: [

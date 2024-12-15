@@ -118,6 +118,7 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                   message:
                       'Utiliza palabras clave para que el lector encuentre tu historia',
                   onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     context.go('/home/3/book-create/tags');
                   },
               ),
@@ -125,6 +126,7 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                 label: 'Categorías',
                 message: 'Seleccione una o más categorias',
                 onTap: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
                   context.go('/home/3/book-create/categories');
                 },
               ),
@@ -212,28 +214,36 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                           backgroundColor: Colors.red);
                           return;
                         }
-                        bookCreateBloc.add(UploadCover(
-                          path: _image!.path, whenComplete: (url) {
-                            bookCreateBloc.add(CreateStoryEvent(
-                              story: StoryDto(
-                                title: titleController.text,
-                                synopsis: synopsisController.text,
-                                categoriesUid: bookCreateBloc.state.categories.where((c)=>c.isActive).map((c)=>c.uid).toList(),
-                                labels: bookCreateBloc.state.targets,
-                                cover: url
-                              )
-                            ));
-                            bookCreateBloc.add(
-                              AddInitialChapterEvent(
-                                title: chapterController.text,
-                                placeName: placeController.text
-                              )
-                            );
-                            context.push('/home/3/book-create/chapter-edit');
-                          }
+                        // bookCreateBloc.add(UploadCover(
+                        //   path: _image!.path, whenComplete: (url) {
+                        //     bookCreateBloc.add(CreateStoryEvent(
+                        //       story: StoryDto(
+                        //         title: titleController.text,
+                        //         synopsis: synopsisController.text,
+                        //         categoriesUid: bookCreateBloc.state.categories.where((c)=>c.isActive).map((c)=>c.uid).toList(),
+                        //         labels: bookCreateBloc.state.targets,
+                        //         cover: url
+                        //       )
+                        //     ));
+                        //     bookCreateBloc.add(
+                        //       AddInitialChapterEvent(
+                        //         title: chapterController.text,
+                        //         placeName: placeController.text
+                        //       )
+                        //     );
+                        //     context.push('/home/3/book-create/chapter-edit');
+                        //   }
+                        // ));
+                        bookCreateBloc.add(SaveStoryEvent(
+                          titleBook: titleController.text,
+                          synopsisBook: synopsisController.text,
+                          pathImage: _image!.path,
+                          titleChapter: chapterController.text,
+                          placeName: placeController.text
                         ));
+                        context.push('/home/3/book-create/chapter-edit');
                       },
-                      child: const Text('Guardar y Continuar'),
+                      child: const Text('Continuar'),
                     ),
                   ),
                 ],

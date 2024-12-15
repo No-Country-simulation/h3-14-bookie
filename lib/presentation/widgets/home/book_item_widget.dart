@@ -13,7 +13,7 @@ class BookItemWidget extends StatelessWidget {
   final bool isDraft;
   final String title;
   final String synopsis;
-  final int rate;
+  final double rate;
   final int readings;
   final String cover;
   const BookItemWidget(

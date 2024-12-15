@@ -8,7 +8,11 @@ interface class IStoryService {
     return [];
   }
 
-  Future<List<Story>> getStoriesWithFilter(
+  Future<List<String>> getAllStoriesUid() async {
+    throw UnimplementedError();
+  }
+
+  Future<List<StoryResponseDto>> getStoriesWithFilter(
       String filter, CategoryDto? category) async {
     return [];
   }
@@ -18,19 +22,43 @@ interface class IStoryService {
     return [];
   }
 
+  Future<Story?> getStoryById(String storyUid) {
+    return Future(() => null);
+  }
+
+  Future<int> getStoryTotalReadings(String storyUid) {
+    throw UnimplementedError();
+  }
+
+  Future<bool> isThisAReading(String storyUid) {
+    throw UnimplementedError();
+  }
+
   Future<String> createStory(StoryDto storyDto) async {
     return '';
   }
 
-  Future<Story?> getStoryById(String storyUid) {
-    return Future(() => null);
+  Future<Story> updateStory(String storyUid, Story updatedStory) {
+    throw UnimplementedError();
   }
 
   Future<bool> addChapterToStory(String storyUid, String chapterUid) async {
     return false;
   }
 
+  Future<double> rateStory(String storyUid, int rate) async {
+    throw UnimplementedError();
+  }
+
+  Future<double> getStoryRate(String storyUid) async {
+    throw UnimplementedError();
+  }
+
   Future<bool> deleteAllChaptersInStory(String storyUid) async {
     return false;
+  }
+
+  Future<bool> deleteStory(String storyUid) async {
+    throw UnimplementedError();
   }
 }

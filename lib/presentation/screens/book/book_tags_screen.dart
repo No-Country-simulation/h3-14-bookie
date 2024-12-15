@@ -62,12 +62,19 @@ class BookTagsScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: BlocBuilder<BookCreateBloc, BookCreateState>(
                 builder: (context, state) {
-                  return Column(
-                    children: state.targets.map((etiqueta) {
-                      return _CustomChip(
-                        label: etiqueta,
-                      );
-                    }).toList(),
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    child: ListView.builder(
+                      itemCount: state.targets.length,
+                      itemBuilder: (context, index) {
+                        final tag = state.targets[index];
+                        return _CustomChip(
+                          label: tag,
+                          onDelete: () {
+                            context.read<BookCreateBloc>().add(DeleteTargetEvent(index: index));
+                          },
+                        );
+                      },),
                   );
                 },
               ),
@@ -81,7 +88,10 @@ class BookTagsScreen extends StatelessWidget {
 
 class _CustomChip extends StatelessWidget {
   final String label;
-  const _CustomChip({required this.label});
+  final VoidCallback onDelete;
+  const _CustomChip({
+    required this.label,
+    required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -90,13 +100,26 @@ class _CustomChip extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
+        border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(30.0),
       ),
-      child: Text(
-        '#$label',
-        style: const TextStyle(fontSize: 16.0),
-        textAlign: TextAlign.center,
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              '#$label',
+              style: const TextStyle(fontSize: 16.0),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          GestureDetector(
+            onTap: onDelete,
+            child: const Icon(
+              Icons.delete_outline,
+              color: Colors.grey,
+            ),
+          )
+        ],
       ),
     );
   }

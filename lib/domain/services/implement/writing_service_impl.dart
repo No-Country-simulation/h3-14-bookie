@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/writing_dto.dart';
-import 'package:h3_14_bookie/domain/model/writing.dart';
 import 'package:h3_14_bookie/domain/services/app_user_service.dart';
 import 'package:h3_14_bookie/domain/services/chapter_service.dart';
 import 'package:h3_14_bookie/domain/services/implement/app_user_service_impl.dart';
