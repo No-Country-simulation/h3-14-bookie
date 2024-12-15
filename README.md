@@ -1,6 +1,6 @@
 <div align="center">
    
-<img src="Activos-Imagenes/Iconos-SVG/Logo Bookie.png" alt="Logo App" >
+<img src="assets/images/logo_bookie.svg" alt="Logo App" >
    
 # **Bookie**  
 *Descubre historias en el mundo real, un capítulo a la vez.*
