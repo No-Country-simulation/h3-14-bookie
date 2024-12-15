@@ -1,5 +1,6 @@
 import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
+import 'package:h3_14_bookie/domain/model/dto/chapter_story_response_dto.dart';
 
 interface class IChapterService {
   Future<List<Chapter>> getChapters() async {
@@ -28,6 +29,11 @@ interface class IChapterService {
   }
 
   Future<String> getChapterPage(String chapterUid, int pageNumber) async {
+    throw UnimplementedError();
+  }
+
+  Future<List<ChapterStoryResponseDto>> getChaptersStory(
+      String storyUid) async {
     throw UnimplementedError();
   }
 
