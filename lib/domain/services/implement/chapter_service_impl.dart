@@ -77,8 +77,11 @@ class ChapterServiceImpl implements IChapterService {
 
   @override
   Future<ChapterDto> convertToChapterDto(Chapter chapter) async {
+    String chapterUid = await getChapterUidByStoryUidAndChapterNumber(
+        chapter.storyUid, chapter.number ?? 0);
     return ChapterDto(
       storyUid: chapter.storyUid,
+      chapterUid: chapterUid,
       title: chapter.title ?? '',
       pages: chapter.pages ?? [],
       placeName: chapter.location?.place ?? '',

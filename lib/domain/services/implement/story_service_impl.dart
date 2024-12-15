@@ -4,6 +4,7 @@ import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_story_response_dto.dart';
+import 'package:h3_14_bookie/domain/model/dto/home_story_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
@@ -152,6 +153,34 @@ class StoryServiceImpl implements IStoryService {
   Future<int> getStoryTotalReadings(String storyUid) async {
     final story = await getStoryById(storyUid);
     return story?.totalReadings ?? 0;
+  }
+
+  @override
+  Future<HomeStoryDto> getHomeStoryDtoByStoryUid(String storyUid) async {
+    final story = await getStoryById(storyUid);
+
+    List<Chapter> chapters =
+        await chapterService.getChaptersByStoryUid(storyUid);
+    List<ChapterDto> chaptersDto = await Future.wait(
+        chapters.map((chapter) => chapterService.convertToChapterDto(chapter)));
+
+    final author = await appUserService.getAppUserById(story?.authorUid ?? '');
+    final authorName = author?.name ?? '';
+
+    return HomeStoryDto(
+      storyUid: storyUid,
+      title: story?.title ?? '',
+      authorName: authorName,
+      cover: story?.cover ?? '',
+      synopsis: story?.synopsis ?? '',
+      labels: story?.labels ?? [],
+      categoryNames:
+          story?.categories?.map((category) => category.name ?? '').toList() ??
+              [],
+      rate: story?.rate ?? 0.0,
+      totalReadings: story?.totalReadings ?? 0,
+      chapters: chaptersDto,
+    );
   }
 
   @override

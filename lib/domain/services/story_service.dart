@@ -1,6 +1,7 @@
 import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_story_response_dto.dart';
+import 'package:h3_14_bookie/domain/model/dto/home_story_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
@@ -29,6 +30,10 @@ interface class IStoryService {
   }
 
   Future<int> getStoryTotalReadings(String storyUid) {
+    throw UnimplementedError();
+  }
+
+  Future<HomeStoryDto> getHomeStoryDtoByStoryUid(String storyUid) {
     throw UnimplementedError();
   }
 
