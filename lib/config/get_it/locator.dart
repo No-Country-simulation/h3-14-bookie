@@ -4,8 +4,10 @@ import 'package:h3_14_bookie/domain/services/implement/app_user_service_impl.dar
 import 'package:h3_14_bookie/domain/services/implement/category_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/implement/chapter_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/implement/image_service_impl.dart';
+import 'package:h3_14_bookie/domain/services/implement/reading_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/implement/story_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/implement/writing_service_impl.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/bloc/favorite_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/edit_view/edit_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/read_view/read_view_bloc.dart';
@@ -27,7 +29,11 @@ void setupLocator() {
     appUserService: AppUserServiceImpl()
   ));
   locator.registerSingleton(HomeViewBloc(
-    storyService: StoryServiceImpl()
+    storyService: StoryServiceImpl(),
+    readingService: ReadingServiceImpl()
   ));
   locator.registerSingleton(ReadViewBloc());
+  locator.registerSingleton(FavoriteViewBloc(
+    readingService: ReadingServiceImpl()
+  ));
 }

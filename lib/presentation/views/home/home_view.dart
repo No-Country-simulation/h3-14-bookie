@@ -60,10 +60,14 @@ class HomeView extends StatelessWidget {
                             offset: Offset(0, isSecondColumn ? 20.0 : 0.0),
                             child: GestureDetector(
                                 onTap: () {
-                                  context.push('/home/0/book/${state.stories[index].storyUid}');
+                                  context.push('/home/0/book/${state.stories[index].story.storyUid}');
                                 },
                                 child: BookWidget(
-                                  story: state.stories[index],
+                                  onFavorite: () {
+                                    context.read<HomeViewBloc>().add(ChangeFavoriteStoryHome(index: index));
+                                  },
+                                  story: state.stories[index].story,
+                                  isFavorite: state.stories[index].isFavorite,
                                 )),
                           );
                         },

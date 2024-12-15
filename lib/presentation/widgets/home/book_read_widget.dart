@@ -55,7 +55,7 @@ class BookReadWidget extends StatelessWidget {
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Icons.book, size: 24, color: AppColors.primaryColor,),
+                Icon(Icons.list, size: 24, color: AppColors.primaryColor,),
                 SizedBox(width: 5),
                 Text(
                   '13 Capítulos',

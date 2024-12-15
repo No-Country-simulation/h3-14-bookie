@@ -1,9 +1,12 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:h3_14_bookie/domain/entities/book_near_entity.dart';
 import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
+import 'package:h3_14_bookie/domain/services/reading_service.dart';
 import 'package:h3_14_bookie/domain/services/story_service.dart';
 
 part 'home_view_event.dart';
@@ -11,11 +14,14 @@ part 'home_view_state.dart';
 
 class HomeViewBloc extends Bloc<HomeViewEvent, HomeViewState> {
   final IStoryService storyService;
+  final IReadingService readingService;
   HomeViewBloc({
-    required this.storyService
+    required this.storyService,
+    required this.readingService
   }) : super(const HomeViewState()) {
     on<GetStoriesHome>(_onGetStories);
     // on<GetInfoStory>(_onGetInfoStory);
+    on<ChangeFavoriteStoryHome>(_onChangeFavoriteStoryHome);
   }
 
   void _onGetStories(GetStoriesHome event, Emitter<HomeViewState> emit) async {
@@ -24,8 +30,9 @@ class HomeViewBloc extends Bloc<HomeViewEvent, HomeViewState> {
         isLoading: true,
       ));
       final list = await storyService.getStoriesWithFilter(event.filter, event.category);
+      final newList = list.map((s) => BookNearEntity(story: s)).toList();
       emit(state.copyWith(
-        stories: list,
+        stories: newList,
         isLoading: false
       ));
     }
@@ -54,4 +61,20 @@ class HomeViewBloc extends Bloc<HomeViewEvent, HomeViewState> {
   //     ));
   //   }
   // }
+
+  void _onChangeFavoriteStoryHome(ChangeFavoriteStoryHome event, Emitter<HomeViewState> emit) {
+    try {
+      List<BookNearEntity> list = List.from(state.stories);
+      readingService.updateInLibrary(list[event.index].story.storyUid, false);
+      list[event.index] = BookNearEntity(story: list[event.index].story, isFavorite: !list[event.index].isFavorite);
+      // int index = list.indexWhere((c) => c.number == event.number);
+      // if(index == -1){return;}
+      emit(state.copyWith(
+        stories: list
+      ));
+    } catch (e) {
+      Fluttertoast.showToast(msg: '$e', backgroundColor: Colors.red);
+    }
+
+  }
 }

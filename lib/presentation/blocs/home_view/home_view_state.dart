@@ -1,7 +1,7 @@
 part of 'home_view_bloc.dart';
 
 class HomeViewState extends Equatable {
-  final List<StoryResponseDto> stories;
+  final List<BookNearEntity> stories;
   final bool isLoading;
   const HomeViewState({
     this.stories = const [],
@@ -15,7 +15,7 @@ class HomeViewState extends Equatable {
   ];
 
   HomeViewState copyWith({
-    List<StoryResponseDto>? stories,
+    List<BookNearEntity>? stories,
     bool? isLoading,
   }) {
     return HomeViewState(

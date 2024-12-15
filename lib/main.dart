@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/bloc/favorite_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/edit_view/edit_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/read_view/read_view_bloc.dart';
@@ -38,6 +39,9 @@ class BlocsProviders extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => locator<ReadViewBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => locator<FavoriteViewBloc>()..add(const InitFavoritesEvent()),
         ),
       ],
       child: const MyApp(),

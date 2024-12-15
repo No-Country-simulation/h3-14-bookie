@@ -20,6 +20,7 @@ class EditViewBloc extends Bloc<EditViewEvent, EditViewState> {
     on<GetStories>(_onGetStories);
     on<ChangeFilter>(_onChangeFilter);
     on<ChangeStatusBook>(_onChangeStatusBook);
+    on<DeleteCreateBook>(_onDeleteCreateBook);
   }
 
   void _onGetStories(GetStories event, Emitter<EditViewState> emit) async {
@@ -67,6 +68,25 @@ class EditViewBloc extends Bloc<EditViewEvent, EditViewState> {
           ? 'draft'
           : 'publish'
     ));
+    }
+    catch(e) {
+      Fluttertoast.showToast(msg: '$e');
+    }
+  }
+
+  void _onDeleteCreateBook(DeleteCreateBook event, Emitter<EditViewState> emit) async {
+    try{
+    //   emit(state.copyWith(
+    //     isLoading: true,
+    //   ));
+    //   await appUserService.updateUserWriting(event.writing);
+    //   add(GetStories(
+    //   draftOrPublish: state.filterSelected == FilterBook.all
+    //     ? null
+    //     : state.filterSelected == FilterBook.drafts
+    //       ? 'draft'
+    //       : 'publish'
+    // ));
     }
     catch(e) {
       Fluttertoast.showToast(msg: '$e');

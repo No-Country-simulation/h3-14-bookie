@@ -23,3 +23,10 @@ class GetInfoStory extends HomeViewEvent {
     required this.storyUid
   });
 }
+
+class ChangeFavoriteStoryHome extends HomeViewEvent {
+  final int index;
+  const ChangeFavoriteStoryHome({
+    required this.index
+  });
+}
