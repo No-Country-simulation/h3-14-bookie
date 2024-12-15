@@ -1,10 +1,26 @@
 part of 'home_view_bloc.dart';
 
-sealed class HomeViewState extends Equatable {
-  const HomeViewState();
+class HomeViewState extends Equatable {
+  final List<StoryResponseDto> stories;
+  final bool isLoading;
+  const HomeViewState({
+    this.stories = const [],
+    this.isLoading = false,  
+  });
   
   @override
-  List<Object> get props => [];
-}
+  List<Object> get props => [
+    stories,
+    isLoading,
+  ];
 
-final class HomeViewInitial extends HomeViewState {}
+  HomeViewState copyWith({
+    List<StoryResponseDto>? stories,
+    bool? isLoading,
+  }) {
+    return HomeViewState(
+      stories: stories ?? this.stories,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
+}

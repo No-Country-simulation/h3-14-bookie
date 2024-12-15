@@ -1,5 +1,7 @@
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:h3_14_bookie/domain/entities/book_chapter_entity.dart';
@@ -35,7 +37,10 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
     on<AddChapterEvent>(_onAddChapterEvent);
     on<CreateStoryEvent>(_onCreateStoryEvent);
     on<CreateChapterEvent>(_onCreateChapterEvent);
-    on<UploadCover>(_onUploadCover);
+    on<ResetValuesBookCreateEvent>(_onResetValuesReadViewEvent);
+    on<SaveStoryEvent>(_onSaveStoryEvent);
+    on<ChangeChapterActive>(_onChangeChapterActive);
+    on<DeleteTargetEvent>(_onDeleteTargetEvent);
   }
 
   void _onAddTargetEvent(AddTargetEvent event, Emitter<BookCreateState> emit) {
@@ -84,8 +89,13 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
   }
 
   void _onUpdateChapterActive(UpdateChapterActive event, Emitter<BookCreateState> emit) {
+    List<BookChapterEntity> list = List.from(state.chapters);
+    int index = list.indexWhere((c) => c.number == event.chapter.number); 
+    if (index != -1) { list[index] = event.chapter; }
     emit(state.copyWith(
       chapterActive: event.chapter,
+      chapters: list,
+      storySave: false
     ));
     if(event.whenComplete != null) {
       event.whenComplete!();
@@ -93,13 +103,27 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
   }
 
   void _onSaveChapterActive(SaveChapterActive event, Emitter<BookCreateState> emit) {
-    List<BookChapterEntity> list = List.from(state.chapters);
-    int index = list.indexWhere((c) => c.uid == event.chapter.uid); 
-    if (index != -1) { list[index] = event.chapter; }
-    else { list.add(event.chapter); }
-    emit(state.copyWith(
-      chapters: list
-    ));
+    try {
+      chapterService.createChapter(ChapterDto(
+        storyUid: state.storyId,
+        title: event.chapter.titleChapter,
+        pages: event.chapter.pages,
+        placeName: event.chapter.placeName,
+        lat: event.chapter.position.latitude,
+        long: event.chapter.position.longitude
+      ));
+      List<BookChapterEntity> list = List.from(state.chapters);
+      int index = list.indexWhere((c) => c.number == event.chapter.number); 
+      if (index != -1) { list[index] = event.chapter; }
+      else { list.add(event.chapter); }
+      list.add(event.chapter);
+      emit(state.copyWith(
+        chapters: list
+      ));
+      Fluttertoast.showToast(msg: 'Cambios guardados.');
+    } catch (e) {
+      Fluttertoast.showToast(msg: '$e');
+    }
   }
 
   void _onUpdateCurrentPage(UpdateCurrentPage event, Emitter<BookCreateState> emit) {
@@ -114,25 +138,50 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
       uid: '',
       placeName: '',
       titleChapter: '',
-      pages: const ['']
+      pages: const [''],
     );
     List<BookChapterEntity> list = List.from(state.chapters);
+    // int index = list.indexWhere((c) => c.number == state.chapterActive.number); 
+    // if (index != -1) { list[index] = state.chapterActive; }
     list.add(chapter);
     emit(state.copyWith(
       chapters: list,
       selectedIndexChapter: state.chapters.length + 1,
       chapterActive: chapter,
+      currentPage: 0,
     ));
   }
 
   void _onCreateStoryEvent(CreateStoryEvent event, Emitter<BookCreateState> emit) async {
     try{
-      final uuidStory = await storyService.createStory(event.story);
+      final url = await imageService.uploadImage(state.pathCover);
+      final story = StoryDto(
+                    title: state.titleBook,
+                    synopsis: state.synopsisBook,
+                    categoriesUid: state.categories.where((c)=>c.isActive).map((c)=>c.uid).toList(),
+                    labels: state.targets,
+                    cover: url
+                  );
+      final uuidStory = await storyService.createStory(story);
+      for (var chapter in state.chapters) {
+        chapterService.createChapter(ChapterDto(
+          storyUid: uuidStory,
+          title: chapter.titleChapter,
+          pages: chapter.pages,
+          placeName: chapter.placeName,
+          lat: chapter.position.latitude,
+          long: chapter.position.longitude
+        ));
+      }
+      if(event.whenComplete != null) {
+        event.whenComplete!();
+      }
       emit(state.copyWith(
-        storyId: uuidStory
+        storySave: true
       ));
+      Fluttertoast.showToast(msg: 'Historia guardada con exito', backgroundColor: Colors.green[300]);
     }catch(e) {
-      Fluttertoast.showToast(msg: '$e');
+      Fluttertoast.showToast(msg: '$e', backgroundColor: Colors.red);
     }
   }
 
@@ -153,12 +202,46 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
     }
   }
 
-  Future<void> _onUploadCover(UploadCover event, Emitter<BookCreateState> emit) async {
-    try{
-      final url = await imageService.uploadImage(event.path);
-      event.whenComplete(url);
-    } catch (e) {
-      Fluttertoast.showToast(msg: '$e');
-    }
+  void _onResetValuesReadViewEvent(ResetValuesBookCreateEvent event, Emitter<BookCreateState> emit) {
+    emit(state.copyWith(
+      targets: []
+    ));
+  }
+
+  void _onSaveStoryEvent(SaveStoryEvent event, Emitter<BookCreateState> emit) {
+    final chapter = BookChapterEntity(
+      number: 1,
+      uid: '',
+      placeName: event.placeName,
+      titleChapter: event.titleChapter,
+      pages: const ['']
+    );
+
+    emit(state.copyWith(
+      titleBook: event.titleBook,
+      synopsisBook: event.synopsisBook,
+      pathCover: event.pathImage,
+      chapters: [chapter],
+      selectedIndexChapter: 0,
+      chapterActive: chapter,
+    ));
+  }
+
+  void _onChangeChapterActive(ChangeChapterActive event, Emitter<BookCreateState> emit) {
+    List<BookChapterEntity> list = List.from(state.chapters);
+    int index = list.indexWhere((c) => c.number == event.number);
+    if(index == -1){return;}
+    emit(state.copyWith(
+      chapterActive: state.chapters[index],
+      currentPage: 0
+    ));
+  }
+
+  void _onDeleteTargetEvent(DeleteTargetEvent event, Emitter<BookCreateState> emit) {
+    List<String> list = List.from(state.targets);
+    list.removeAt(event.index);
+    emit(state.copyWith(
+      targets: list
+    ));
   }
 }

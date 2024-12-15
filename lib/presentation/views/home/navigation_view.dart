@@ -8,22 +8,14 @@ class NavigationView extends StatelessWidget {
   const NavigationView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-
-    const CameraPosition kLake = CameraPosition( bearing: 0, target: LatLng(-34.625946, -58.463903), tilt: 80, zoom: 18, );
-    // CameraPosition(
-    //     bearing: 0, target: LatLng(-34.625946, -58.463903), tilt: 0, zoom: 18);
-        
-    return Container(
-      child: CustomMapInfoWidget(
-        postion: kLake,
-        positions: const [
-          LatLng(-34.718215, -58.260557),
-          LatLng(-34.625955, -58.462272),
-          LatLng(-34.624675, -58.466049),
-          LatLng(-34.625222, -58.467905),
-        ],
-      )
+  Widget build(BuildContext context) {       
+    return const CustomMapInfoWidget(
+      positions: [
+        LatLng(-34.718215, -58.260557),
+        LatLng(-34.625955, -58.462272),
+        LatLng(-34.624675, -58.466049),
+        LatLng(-34.625222, -58.467905),
+      ],
     );
   }
 }

@@ -8,11 +8,9 @@ import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 class CustomMapInfoWidget extends StatefulWidget {
   const CustomMapInfoWidget({
     super.key,
-    required CameraPosition postion,
     this.positions,
-  }) : _position = postion;
+  });
 
-  final CameraPosition _position;
   final List<LatLng>? positions;
 
   @override
@@ -103,7 +101,7 @@ class _CustomMapInfoWidgetState extends State<CustomMapInfoWidget> {
             style:
                 ''' [ { "featureType": "poi", "elementType": "labels", "stylers": [ { "visibility": "off" } ] }, { "featureType": "transit", "elementType": "labels", "stylers": [ { "visibility": "off" } ] } ] ''',
             initialCameraPosition: CameraPosition(
-              target: currentPosition ?? widget._position.target,
+              target: currentPosition!,
               zoom: 17,
             ),
             onMapCreated: (GoogleMapController controller) {

@@ -9,6 +9,7 @@ import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/edit_view/edit_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/location/location_provider.dart';
+import 'package:h3_14_bookie/presentation/widgets/dialogs/confirmation_dialog.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
 class ChapterEditScreen extends StatefulWidget {
@@ -38,6 +39,22 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
     _textController = TextEditingController();
     _titleController = TextEditingController(text: initialChapter.titleChapter);
     _placeController = TextEditingController(text: initialChapter.placeName);
+
+    _titleController.addListener(() {
+      bookCreateBloc.add(UpdateChapterActive(
+        chapter: bookCreateBloc.state.chapterActive.copyWith(
+          titleChapter: _titleController.text,
+        )
+      ));
+    });
+
+    _placeController.addListener(() {
+      bookCreateBloc.add(UpdateChapterActive(
+        chapter: bookCreateBloc.state.chapterActive.copyWith(
+          placeName: _placeController.text,
+        )
+      ));
+    });
   }
 
   @override
@@ -53,8 +70,6 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
     final textStyle = Theme.of(context).textTheme;
     final size = MediaQuery.of(context).size;
     final bookCreateBloc = context.read<BookCreateBloc>();
-    final CameraPosition kLake = const CameraPosition(
-        bearing: 0, target: LatLng(-34.625946, -58.463903), tilt: 0, zoom: 14);
 
 
     bool validate(){
@@ -79,14 +94,19 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
     return Scaffold(
       key: keyScaffold,
       appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              context.go('/home/3');
-            },
-            icon: const Icon(Icons.arrow_back)),
         actions: [
+          IconButton(onPressed: (){
+            if(!validate()){
+              return;
+            }
+            bookCreateBloc.add(CreateStoryEvent(whenComplete: (){
+                context.read<EditViewBloc>().add(const GetStories()); //todo: verificar si se actualia la lsita al dar atras
+                context.go('/home/3');
+            }));
+          }, icon: const Icon(Icons.save_outlined)),
           IconButton(
               onPressed: () {
+                FocusManager.instance.primaryFocus?.unfocus();
                 keyScaffold.currentState!.openEndDrawer();
               },
               icon: const Icon(Icons.list))
@@ -102,20 +122,37 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
       ),
       endDrawer: const SelectChapterDrawer(),
       body: PopScope(
-        canPop: true,
+        canPop: false,
         onPopInvokedWithResult: (didPop, result) {
-          if(!validate()){
-            return;
-          }
-          bookCreateBloc.add(SaveChapterActive(
-            chapter: bookCreateBloc.state.chapterActive.copyWith(
-            placeName: _placeController.text,
-            titleChapter: _titleController.text,
-          )));
-          bookCreateBloc.add(const CreateChapterEvent());
-          Fluttertoast.showToast(msg: 'Cambios guardados.');
-          context.read<EditViewBloc>().add(const GetStories());
-          context.go('/home/3');
+          ConfirmationDialog.show(
+            context,
+            question: '¿Estás seguro de que deseas salir sin guardar?',
+            message: 'Tu historia no se ha guardado. Si decides irte sin guardar, perderás todos los cambios realizados.',
+            confirmText: 'Guardar',
+            cancelText: 'No guardar',
+            onConfirm: () {
+              if(validate()){
+                bookCreateBloc.add(CreateStoryEvent(
+                  whenComplete: (){
+                    context.read<EditViewBloc>().add(const GetStories()); //todo: verificar si se actualia la lsita al dar atras
+                    context.go('/home/3');
+                  }));
+              }
+              return;
+            },
+            onCancel: (){
+              context.go('/home/3');
+            }
+          );
+            
+          
+          // bookCreateBloc.add(SaveChapterActive(
+          //   chapter: bookCreateBloc.state.chapterActive.copyWith(
+          //   placeName: _placeController.text,
+          //   titleChapter: _titleController.text,
+          // )));
+          // bookCreateBloc.add(const CreateChapterEvent());
+          // Fluttertoast.showToast(msg: 'Cambios guardados.');
         },
         child: BorderLayout(
           child: BlocListener<BookCreateBloc, BookCreateState>(
@@ -170,9 +207,7 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                                 borderRadius: BorderRadius.circular(16),
                                 child: Stack(
                                   children: [
-                                    CustomMapInfoWidget(
-                                      postion: kLake,
-                                    ),
+                                    CustomMapInfoWidget(),
                                     if (blockContent)
                                       GestureDetector(
                                         onTap: () async {
@@ -263,26 +298,40 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                                 _textController.text = state
                                     .chapterActive.pages[state.currentPage];
                               },
-                              child: TextFormField(
-                                maxLines: 10,
-                                controller: _textController,
-                                onChanged: (value) {
-                                  List<String> list =
-                                      List.from(state.chapterActive.pages);
-                                  list[state.currentPage] = value;
-                                  bookCreateBloc.add(UpdateChapterActive(
-                                      chapter: state.chapterActive
-                                          .copyWith(pages: list)));
-                                },
-                                decoration: InputDecoration(
-                                  hintText: 'Comienza a escribir una historia',
-                                  filled: true,
-                                  fillColor: Colors.grey[200],
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                    borderSide: BorderSide.none,
+                              child: Stack(
+                                children: [
+                                  TextFormField(
+                                    maxLines: 10,
+                                    controller: _textController,
+                                    onChanged: (value) {
+                                      List<String> list =
+                                          List.from(state.chapterActive.pages);
+                                      list[state.currentPage] = value;
+                                      bookCreateBloc.add(UpdateChapterActive(
+                                          chapter: state.chapterActive
+                                              .copyWith(pages: list)));
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: 'Comienza a escribir una historia',
+                                      filled: true,
+                                      fillColor: Colors.grey[200],
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  Positioned(
+                                    right: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: AppColors.background
+                                      ),
+                                      child: Text('${state.currentPage + 1}')),
+                                  )
+                                ],
                               ),
                             )
                           ],
@@ -314,14 +363,16 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                         if(!validate()){
                           return;
                         }
-                        bookCreateBloc.add(SaveChapterActive(
-                            chapter: bookCreateBloc.state.chapterActive.copyWith(
-                              placeName: _placeController.text,
-                              titleChapter: _titleController.text,
-                            )));
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        // bookCreateBloc.add(SaveChapterActive(
+                        //     chapter: bookCreateBloc.state.chapterActive.copyWith(
+                        //       placeName: _placeController.text,
+                        //       titleChapter: _titleController.text,
+                        //     )));
                         bookCreateBloc.add(const AddChapterEvent());
                         setState(() {
                           blockContent = true;
+                          _textController.text = '';
                         });
                       },
                     )
