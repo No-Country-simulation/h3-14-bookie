@@ -8,6 +8,10 @@ interface class IStoryService {
     return [];
   }
 
+  Future<List<String>> getAllStoriesUid() async {
+    throw UnimplementedError();
+  }
+
   Future<List<StoryResponseDto>> getStoriesWithFilter(
       String filter, CategoryDto? category) async {
     return [];
@@ -52,5 +56,9 @@ interface class IStoryService {
 
   Future<bool> deleteAllChaptersInStory(String storyUid) async {
     return false;
+  }
+
+  Future<bool> deleteStory(String storyUid) async {
+    throw UnimplementedError();
   }
 }

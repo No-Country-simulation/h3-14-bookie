@@ -100,6 +100,23 @@ class ChapterServiceImpl implements IChapterService {
     return chaptersStoryResponseDto;
   }
 
+  @override
+  Future<List<ChapterStoryResponseDto>> getAllChaptersStory() async {
+    List<String> storiesUid = await _storyService.getAllStoriesUid();
+    List<ChapterStoryResponseDto> chaptersStoryResponseDto = [];
+    try {
+      for (String storyUid in storiesUid) {
+        List<ChapterStoryResponseDto> chapters =
+            await getChaptersStory(storyUid);
+        chaptersStoryResponseDto.addAll(chapters);
+      }
+    } catch (e) {
+      print("Error: $e");
+      throw Exception('Error getting chapters');
+    }
+    return chaptersStoryResponseDto;
+  }
+
   Future<ChapterStoryResponseDto> convertToChapterStoryResponseDto(
       Chapter chapter, Story story, String chapterUid) async {
     bool isReading = await _storyService.isThisAReading(chapter.storyUid);
@@ -118,6 +135,9 @@ class ChapterServiceImpl implements IChapterService {
       isReading: isReading,
       chapterNumber: chapter.number ?? 0,
       chapterTitle: chapter.title ?? '',
+      placeName: chapter.location?.place ?? '',
+      latitude: chapter.location?.lat ?? 0.0,
+      longitude: chapter.location?.long ?? 0.0,
     );
   }
 

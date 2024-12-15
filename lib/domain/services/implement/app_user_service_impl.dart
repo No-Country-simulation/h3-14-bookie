@@ -131,4 +131,42 @@ class AppUserServiceImpl implements IAppUserService {
     // TODO: implement completeNewChapterInStory
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool> deleteUserReading(String userUid, String readingUid) async {
+    final appUser = await getAppUserByAuthUserUid(userUid);
+    final readings = appUser?.readings ?? [];
+    if (readings.isEmpty) {
+      return false;
+    }
+    try {
+      final reading = readings.firstWhere((r) => r.storyId == readingUid);
+      final readingIndex = readings.indexOf(reading);
+      readings.removeAt(readingIndex);
+      final readingMaps = readings.map((r) => r.toFirestore()).toList();
+      await _appUserRef.doc(userUid).update({"readings": readingMaps});
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> deleteUserWriting(String authUserUid, String writingUid) async {
+    final appUser = await getAppUserByAuthUserUid(authUserUid);
+    final writings = appUser?.writings ?? [];
+    if (writings.isEmpty) {
+      return false;
+    }
+    try {
+      final writing = writings.firstWhere((w) => w.storyId == writingUid);
+      final writingIndex = writings.indexOf(writing);
+      writings.removeAt(writingIndex);
+      final writingMaps = writings.map((w) => w.toFirestore()).toList();
+      await _appUserRef.doc(authUserUid).update({"writings": writingMaps});
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }
