@@ -14,6 +14,7 @@ import 'package:h3_14_bookie/domain/services/story_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 const String STORY_COLLECTION_REF = "stories";
+const String CHAPTER_COLLECTION_REF = "chapters";
 
 class StoryServiceImpl implements IStoryService {
   final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -21,11 +22,14 @@ class StoryServiceImpl implements IStoryService {
   final ILabelService labelService = LabelServiceImpl();
   final IAppUserService appUserService = AppUserServiceImpl();
   late final CollectionReference _storyRef;
+  late final CollectionReference _chapterRef;
 
   StoryServiceImpl() {
     _storyRef = db.collection(STORY_COLLECTION_REF).withConverter<Story>(
         fromFirestore: (snapshots, _) => Story.fromFirestore(snapshots, _),
         toFirestore: (story, _) => story.toFirestore());
+
+    _chapterRef = db.collection(CHAPTER_COLLECTION_REF);
   }
 
   @override
@@ -188,8 +192,36 @@ class StoryServiceImpl implements IStoryService {
     if (story == null) {
       return false;
     }
+    QuerySnapshot querySnapshot =
+        await _chapterRef.where('storyUid', isEqualTo: storyUid).get();
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+      await _chapterRef.doc(doc.id).delete();
+    }
     story.chaptersUid?.clear();
     await _storyRef.doc(storyUid).update(story.toFirestore());
     return true;
+  }
+
+  @override
+  Future<bool> deleteStory(String storyUid) async {
+    try {
+      // 1. Eliminar referencias en usuarios
+      final users = await appUserService.getAppUsers();
+      for (var user in users) {
+        await appUserService.deleteUserReading(user.authUserUid!, storyUid);
+        await appUserService.deleteUserWriting(user.authUserUid!, storyUid);
+      }
+
+      // 2. Eliminar chapters relacionados
+      await deleteAllChaptersInStory(storyUid);
+
+      // 3. Eliminar la story
+      await _storyRef.doc(storyUid).delete();
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 }
