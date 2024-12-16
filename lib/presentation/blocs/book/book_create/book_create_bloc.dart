@@ -40,6 +40,7 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
     on<SaveStoryEvent>(_onSaveStoryEvent);
     on<ChangeChapterActive>(_onChangeChapterActive);
     on<DeleteTargetEvent>(_onDeleteTargetEvent);
+    on<DeleteChapterEvent>(_onDeleteChapterEvent);
   }
 
   void _onAddTargetEvent(AddTargetEvent event, Emitter<BookCreateState> emit) {
@@ -243,5 +244,39 @@ class BookCreateBloc extends Bloc<BookCreateEvent, BookCreateState> {
     List<String> list = List.from(state.targets);
     list.removeAt(event.index);
     emit(state.copyWith(targets: list));
+  }
+
+  void _onDeleteChapterEvent(DeleteChapterEvent event, Emitter<BookCreateState> emit) {
+    List<BookChapterEntity> list = List.from(state.chapters);
+    
+    BookChapterEntity? chapter;
+    if(state.chapterActive.number == event.number) {
+      if(state.chapters.length == 1) {
+          chapter = const BookChapterEntity(number: 1, uid: '', placeName: '', titleChapter: '', pages: ['']);
+      } else {
+        if(event.number == 1) {
+          chapter = state.chapters[1].copyWith(number: 1);
+        } else {
+          chapter = state.chapters[0];
+        }
+      }
+    } else {
+      if(event.number == 1) {
+          chapter = state.chapters[1].copyWith(number: 1);
+        } else {
+          chapter = state.chapters[0];
+        }
+    }
+
+    List<BookChapterEntity> newList = list.where((c) => c.number != event.number).toList();
+    for (int i = 0; i < newList.length; i++) {
+      newList[i] = newList[i].copyWith(number: i+1);
+    }
+    
+    emit(state.copyWith(
+      chapters: newList,
+      selectedIndexChapter: 0,
+      chapterActive: chapter,
+    ));
   }
 }

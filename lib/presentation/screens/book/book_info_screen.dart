@@ -25,15 +25,11 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final textStyle = Theme.of(context).textTheme;
-    const locations = [
-      'Plaza de la prevalencia',
-      'Café Torres',
-      'Parque Versalles'
-    ];
 
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AppBar(
+        elevation: 0,
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.book_outlined))
         ],
@@ -43,7 +39,8 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
               color: AppColors.primaryColor,
               height: 1.0,
             )),
-        shadowColor: AppColors.primaryColor,
+        
+        shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
       body: FutureBuilder(

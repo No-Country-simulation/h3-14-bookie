@@ -39,7 +39,8 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
     final bookCreateBloc = context.read<BookCreateBloc>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nueva Historia'),
+        elevation: 0,
+        title: const Text('Información'),
         centerTitle: true,
         bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
@@ -47,7 +48,7 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
               color: AppColors.primaryColor,
               height: 1.0,
             )),
-        shadowColor: AppColors.primaryColor,
+        shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
       body: BorderLayout(

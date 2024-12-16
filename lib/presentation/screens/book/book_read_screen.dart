@@ -22,6 +22,7 @@ class BookReadScreen extends StatelessWidget {
     return Scaffold(
       key: keyScaffold,
       appBar: AppBar(
+        elevation: 0,
         actions: [
           IconButton(
               onPressed: () {
@@ -35,7 +36,7 @@ class BookReadScreen extends StatelessWidget {
               color: AppColors.primaryColor,
               height: 1.0,
             )),
-        shadowColor: AppColors.primaryColor,
+        shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         title: Text(context.read<ReadViewBloc>().state.story.title),
         centerTitle: true,

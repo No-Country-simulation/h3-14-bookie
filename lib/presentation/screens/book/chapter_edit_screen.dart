@@ -94,6 +94,7 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
     return Scaffold(
       key: keyScaffold,
       appBar: AppBar(
+        elevation: 0,
         actions: [
           IconButton(onPressed: (){
             if(!validate()){
@@ -117,7 +118,7 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
               color: AppColors.primaryColor,
               height: 1.0,
             )),
-        shadowColor: AppColors.primaryColor,
+        shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
       endDrawer: const SelectChapterDrawer(),

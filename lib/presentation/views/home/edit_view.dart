@@ -10,85 +10,101 @@ class EditView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme;
-    return BorderLayout(
-      child: Column(
-        children: [
-          Text(
-            'Mis historias',
-            style: textStyle.titleLarge!.copyWith(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-            ),
+    return Column(
+      children: [
+        const SizedBox(
+          height: 10,
+        ),
+        Text(
+          'Mis historias',
+          style: textStyle.titleLarge!.copyWith(
+            fontSize: 21,
+            fontWeight: FontWeight.bold,
           ),
-          const Divider(),
-          const SizedBox(
-            height: 10,
-          ),
-          BlocBuilder<EditViewBloc, EditViewState>(
-            builder: (context, state) {
-              return SegmentedButton<FilterBook>(
-                style: ButtonStyle(
-                    shape: WidgetStatePropertyAll(ContinuousRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)))),
-                segments: const <ButtonSegment<FilterBook>>[
-                  ButtonSegment(
-                    value: FilterBook.all,
-                    label: Text('Todas', style: TextStyle(),),
-                  ),
-                  ButtonSegment(
-                    value: FilterBook.drafts,
-                    label: Text('Borradores'),
-                  ),
-                  ButtonSegment(
-                    value: FilterBook.publications,
-                    label: Text('Publicaciones'),
-                  ),
-                ],
-                selected: {state.filterSelected},
-                onSelectionChanged: (newSelection) {
-                  context
-                      .read<EditViewBloc>()
-                      .add(ChangeFilter(filter: newSelection.first));
-                },
-              );
-            },
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Expanded(
-            child: BlocBuilder<EditViewBloc, EditViewState>(
-              builder: (context, state) {
-                return state.isLoading
-                ? const Center(child: CircularProgressIndicator(),)
-                : state.stories.isEmpty
-                  ? const Center(
-                    child: Text(
-                      'Apun no tienes histoiras. ¡Empieza ahora!\nToca el botón + para crear tu primera historia.',
-                      textAlign: TextAlign.center,),)
-                  : ListView.separated(
-                    itemBuilder: (context, index) {
-                      final response = state.stories[index];
-                      final info = response.story;
-                      return BookItemWidget(
-                        id: info.storyUid,
-                        title: info.title,
-                        isDraft: response.isDraft,
-                        synopsis: info.synopsis,
-                        rate: info.rate,
-                        readings: info.readings,
-                        cover: info.cover,
-                      );
-                    },
-                    separatorBuilder: (context, index) => const SizedBox(
-                          height: 10,
+        ),
+        const Divider(),
+        Expanded(
+          child: BorderLayout(
+            child: Column(
+              children: [
+                BlocBuilder<EditViewBloc, EditViewState>(
+                  builder: (context, state) {
+                    return SegmentedButton<FilterBook>(
+                      selectedIcon: null,
+                      showSelectedIcon: false,
+                      style: ButtonStyle(
+                          shape: WidgetStatePropertyAll(
+                              ContinuousRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16)))),
+                      segments: const <ButtonSegment<FilterBook>>[
+                        ButtonSegment(
+                          value: FilterBook.all,
+                          label: Text(
+                            'Todas',
+                          ),
                         ),
-                    itemCount: state.stories.length);
-              },
+                        ButtonSegment(
+                          value: FilterBook.drafts,
+                          label: Text('Borradores'),
+                        ),
+                        ButtonSegment(
+                          value: FilterBook.publications,
+                          label: Text('Publicaciones'),
+                        ),
+                      ],
+                      selected: {state.filterSelected},
+                      onSelectionChanged: (newSelection) {
+                        context
+                            .read<EditViewBloc>()
+                            .add(ChangeFilter(filter: newSelection.first));
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Expanded(
+                  child: BlocBuilder<EditViewBloc, EditViewState>(
+                    builder: (context, state) {
+                      return state.isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : state.stories.isEmpty
+                              ? const Center(
+                                  child: Text(
+                                    'Apun no tienes histoiras. ¡Empieza ahora!\nToca el botón + para crear tu primera historia.',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )
+                              : ListView.separated(
+                                  itemBuilder: (context, index) {
+                                    final response = state.stories[index];
+                                    final info = response.story;
+                                    return BookItemWidget(
+                                      id: info.storyUid,
+                                      title: info.title,
+                                      isDraft: response.isDraft,
+                                      synopsis: info.synopsis,
+                                      rate: info.rate,
+                                      readings: info.readings,
+                                      cover: info.cover,
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                  itemCount: state.stories.length);
+                    },
+                  ),
+                )
+              ],
             ),
-          )
-        ],
-      ),
+          ),
+        ),
+      ],
     );
   }
 }

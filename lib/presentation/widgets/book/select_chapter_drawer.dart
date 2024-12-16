@@ -56,12 +56,19 @@ class SelectChapterDrawer extends StatelessWidget {
                               horizontal: 15,
                             ),
                           ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Capítulo ${index + 1}: ${title.isEmpty ? '(Sin nombre)' : title}',
-                            ),
-                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Capítulo ${index + 1}: ${title.isEmpty ? '(Sin nombre)' : title}',
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  context.read<BookCreateBloc>().add(DeleteChapterEvent(number: number));
+                                },
+                                child: const Icon(Icons.delete_outline))
+                            ],
+                          )
                         );
                       },
                       itemCount: chapters.length,

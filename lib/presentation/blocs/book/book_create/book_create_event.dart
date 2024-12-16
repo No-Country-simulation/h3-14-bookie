@@ -100,6 +100,13 @@ class ChangeChapterActive extends BookCreateEvent {
   });
 }
 
+class DeleteChapterEvent extends BookCreateEvent {
+  final int number;
+  const DeleteChapterEvent({
+    required this.number
+  });
+}
+
 class DeleteTargetEvent extends BookCreateEvent {
   final int index;
   const DeleteTargetEvent({
