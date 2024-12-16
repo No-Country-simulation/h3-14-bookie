@@ -159,23 +159,71 @@ class AuthService {
     required String email,
     required String password,
     required BuildContext context,
+    bool redirectToHome = true,
   }) async {
     try {
-      // Mostrar pantalla de carga
-      if (context.mounted) {
+      if (redirectToHome && context.mounted) {
         context.go('/loading');
       }
 
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+      } on FirebaseAuthException catch (e) {
+        if (context.mounted) {
+          context.go('/initScreen');
+        }
 
-      // La redirección al home la manejará el router automáticamente
+        String message;
+        switch (e.code) {
+          case 'user-not-found':
+            message = 'No existe una cuenta con este correo electrónico.';
+            break;
+          case 'wrong-password':
+            message = 'Contraseña incorrecta.';
+            break;
+          case 'invalid-email':
+            message = 'El formato del correo electrónico no es válido.';
+            break;
+          case 'user-disabled':
+            message = 'Esta cuenta ha sido deshabilitada.';
+            break;
+          case 'too-many-requests':
+            message =
+                'Demasiados intentos fallidos. Por favor, intente más tarde.';
+            break;
+          default:
+            message = 'Error de autenticación: ${e.message}';
+        }
+
+        Fluttertoast.showToast(
+          msg: message,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.SNACKBAR,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 14.0,
+        );
+
+        rethrow;
+      }
+
+      // Solo redirigir al home si redirectToHome es true
+      if (!redirectToHome && context.mounted) {
+        context.go('/user-created');
+      }
     } catch (e) {
-      // En caso de error, volver a la pantalla de login
-      if (context.mounted) {
-        context.go('/initScreen');
+      if (e is! FirebaseAuthException) {
+        Fluttertoast.showToast(
+          msg: 'Error inesperado durante el inicio de sesión',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.SNACKBAR,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 14.0,
+        );
       }
       rethrow;
     }

@@ -297,7 +297,8 @@ class _LoginState extends State<Login> {
                 'Regístrate',
                 style: TextStyle(
                   color: Colors.blue.shade700,
-                  fontSize: 12,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Colors.blue.shade700,
                 ),
               ),
             ),

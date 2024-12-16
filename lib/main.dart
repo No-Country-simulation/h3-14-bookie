@@ -13,9 +13,12 @@ import 'package:h3_14_bookie/config/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Verificar si Firebase ya está inicializado
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
   setupLocator();
   runApp(const BlocsProviders());
 }
@@ -34,7 +37,8 @@ class BlocsProviders extends StatelessWidget {
           create: (_) => locator<EditViewBloc>()..add(const GetStories()),
         ),
         BlocProvider(
-          create: (_) => locator<HomeViewBloc>()..add(const GetStoriesHome(filter: '')),
+          create: (_) =>
+              locator<HomeViewBloc>()..add(const GetStoriesHome(filter: '')),
         ),
         BlocProvider(
           create: (_) => locator<ReadViewBloc>(),

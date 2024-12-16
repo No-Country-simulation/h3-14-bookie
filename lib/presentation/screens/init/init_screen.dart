@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
+import 'package:h3_14_bookie/domain/services/auth_service.dart';
 import 'package:h3_14_bookie/presentation/screens/login/login.dart';
 import 'package:h3_14_bookie/presentation/screens/signup/signup.dart';
 
@@ -88,8 +89,8 @@ class _InitScreenState extends State<InitScreen> {
       children: [
         _socialButton(
           'assets/images/google_icon.png',
-          onTap: () {
-            // Implementar login con Google
+          onTap: () async {
+            await AuthService().signInWithGoogle(context);
           },
         ),
         const SizedBox(width: 47),

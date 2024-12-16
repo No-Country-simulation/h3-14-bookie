@@ -233,11 +233,22 @@ class _SignupState extends State<Signup> {
                 _userController.text.trim(),
               );
 
+              // Iniciar sesión sin redirección automática al home
+              if (context.mounted) {
+                await AuthService().signin(
+                  email: _emailController.text.trim(),
+                  password: _passwordController.text.trim(),
+                  context: context,
+                  redirectToHome: false,
+                );
+              }
+
               if (context.mounted) {
                 // Navegar a la pantalla de usuario creado
-                await Navigator.push(
+                Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const UserCreated()),
+                  (route) => false,
                 );
               }
             } catch (e) {
