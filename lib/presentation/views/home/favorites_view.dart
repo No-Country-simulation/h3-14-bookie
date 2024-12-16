@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/favorite_view/favorite_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
@@ -88,13 +89,18 @@ class FavoritesView extends StatelessWidget {
                   ),
                   itemBuilder: (context, index) {
                     final story = state.listFavorites[index].reading;
-                    return BookWidget(
-                      isFavorite: true,
-                      story: StoryResponseDto(
-                          story.storyId, story.title??'(Título)', '', story.cover??'', story.synopsis??'', [], [], 0, 0, 0, [], true),
-                      onFavorite: () {
-                        context.read<FavoriteViewBloc>().add(ChangeFavoriteStoryFavorites(index: index));
+                    return GestureDetector(
+                      onTap: () {
+                        context.push('/home/0/book/${story.storyId}');
                       },
+                      child: BookWidget(
+                        isFavorite: true,
+                        story: StoryResponseDto(
+                            story.storyId, story.title??'(Título)', '', story.cover??'', story.synopsis??'', [], [], 0, 0, 0, [], true),
+                        onFavorite: () {
+                          context.read<FavoriteViewBloc>().add(ChangeFavoriteStoryFavorites(index: index));
+                        },
+                      ),
                     );
                   },
                 ),

@@ -22,52 +22,65 @@ class _BookFinishedReadScreenState extends State<BookFinishedReadScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                '¡Felicidades por completar tu lectura!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+              const Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        '¡Felicidades por completar tu lectura!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Ve al inicio y descubre más historias que te están esperando.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 16),
-              const Text(
-                'Ve al inicio y descubre más historias que te están esperando.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
                     5,
                     (index) => GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          rate = index + 1;
-                        });
-                      },
-                      child: Icon(
+                          onTap: () {
+                            setState(() {
+                              rate = index + 1;
+                            });
+                          },
+                          child: Icon(
                             index < rate ? Icons.star : Icons.star_border,
                             color: const Color(0xff906E2A),
-                            size: 30,
+                            size: 40,
                           ),
-                    )),
+                        )),
               ),
               const SizedBox(height: 16),
-              const Text(
-                '¿Te ha gustado la historia?\n¡Tu opinión cuenta! Valórala para ayudarnos a mejorar.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30),
+                child: Text(
+                  '¿Te ha gustado la historia?\n¡Tu opinión cuenta! Valórala para ayudarnos a mejorar.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 50),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -78,7 +91,7 @@ class _BookFinishedReadScreenState extends State<BookFinishedReadScreen> {
                     backgroundColor: AppColors.primaryColor,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(25),
                     ),
                   ),
                   child: const Text(
