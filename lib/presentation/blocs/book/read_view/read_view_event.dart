@@ -8,7 +8,7 @@ sealed class ReadViewEvent extends Equatable {
 }
 
 class ChangeChapters extends ReadViewEvent{
-  final List<Chapter> chapters;
+  final List<ChapterDto> chapters;
   const ChangeChapters({
     required this.chapters
   });
@@ -22,8 +22,15 @@ class ChangePageChapterSelected extends ReadViewEvent{
 }
 
 class ChangeStoryUidSelected extends ReadViewEvent{
-  final String uid;
+  final HomeStoryDto story;
   const ChangeStoryUidSelected({
-    required this.uid
+    required this.story
+  });
+}
+
+class ChangeChapterReadActive extends ReadViewEvent {
+  final String storyId;
+  const ChangeChapterReadActive({
+    required this.storyId
   });
 }

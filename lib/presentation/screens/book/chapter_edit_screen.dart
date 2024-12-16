@@ -94,6 +94,7 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
     return Scaffold(
       key: keyScaffold,
       appBar: AppBar(
+        elevation: 0,
         actions: [
           IconButton(onPressed: (){
             if(!validate()){
@@ -117,13 +118,17 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
               color: AppColors.primaryColor,
               height: 1.0,
             )),
-        shadowColor: AppColors.primaryColor,
+        shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
       endDrawer: const SelectChapterDrawer(),
       body: PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
+
+          if(context.read<BookCreateBloc>().state.storySave){
+            return;
+          }
           ConfirmationDialog.show(
             context,
             question: '¿Estás seguro de que deseas salir sin guardar?',
@@ -207,7 +212,7 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                                 borderRadius: BorderRadius.circular(16),
                                 child: Stack(
                                   children: [
-                                    CustomMapInfoWidget(),
+                                    InfoRouteMap(),
                                     if (blockContent)
                                       GestureDetector(
                                         onTap: () async {

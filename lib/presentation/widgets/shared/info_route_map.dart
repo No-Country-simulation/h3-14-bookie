@@ -44,18 +44,37 @@ class _InfoRouteMapState extends State<InfoRouteMap> {
   static const double _mapBearing = 30;
   static const double _mapPadding = 50;
 
+  // Añade variables para los controladores
+  Timer? _locationTimer;
+  bool _isDisposed = false;
+
   @override
   void initState() {
     super.initState();
     _initializeMap();
   }
 
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _locationTimer?.cancel();
+    super.dispose();
+  }
+
   Future<void> _initializeMap() async {
+    if (_isDisposed) return;
+    
     await _initializeIcons();
     await _fetchLocationUpdate();
+    
+    if (_isDisposed) return;
+    
     if (widget.positions != null) {
       _setMarkers();
       await _getDirectionsRoute();
+      
+      if (_isDisposed) return;
+      
       if (widget.centerOnUser) {
         _centerOnUserLocation();
       } else {
@@ -83,6 +102,8 @@ class _InfoRouteMapState extends State<InfoRouteMap> {
   }
 
   void _setMarkers() {
+    if (!mounted) return;
+    
     bool isAlternating = true;
     _markers = widget.positions!.map((position) {
       final marker = Marker(
@@ -93,7 +114,8 @@ class _InfoRouteMapState extends State<InfoRouteMap> {
       isAlternating = !isAlternating;
       return marker;
     }).toSet();
-    setState(() {});
+    
+    if (mounted) setState(() {});
   }
 
   Future<void> _getDirectionsRoute() async {
@@ -195,7 +217,9 @@ class _InfoRouteMapState extends State<InfoRouteMap> {
         setState(() => _currentPosition = position);
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error obteniendo la ubicación: $e');
+      if (mounted) {
+        Fluttertoast.showToast(msg: 'Error obteniendo la ubicación: $e');
+      }
     }
   }
 

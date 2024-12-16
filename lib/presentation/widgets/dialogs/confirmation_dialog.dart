@@ -54,7 +54,7 @@ class ConfirmationDialog extends StatelessWidget {
             Text(
               question,
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.center,
@@ -65,7 +65,7 @@ class ConfirmationDialog extends StatelessWidget {
                 message!,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 12,
                   color: Colors.black87,
                 ),
               ),
@@ -90,6 +90,7 @@ class ConfirmationDialog extends StatelessWidget {
                       cancelText,
                       style: const TextStyle(
                         color: Color(0xFF006494),
+                        fontSize: 12
                       ),
                     ),
                   ),
@@ -107,7 +108,7 @@ class ConfirmationDialog extends StatelessWidget {
                       Navigator.pop(context, true);
                       onConfirm?.call();
                     },
-                    child: Text(confirmText),
+                    child: Text(confirmText, style: const TextStyle(fontSize: 12),),
                   ),
                 ),
               ],

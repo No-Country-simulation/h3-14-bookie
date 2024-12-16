@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
-import 'package:h3_14_bookie/domain/model/story.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
 class BookWidget extends StatelessWidget {
   final StoryResponseDto story;
+  final bool isFavorite;
+  final VoidCallback onFavorite;
 
   const BookWidget({
     super.key,
     required this.story,
+    this.isFavorite = false,
+    required this.onFavorite
   });
 
   @override
@@ -68,26 +71,29 @@ class BookWidget extends StatelessWidget {
                                 AppColors.primaryColor),
                             backgroundColor: WidgetStateProperty.all<Color>(
                                 AppColors.background)),
-                        onPressed: () {},
-                        icon: const Icon(Icons.book_outlined)),
+                        onPressed: onFavorite,
+                        icon: Icon(
+                          isFavorite
+                            ? Icons.book
+                            : Icons.book_outlined)),
                   )
                 ]),
                 const SizedBox(
                   height: 10,
                 ),
                 Text(
-                  story.title ?? '(título)',
+                  story.title.isEmpty ? '(título)' :story.title,
                   style: textStyle.bodyLarge!
                       .copyWith(fontWeight: FontWeight.w700),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
                 Text(
-                  story.synopsis ?? '(Sinipsis del libro)',
+                  story.synopsis.isEmpty ? '(Sinópsis del libro)' : story.synopsis,
                   style: textStyle.labelLarge!
                       .copyWith(fontWeight: FontWeight.w400),
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
+                  maxLines: 1,
                 ),
                 const SizedBox(
                   height: 3,
@@ -96,7 +102,7 @@ class BookWidget extends StatelessWidget {
             ),
             Column(
               children: [
-                const StarRating(calification: 4),
+                StarRating(calification: story.rate),
                 const SizedBox(
                   height: 3,
                 ),

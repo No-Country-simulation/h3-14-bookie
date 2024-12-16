@@ -5,6 +5,7 @@ import 'package:h3_14_bookie/config/helpers/enums/book_enum.dart';
 import 'package:h3_14_bookie/domain/model/dto/writing_dto.dart';
 import 'package:h3_14_bookie/domain/model/writing.dart';
 import 'package:h3_14_bookie/domain/services/app_user_service.dart';
+import 'package:h3_14_bookie/domain/services/story_service.dart';
 import 'package:h3_14_bookie/domain/services/writing_service.dart';
 
 part 'edit_view_event.dart';
@@ -13,13 +14,16 @@ part 'edit_view_state.dart';
 class EditViewBloc extends Bloc<EditViewEvent, EditViewState> {
   final IWritingService writingService;
   final IAppUserService appUserService;
+  final IStoryService storyService;
   EditViewBloc({
     required this.writingService,
     required this.appUserService,
+    required this.storyService,
   }) : super(const EditViewState()) {
     on<GetStories>(_onGetStories);
     on<ChangeFilter>(_onChangeFilter);
     on<ChangeStatusBook>(_onChangeStatusBook);
+    on<DeleteCreateBook>(_onDeleteCreateBook);
   }
 
   void _onGetStories(GetStories event, Emitter<EditViewState> emit) async {
@@ -67,6 +71,25 @@ class EditViewBloc extends Bloc<EditViewEvent, EditViewState> {
           ? 'draft'
           : 'publish'
     ));
+    }
+    catch(e) {
+      Fluttertoast.showToast(msg: '$e');
+    }
+  }
+
+  void _onDeleteCreateBook(DeleteCreateBook event, Emitter<EditViewState> emit) async {
+    try{
+      emit(state.copyWith(
+        isLoading: true,
+      ));
+      await storyService.deleteStory(event.id);
+      add(GetStories(
+        draftOrPublish: state.filterSelected == FilterBook.all
+          ? null
+          : state.filterSelected == FilterBook.drafts
+            ? 'draft'
+            : 'publish'
+      ));
     }
     catch(e) {
       Fluttertoast.showToast(msg: '$e');

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
-import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/read_view/read_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
-class SelectChapterDrawer extends StatelessWidget {
-  const SelectChapterDrawer({super.key});
+class SelectChapterReadDrawer extends StatelessWidget {
+  const SelectChapterReadDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,25 +29,26 @@ class SelectChapterDrawer extends StatelessWidget {
                 height: 20,
               ),
               Expanded(
-                child: BlocBuilder<BookCreateBloc, BookCreateState>(
+                child: BlocBuilder<ReadViewBloc, ReadViewState>(
                   builder: (context, state) {
                     // Usamos directamente state.chapters
-                    final chapters = state.chapters;
+                    final chapters = state.chapterList;
                     return ListView.separated(
                       separatorBuilder: (context, index) => const SizedBox(
                         height: 10,
                       ),
                       itemBuilder: (context, index) {
-                        final title = chapters[index].titleChapter;
-                        final number = chapters[index].number;
+                        final chapter = chapters[index];
+                        final title = chapter.title;
+                        final chapterId = chapter.chapterUid;
                         return OutlinedButton(
                           onPressed: () {
                             // Acción al seleccionar un capítulo
-                            context.read<BookCreateBloc>().add(ChangeChapterActive(number: number));
+                            context.read<ReadViewBloc>().add(ChangeChapterReadActive(storyId: chapterId!));
                           },
                           style: OutlinedButton.styleFrom(
-                            backgroundColor: state.chapterActive.number == number ? AppColors.primaryColor : null,
-                            foregroundColor: state.chapterActive.number == number ? AppColors.background : null,
+                            backgroundColor: state.chapterActive.chapterUid == chapterId ? AppColors.primaryColor : null,
+                            foregroundColor: state.chapterActive.chapterUid == chapterId ? AppColors.background : null,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16.0),
                             ),
@@ -56,19 +57,12 @@ class SelectChapterDrawer extends StatelessWidget {
                               horizontal: 15,
                             ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Capítulo ${index + 1}: ${title.isEmpty ? '(Sin nombre)' : title}',
-                              ),
-                              GestureDetector(
-                                onTap: (){
-                                  context.read<BookCreateBloc>().add(DeleteChapterEvent(number: number));
-                                },
-                                child: const Icon(Icons.delete_outline))
-                            ],
-                          )
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Capítulo ${index + 1}: ${title.isEmpty ? '(Sin nombre)' : title}',
+                            ),
+                          ),
                         );
                       },
                       itemCount: chapters.length,

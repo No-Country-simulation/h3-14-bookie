@@ -1,6 +1,5 @@
 import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
-import 'package:h3_14_bookie/domain/model/dto/chapter_story_response_dto.dart';
 
 interface class IChapterService {
   Future<List<Chapter>> getChapters() async {
@@ -32,24 +31,19 @@ interface class IChapterService {
     throw UnimplementedError();
   }
 
-  Future<List<ChapterStoryResponseDto>> getChaptersStory(
-      String storyUid) async {
-    throw UnimplementedError();
-  }
-
-  Future<List<ChapterStoryResponseDto>> getAllChaptersStory() async {
-    throw UnimplementedError();
-  }
-
   Future<ChapterDto> convertToChapterDto(Chapter chapter) async {
     throw UnimplementedError();
   }
 
-  Future<String> createChapter(ChapterDto chapterDto) async {
+  Future<String> createChapter(ChapterDto chapterDto, int chapterNumber) async {
     return Future.value('');
   }
 
   Future<bool> deleteChaptersByStoryUid(String storyUid) async {
     return Future.value(false);
+  }
+
+  Future<bool> deleteChapter(String chapterUid) async {
+    throw UnimplementedError();
   }
 }

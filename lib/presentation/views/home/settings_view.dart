@@ -1,97 +1,90 @@
 import 'package:flutter/material.dart';
 import 'package:h3_14_bookie/domain/services/auth_service.dart';
+import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 4.0,
-        shadowColor: Colors.black.withOpacity(0.1),
-        title: const Text(
-          "Configuración",
-          style: TextStyle(
-            fontSize: 20.0,
+    final textStyle = Theme.of(context).textTheme;
+    return Column(
+      children: [
+        const SizedBox(
+          height: 10,
+        ),
+        Text(
+          'Configuración',
+          style: textStyle.titleLarge!.copyWith(
+            fontSize: 21,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
-            fontFamily: 'Roboto',
           ),
         ),
-        centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+        const Divider(),
+        Expanded(
+          child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 35.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 30.0),
+                  const SectionHeader1(title: "Configuración de la aplicación"),
+                  const SizedBox(height: 30.0),
+                  const SectionHeader2(title: "Perfil y configuración de la cuenta"),
+                  const DividerStyled(),
+                  const SizedBox(height: 20.0),
+                  const SectionHeader2(title: "Notificaciones"),
+                  const DividerStyled(),
+                  const SizedBox(height: 20.0),
+                  const SectionHeader2(title: "Preferencias de lectura"),
+                  const DividerStyled(),
+                  const SizedBox(height: 20.0),
+                  const SectionHeader2(
+                    title: "Modo nocturno",
+                    subtitle: "Desactivado",
+                  ),
+                  const DividerStyled(),
+                  const SizedBox(height: 40.0),
+                  const SectionHeader1(title: "Privacidad y Seguridad"),
+                  const SizedBox(height: 30.0),
+                  const SectionHeader2(title: "Cuentas silenciadas"),
+                  const DividerStyled(),
+                  const SizedBox(height: 20.0),
+                  const SectionHeader2(title: "Cuentas bloqueadas"),
+                  const DividerStyled(),
+                  const SizedBox(height: 20.0),
+                  const SectionHeader2(title: "Preferencias de contenido"),
+                  const DividerStyled(),
+                  const SizedBox(height: 40.0),
+                  const SectionHeader1(title: "Más información y asistencia"),
+                  const SizedBox(height: 30.0),
+                  const SectionHeader2(title: "Sobre Bookie"),
+                  const DividerStyled(),
+                  const SizedBox(height: 20.0),
+                  const SectionHeader2(title: "Ayuda & Soporte"),
+                  const DividerStyled(),
+                  const SizedBox(height: 20.0),
+                  const SectionHeader2(title: "Políticas de privacidad"),
+                  const DividerStyled(),
+                  const SizedBox(height: 20.0),
+                  const SectionHeader2(title: "Condiciones de uso"),
+                  const DividerStyled(),
+                  const SizedBox(height: 40.0),
+                  const SectionHeader1(title: "Inicio de Sesión"),
+                  const SizedBox(height: 30.0),
+                  const SectionHeader3(title: "Agregar cuenta"),
+                  const SizedBox(height: 20.0),
+                  SectionHeader3(title: "Cerrar sesión", onTap: () async {
+                    await AuthService().signout(context: context);
+                  },),
+                  const SizedBox(height: 20.0),
+                  const SectionHeader3(title: "Salir de todas las cuentas"),
+                  const SizedBox(height: 20.0),
+                ],
+              ),
           ),
         ),
-        backgroundColor: Colors.white,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 35.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 40.0),
-            const SectionHeader1(title: "Configuración de la aplicación"),
-            const SizedBox(height: 30.0),
-            const SectionHeader2(title: "Perfil y configuración de la cuenta"),
-            const DividerStyled(),
-            const SizedBox(height: 20.0),
-            const SectionHeader2(title: "Notificaciones"),
-            const DividerStyled(),
-            const SizedBox(height: 20.0),
-            const SectionHeader2(title: "Preferencias de lectura"),
-            const DividerStyled(),
-            const SizedBox(height: 20.0),
-            const SectionHeader2(
-              title: "Modo nocturno",
-              subtitle: "Desactivado",
-            ),
-            const DividerStyled(),
-            const SizedBox(height: 40.0),
-            const SectionHeader1(title: "Privacidad y Seguridad"),
-            const SizedBox(height: 30.0),
-            const SectionHeader2(title: "Cuentas silenciadas"),
-            const DividerStyled(),
-            const SizedBox(height: 20.0),
-            const SectionHeader2(title: "Cuentas bloqueadas"),
-            const DividerStyled(),
-            const SizedBox(height: 20.0),
-            const SectionHeader2(title: "Preferencias de contenido"),
-            const DividerStyled(),
-            const SizedBox(height: 40.0),
-            const SectionHeader1(title: "Más información y asistencia"),
-            const SizedBox(height: 30.0),
-            const SectionHeader2(title: "Sobre Bookie"),
-            const DividerStyled(),
-            const SizedBox(height: 20.0),
-            const SectionHeader2(title: "Ayuda & Soporte"),
-            const DividerStyled(),
-            const SizedBox(height: 20.0),
-            const SectionHeader2(title: "Políticas de privacidad"),
-            const DividerStyled(),
-            const SizedBox(height: 20.0),
-            const SectionHeader2(title: "Condiciones de uso"),
-            const DividerStyled(),
-            const SizedBox(height: 40.0),
-            const SectionHeader1(title: "Inicio de Sesión"),
-            const SizedBox(height: 30.0),
-            const SectionHeader3(title: "Agregar cuenta"),
-            const SizedBox(height: 20.0),
-            SectionHeader3(title: "Cerrar sesión", onTap: () async {
-              await AuthService().signout(context: context);
-            },),
-            const SizedBox(height: 20.0),
-            const SectionHeader3(title: "Salir de todas las cuentas"),
-            const SizedBox(height: 20.0),
-          ],
-        ),
-      ),
+      ],
     );
   }
 }

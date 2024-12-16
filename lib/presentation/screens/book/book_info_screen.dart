@@ -25,15 +25,11 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final textStyle = Theme.of(context).textTheme;
-    const locations = [
-      'Plaza de la prevalencia',
-      'Café Torres',
-      'Parque Versalles'
-    ];
 
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AppBar(
+        elevation: 0,
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.book_outlined))
         ],
@@ -43,11 +39,12 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
               color: AppColors.primaryColor,
               height: 1.0,
             )),
-        shadowColor: AppColors.primaryColor,
+        
+        shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
       body: FutureBuilder(
-          future: StoryServiceImpl().getStoryById(widget.bookId),
+          future: StoryServiceImpl().getHomeStoryDtoByStoryUid(widget.bookId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -101,7 +98,7 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                             const SizedBox(
                               width: 10,
                             ),
-                            Text(story.authorUid!),
+                            Text(story.authorName),
                           ],
                         ),
                         const Row(
@@ -162,11 +159,12 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                       ),
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
-                          child: const InfoRouteMap(
+                          child: InfoRouteMap(
                             centerOnUser: false,
                             positions: [
-                              LatLng(37.40523168383278, -122.15067051351069),
-                              LatLng(37.40209318936961, -122.14084122329949)
+                              ...story.chapters.map((c) => LatLng(c.lat, c.long))
+                              // LatLng(37.40523168383278, -122.15067051351069),
+                              // LatLng(37.40209318936961, -122.14084122329949)
                             ],
                           )),
                     ),
@@ -186,14 +184,12 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                              'Total capitulos: ${story.chaptersUid?.length} (solo es una marca)'),
                           const Text('Lugares'),
                           const SizedBox(
                             height: 10,
                           ),
-                          ...locations.map((location) => IconLabelWidget(
-                              label: location, icon: Icons.push_pin_outlined)),
+                          ...story.chapters.map((location) => IconLabelWidget(
+                              label: location.placeName, icon: Icons.push_pin_outlined)),
                           const SizedBox(
                             height: 15,
                           ),
@@ -201,11 +197,11 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                           const SizedBox(
                             height: 10,
                           ),
-                          ...locations.asMap().entries.map((entry) {
+                          ...story.chapters.asMap().entries.map((entry) {
                             int index = entry.key;
-                            var location = entry.value;
+                            var title = entry.value.title;
                             return IconLabelWidget(
-                              label: 'Capítulo ${index + 1}: $location',
+                              label: 'Capítulo ${index + 1}: $title',
                               icon: Icons.list,
                             );
                           })
@@ -222,7 +218,7 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                           context.push('/home/0/book/1/read');
                           context
                               .read<ReadViewBloc>()
-                              .add(ChangeStoryUidSelected(uid: widget.bookId));
+                              .add(ChangeStoryUidSelected(story: story));
                         },
                         child: const Text('Leer'),
                       ),

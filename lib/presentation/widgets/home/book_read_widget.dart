@@ -41,9 +41,9 @@ class BookReadWidget extends StatelessWidget {
             ),
             const SizedBox(height: 10,),
             Text('Titulo del libro', style: textStyle.bodyLarge!.copyWith(fontWeight: FontWeight.w700),),
-            Text('Inicio de sinipsis del libro mas largo super largo largo',
+            Text('Inicio de sinopsis del libro mas largo super largo largo',
               style: textStyle.labelLarge!.copyWith(fontWeight: FontWeight.w400),
-              overflow: TextOverflow.ellipsis, maxLines: 2,),
+              overflow: TextOverflow.ellipsis, maxLines: 1,),
             const SizedBox(height: 7,),
             LinearProgressIndicator(
               value: 0.4,
@@ -55,7 +55,7 @@ class BookReadWidget extends StatelessWidget {
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Icons.book, size: 24, color: AppColors.primaryColor,),
+                Icon(Icons.list, size: 24, color: AppColors.primaryColor,),
                 SizedBox(width: 5),
                 Text(
                   '13 Capítulos',

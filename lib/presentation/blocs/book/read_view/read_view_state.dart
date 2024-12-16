@@ -1,27 +1,42 @@
 part of 'read_view_bloc.dart';
 
 class ReadViewState extends Equatable {
-  final String storyId;
+  final HomeStoryDto story;
   final int pageChapterSelected;
-  final List<Chapter> chapterList;
+  final List<ChapterDto> chapterList;
+  final ChapterDto chapterActive;
   const ReadViewState({
-    this.storyId = '',
-    this.pageChapterSelected = 1,
-    this.chapterList = const []
+    this.story = const HomeStoryDto(
+        authorName: '',
+        storyUid: '',
+        title: '',
+        cover: '',
+        synopsis: '',
+        labels: [],
+        categoryNames: [],
+        rate: 0,
+        totalReadings: 0,
+        chapters: []
+    ),
+    this.pageChapterSelected = 0,
+    this.chapterList = const [],
+    this.chapterActive = const ChapterDto(lat: 0,long: 0,pages: [], storyUid: '', title: '', placeName: '',)
   });
   
   @override
-  List<Object> get props => [chapterList, storyId, pageChapterSelected];
+  List<Object> get props => [chapterList, story, pageChapterSelected];
 
   ReadViewState copyWith({
-    String? storyId,
+    HomeStoryDto? story,
     int? pageChapterSelected,
-    List<Chapter>? chapterList,
+    List<ChapterDto>? chapterList,
+    ChapterDto? chapterActive,
   }) {
     return ReadViewState(
-      storyId: storyId ?? this.storyId,
+      story: story ?? this.story,
       pageChapterSelected: pageChapterSelected ?? this.pageChapterSelected,
       chapterList: chapterList ?? this.chapterList,
+      chapterActive: chapterActive ?? this.chapterActive
     );
   }
 }

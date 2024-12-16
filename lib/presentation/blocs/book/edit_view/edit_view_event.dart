@@ -27,3 +27,10 @@ class ChangeStatusBook extends EditViewEvent {
     required this.writing
   });
 }
+
+class DeleteCreateBook extends EditViewEvent {
+  final String id;
+  const DeleteCreateBook({
+    required this.id
+  });
+}

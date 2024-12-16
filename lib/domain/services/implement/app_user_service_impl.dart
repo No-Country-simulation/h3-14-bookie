@@ -4,17 +4,19 @@ import 'package:h3_14_bookie/domain/model/dto/user_dto.dart';
 import 'package:h3_14_bookie/domain/model/writing.dart';
 import 'package:h3_14_bookie/domain/services/app_user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-const String APP_USER_COLLECTION_REF = "appuser";
+import 'package:h3_14_bookie/constants/collection_references.dart';
 
 class AppUserServiceImpl implements IAppUserService {
   final db = FirebaseFirestore.instance;
   late final CollectionReference _appUserRef;
 
   AppUserServiceImpl() {
-    _appUserRef = db.collection(APP_USER_COLLECTION_REF).withConverter<AppUser>(
-        fromFirestore: (snapshots, _) => AppUser.fromFirestore(snapshots, _),
-        toFirestore: (appUser, _) => appUser.toFirestore());
+    _appUserRef = db
+        .collection(CollectionReferences.APP_USER_COLLECTION_REF)
+        .withConverter<AppUser>(
+            fromFirestore: (snapshots, _) =>
+                AppUser.fromFirestore(snapshots, _),
+            toFirestore: (appUser, _) => appUser.toFirestore());
   }
 
   @override
@@ -33,17 +35,33 @@ class AppUserServiceImpl implements IAppUserService {
   @override
   Future<AppUser?> getAppUserById(String uid) async {
     final doc = await _appUserRef.doc(uid).get() as DocumentSnapshot<AppUser>;
-    return doc.data();
+    if (doc.data() == null) {
+      throw StateError('AppUser data is null');
+    }
+    final appUser = doc.data();
+    if (appUser == null) {
+      throw StateError('AppUser data is null');
+    }
+    return appUser;
   }
 
   @override
   Future<AppUser?> getAppUserByAuthUserUid(String authUserUid) async {
     final docs =
         await _appUserRef.where('authUserUid', isEqualTo: authUserUid).get();
-    return docs.docs.map((doc) {
-      final appUser = (doc as DocumentSnapshot<AppUser>).data();
+    if (docs.docs.isEmpty) {
+      throw StateError('AppUser not found');
+    }
+    try {
+      final appUser = docs.docs.first.data() as AppUser?;
+      if (appUser == null) {
+        throw StateError('AppUser data is null');
+      }
       return appUser;
-    }).first;
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 
   @override
@@ -147,6 +165,7 @@ class AppUserServiceImpl implements IAppUserService {
       await _appUserRef.doc(userUid).update({"readings": readingMaps});
       return true;
     } catch (e) {
+      print(e);
       return false;
     }
   }
@@ -166,6 +185,7 @@ class AppUserServiceImpl implements IAppUserService {
       await _appUserRef.doc(authUserUid).update({"writings": writingMaps});
       return true;
     } catch (e) {
+      print(e);
       return false;
     }
   }
