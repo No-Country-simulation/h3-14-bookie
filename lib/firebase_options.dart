@@ -25,9 +25,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -41,46 +47,31 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDWfT4pZfv15PRSZxMxAsvv2GRaUfOVFGs',
-    appId: '1:165946365384:web:4a9ce65e4d77a39fec9cfd',
-    messagingSenderId: '165946365384',
-    projectId: 'bookietest-75f8c',
-    authDomain: 'bookietest-75f8c.firebaseapp.com',
-    storageBucket: 'bookietest-75f8c.firebasestorage.app',
+    apiKey: 'AIzaSyBfIEM4YjCWYiqFxX_kmEgnZ8dQGdekDRs',
+    appId: '1:349182635614:web:611cddb4be89b620a78ecf',
+    messagingSenderId: '349182635614',
+    projectId: 'new-bookie',
+    authDomain: 'new-bookie.firebaseapp.com',
+    storageBucket: 'new-bookie.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDypEx8vEzH8w_0iTMydlp0zR2hvcrXb8I',
-    appId: '1:165946365384:android:476cda323ac4820eec9cfd',
-    messagingSenderId: '165946365384',
-    projectId: 'bookietest-75f8c',
-    storageBucket: 'bookietest-75f8c.firebasestorage.app',
+    apiKey: 'AIzaSyDTWqSX3thBdJ9eacrhJ8ctkzPVW8WVpnY',
+    appId: '1:349182635614:android:d4e882d24db1c974a78ecf',
+    messagingSenderId: '349182635614',
+    projectId: 'new-bookie',
+    storageBucket: 'new-bookie.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyASsT26J3aspjdGmxISpdziLDNF2MwEvpA',
-    appId: '1:165946365384:ios:4c67b291f53c56f8ec9cfd',
-    messagingSenderId: '165946365384',
-    projectId: 'bookietest-75f8c',
-    storageBucket: 'bookietest-75f8c.firebasestorage.app',
+    apiKey: 'AIzaSyDmo-oE5x5n_GI9-H_n2Wjm1uefW1Smdd4',
+    appId: '1:349182635614:ios:672e0e00572e9ca4a78ecf',
+    messagingSenderId: '349182635614',
+    projectId: 'new-bookie',
+    storageBucket: 'new-bookie.firebasestorage.app',
+    androidClientId: '349182635614-nd7cp9avs85atd5anbffig3oaukaqs3i.apps.googleusercontent.com',
+    iosClientId: '349182635614-1nh6ql5k120qtcdejot6eoumsb46fd36.apps.googleusercontent.com',
     iosBundleId: 'com.example.flutterBaseApp',
   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyASsT26J3aspjdGmxISpdziLDNF2MwEvpA',
-    appId: '1:165946365384:ios:4c67b291f53c56f8ec9cfd',
-    messagingSenderId: '165946365384',
-    projectId: 'bookietest-75f8c',
-    storageBucket: 'bookietest-75f8c.firebasestorage.app',
-    iosBundleId: 'com.example.flutterBaseApp',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDWfT4pZfv15PRSZxMxAsvv2GRaUfOVFGs',
-    appId: '1:165946365384:web:1d84b863fade2c98ec9cfd',
-    messagingSenderId: '165946365384',
-    projectId: 'bookietest-75f8c',
-    authDomain: 'bookietest-75f8c.firebaseapp.com',
-    storageBucket: 'bookietest-75f8c.firebasestorage.app',
-  );
 }
