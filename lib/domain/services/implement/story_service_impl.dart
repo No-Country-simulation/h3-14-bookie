@@ -45,8 +45,17 @@ class StoryServiceImpl implements IStoryService {
 
   @override
   Future<List<String>> getAllStoriesUid() async {
-    final docs = await _storyRef.get();
-    return docs.docs.map((doc) => doc.id).toList();
+    try {
+      final querySnapshot = await _storyRef.get();
+      if (querySnapshot.docs.isEmpty) {
+        print("Warning: No documents found in stories collection");
+        return [];
+      }
+      return querySnapshot.docs.map((doc) => doc.id).toList();
+    } catch (e) {
+      print("Error getting stories: $e");
+      throw Exception("Failed to get stories: $e");
+    }
   }
 
   @override
