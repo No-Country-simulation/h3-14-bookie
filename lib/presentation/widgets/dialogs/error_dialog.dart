@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:h3_14_bookie/config/theme/app_colors.dart';
 
 class ErrorDialog extends StatelessWidget {
   final String title;
@@ -29,7 +30,7 @@ class ErrorDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -64,10 +65,19 @@ class ErrorDialog extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
+                  style: TextButton.styleFrom(
+                    side: const BorderSide(
+                      color: AppColors.primaryColor,
+                      width: 1.0,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                  ),
                   child: const Text(
                     'Cancelar',
                     style: TextStyle(
-                      color: Colors.black54,
+                      color: AppColors.primaryColor,
                     ),
                   ),
                 ),
@@ -75,7 +85,7 @@ class ErrorDialog extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF006494),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(24),
                     ),
                   ),
                   onPressed: () {

@@ -8,6 +8,8 @@ import 'package:h3_14_bookie/domain/services/app_user_service.dart';
 import 'package:h3_14_bookie/presentation/screens/home/home.dart';
 import 'package:h3_14_bookie/presentation/screens/login/login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:h3_14_bookie/presentation/screens/auth/email_verification_screen.dart';
+import 'package:h3_14_bookie/presentation/widgets/dialogs/error_dialog.dart';
 
 class AuthService {
   Future<UserCredential> signup({
@@ -15,6 +17,7 @@ class AuthService {
     required String password,
     required String name,
     required String username,
+    required BuildContext context,
   }) async {
     final IAppUserService appUserService = AppUserServiceImpl();
 
@@ -102,11 +105,29 @@ class AuthService {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
+      // Enviar correo de verificación
+      await userCredential.user!.sendEmailVerification();
+
       await appUserService.createAppUser(UserDto(
         authUserUid: userCredential.user!.uid,
         name: username,
         email: email,
       ));
+
+      // Mostrar mensaje de éxito y redirigir a la pantalla de verificación
+      // Fluttertoast.showToast(
+      //   msg: 'Cuenta creada exitosamente. Por favor, verifica tu email.',
+      //   toastLength: Toast.LENGTH_LONG,
+      //   gravity: ToastGravity.SNACKBAR,
+      //   backgroundColor: Colors.green,
+      //   textColor: Colors.white,
+      //   fontSize: 14.0,
+      // );
+
+      // Navegar a la pantalla de verificación de email
+      if (context.mounted) {
+        context.go('/email-verification');
+      }
 
       return userCredential;
     } on FirebaseAuthException catch (e) {
@@ -162,128 +183,136 @@ class AuthService {
     bool redirectToHome = true,
   }) async {
     try {
-      if (redirectToHome && context.mounted) {
-        context.go('/loading');
+      // Validar que los campos no estén vacíos
+      if (email.trim().isEmpty || password.trim().isEmpty) {
+        if (context.mounted) {
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Campos Vacíos'),
+                content: const Text('Por favor, complete todos los campos.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Aceptar'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+        return;
       }
 
-      try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
+      final userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-        // Imprimir el UID del usuario
-        print('UID del usuario: ${userCredential.user?.uid}');
-      } on FirebaseAuthException catch (e) {
-        if (context.mounted) {
-          context.go('/initScreen');
+      if (userCredential.user != null) {
+        if (!userCredential.user!.emailVerified) {
+          await userCredential.user!.sendEmailVerification();
+          await FirebaseAuth.instance.signOut();
+
+          if (context.mounted) {
+            context.go('/email-verification');
+          }
+          return;
         }
 
-        String message;
+        print('UID del usuario: ${userCredential.user?.uid}');
+
+        if (context.mounted) {
+          if (redirectToHome) {
+            context.go('/loading');
+          } else {
+            context.go('/user-created');
+          }
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException en signin: ${e.code} - ${e.message}');
+
+      if (context.mounted) {
+        String errorMessage = '';
+
         switch (e.code) {
           case 'user-not-found':
-            message = 'No existe una cuenta con este correo electrónico.';
+            errorMessage = 'No existe una cuenta con este correo electrónico.';
             break;
           case 'wrong-password':
-            message = 'Contraseña incorrecta.';
+            errorMessage = 'La contraseña es incorrecta.';
             break;
           case 'invalid-email':
-            message = 'El formato del correo electrónico no es válido.';
+            errorMessage = 'El formato del correo electrónico no es válido.';
             break;
           case 'user-disabled':
-            message = 'Esta cuenta ha sido deshabilitada.';
+            errorMessage = 'Esta cuenta ha sido deshabilitada.';
             break;
           case 'too-many-requests':
-            message =
-                'Demasiados intentos fallidos. Por favor, intente más tarde.';
+            errorMessage = 'Demasiados intentos fallidos. Intente más tarde.';
             break;
           default:
-            message = 'Error de autenticación: ${e.message}';
+            errorMessage =
+                ' ${"No hemos podido encontrar un registro de usuario con el correo electrónico ingresado."}';
         }
-
-        Fluttertoast.showToast(
-          msg: message,
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.SNACKBAR,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 14.0,
-        );
-
-        rethrow;
-      }
-
-      // Solo redirigir al home si redirectToHome es true
-      if (!redirectToHome && context.mounted) {
-        context.go('/user-created');
+        ErrorDialog.show(context, message: errorMessage);
+        // await showDialog(
+        //   context: context,
+        //   builder: (BuildContext context) {
+        //     return AlertDialog(
+        //       title: const Text('Error de Inicio de Sesión'),
+        //       content: Text(errorMessage),
+        //       actions: [
+        //         TextButton(
+        //           onPressed: () => Navigator.pop(context),
+        //           child: const Text('Aceptar'),
+        //         ),
+        //       ],
+        //     );
+        //   },
+        // );
       }
     } catch (e) {
-      if (e is! FirebaseAuthException) {
-        Fluttertoast.showToast(
-          msg: 'Error inesperado durante el inicio de sesión',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.SNACKBAR,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 14.0,
+      print('Error inesperado en signin: $e');
+      if (context.mounted) {
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: const Text(
+                  'Ocurrió un error inesperado. Por favor, intente nuevamente.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Aceptar'),
+                ),
+              ],
+            );
+          },
         );
       }
-      rethrow;
     }
   }
 
   Future<void> signout({required BuildContext context}) async {
-    await FirebaseAuth.instance.signOut();
-    if (context.mounted) {
-      context.go('/login');
-    }
-  }
-
-  Future<bool> verifyEmail(String email) async {
     try {
-      // Primero verificamos si el email tiene un formato válido
-      if (!email.contains('@') || !email.contains('.')) {
-        throw FirebaseAuthException(
-          code: 'invalid-email',
-          message: 'El formato del correo electrónico no es válido',
-        );
-      }
-
-      // Verificar si el email existe usando el servicio de autenticación
-      try {
-        final methods =
-            await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
-        print('Métodos de autenticación disponibles: $methods'); // Debug
-
-        // Si no hay métodos de inicio de sesión, el usuario no existe
-        if (methods.isEmpty) {
-          throw FirebaseAuthException(
-            code: 'user-not-found',
-            message: 'No existe una cuenta con este correo electrónico',
-          );
-        }
-
-        // Si llegamos aquí, el usuario existe
-        return true;
-      } on FirebaseException catch (e) {
-        print('Firebase Exception: ${e.code} - ${e.message}');
-        if (e.code == 'invalid-email') {
-          throw FirebaseAuthException(
-            code: 'invalid-email',
-            message: 'El formato del correo electrónico no es válido',
-          );
-        }
-        rethrow;
+      await FirebaseAuth.instance.signOut();
+      if (context.mounted) {
+        context.go('/initScreen');
       }
     } catch (e) {
-      print('Error en verifyEmail: $e');
-      if (e is FirebaseAuthException) {
-        rethrow;
-      }
-      throw FirebaseAuthException(
-        code: 'unknown',
-        message: 'Ha ocurrido un error al verificar el correo electrónico',
+      print('Error en signout: $e');
+      Fluttertoast.showToast(
+        msg: 'Error al cerrar sesión',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.SNACKBAR,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 14.0,
       );
     }
   }
@@ -352,6 +381,17 @@ class AuthService {
         textColor: Colors.white,
         fontSize: 14.0,
       );
+    }
+  }
+
+  Future<bool> verifyEmail(String email) async {
+    try {
+      final methods =
+          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+      return methods.isNotEmpty;
+    } catch (e) {
+      print('Error en verifyEmail: $e');
+      return false;
     }
   }
 }

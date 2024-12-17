@@ -7,6 +7,7 @@ import 'package:h3_14_bookie/presentation/screens/loading/loading_screen.dart';
 import 'package:h3_14_bookie/presentation/screens/password/forgot_password_screen.dart';
 import 'package:h3_14_bookie/presentation/screens/signup/signup.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Login extends StatefulWidget {
   static const String name = 'Login';
@@ -179,7 +180,7 @@ class _LoginState extends State<Login> {
             elevation: 0,
           ),
           onPressed: () async {
-            // Validar que los campos no estén vacíos
+            // Validar campos vacíos
             if (_emailController.text.trim().isEmpty ||
                 _passwordController.text.trim().isEmpty) {
               Fluttertoast.showToast(
@@ -195,12 +196,12 @@ class _LoginState extends State<Login> {
 
             try {
               await AuthService().signin(
-                email: _emailController.text,
-                password: _passwordController.text,
+                email: _emailController.text.trim(),
+                password: _passwordController.text.trim(),
                 context: context,
               );
             } catch (e) {
-              // El error ya se maneja en AuthService
+              print('Error inesperado en login: $e');
             }
           },
           child: const Text(
