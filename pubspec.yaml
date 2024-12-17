@@ -26,6 +26,7 @@ dependencies:
   image_picker: ^1.1.2
   location: ^7.0.1
   flutter_facebook_auth: ^7.1.1
+  cached_network_image: ^3.3.1
 
 dev_dependencies:
   cloud_firestore: ^5.5.0

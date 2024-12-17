@@ -8,12 +8,11 @@ class BookWidget extends StatelessWidget {
   final bool isFavorite;
   final VoidCallback onFavorite;
 
-  const BookWidget({
-    super.key,
-    required this.story,
-    this.isFavorite = false,
-    required this.onFavorite
-  });
+  const BookWidget(
+      {super.key,
+      required this.story,
+      this.isFavorite = false,
+      required this.onFavorite});
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +47,15 @@ class BookWidget extends StatelessWidget {
                       height: 140,
                       decoration: BoxDecoration(
                         image: story.cover.isNotEmpty
-                        ? DecorationImage(
-                            image: NetworkImage(story.cover),
-                            fit: BoxFit.cover,
-                            onError: (exception, stackTrace) {
-                              // Manejar el error aquí si es necesario
-                              print('Error loading image: $exception');
-                            },
-                          )
-                        : null,
+                            ? DecorationImage(
+                                image: NetworkImage(story.cover),
+                                fit: BoxFit.cover,
+                                onError: (exception, stackTrace) {
+                                  // Manejar el error aquí si es necesario
+                                  print('Error loading image: $exception');
+                                },
+                              )
+                            : null,
                         color: AppColors.secondaryColor,
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -73,23 +72,23 @@ class BookWidget extends StatelessWidget {
                                 AppColors.background)),
                         onPressed: onFavorite,
                         icon: Icon(
-                          isFavorite
-                            ? Icons.book
-                            : Icons.book_outlined)),
+                            isFavorite ? Icons.book : Icons.book_outlined)),
                   )
                 ]),
                 const SizedBox(
                   height: 10,
                 ),
                 Text(
-                  story.title.isEmpty ? '(título)' :story.title,
+                  story.title.isEmpty ? '(título)' : story.title,
                   style: textStyle.bodyLarge!
                       .copyWith(fontWeight: FontWeight.w700),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
                 Text(
-                  story.synopsis.isEmpty ? '(Sinópsis del libro)' : story.synopsis,
+                  story.synopsis.isEmpty
+                      ? '(Sinópsis del libro)'
+                      : story.synopsis,
                   style: textStyle.labelLarge!
                       .copyWith(fontWeight: FontWeight.w400),
                   overflow: TextOverflow.ellipsis,

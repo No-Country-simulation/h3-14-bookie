@@ -10,9 +10,7 @@ part 'read_view_state.dart';
 
 class ReadViewBloc extends Bloc<ReadViewEvent, ReadViewState> {
   final IReadingService readingService;
-  ReadViewBloc({
-    required this.readingService
-  }) : super(const ReadViewState()) {
+  ReadViewBloc({required this.readingService}) : super(const ReadViewState()) {
     on<ChangeChapters>(_onChangeChapters);
     on<ChangePageChapterSelected>(_onChangePageChapterSelected);
     on<ChangeStoryUidSelected>(_onChangeStoryUidSelected);
@@ -22,19 +20,17 @@ class ReadViewBloc extends Bloc<ReadViewEvent, ReadViewState> {
   }
 
   void _onChangeChapters(ChangeChapters event, Emitter<ReadViewState> emit) {
-    emit(state.copyWith(
-      chapterList: event.chapters
-    ));
+    emit(state.copyWith(chapterList: event.chapters));
   }
 
-  void _onChangePageChapterSelected(ChangePageChapterSelected event, Emitter<ReadViewState> emit) {
-    emit(state.copyWith(
-      pageChapterSelected: event.page
-    ));
+  void _onChangePageChapterSelected(
+      ChangePageChapterSelected event, Emitter<ReadViewState> emit) {
+    emit(state.copyWith(pageChapterSelected: event.page));
     add(const SaveLastPageReadEvent());
   }
 
-  void _onChangeStoryUidSelected(ChangeStoryUidSelected event, Emitter<ReadViewState> emit) {
+  void _onChangeStoryUidSelected(
+      ChangeStoryUidSelected event, Emitter<ReadViewState> emit) {
     final chapters = event.story.chapters;
     emit(state.copyWith(
       story: event.story,
@@ -43,14 +39,20 @@ class ReadViewBloc extends Bloc<ReadViewEvent, ReadViewState> {
     ));
   }
 
-  void _onChangeChapterReadActive(ChangeChapterReadActive event, Emitter<ReadViewState> emit) {
-    int index = state.chapterList.indexWhere((c) => c.storyUid == event.storyId);
-    emit(state.copyWith(
-      chapterActive: state.chapterList[index],
-    ));
+  void _onChangeChapterReadActive(
+      ChangeChapterReadActive event, Emitter<ReadViewState> emit) {
+    int index =
+        state.chapterList.indexWhere((c) => c.chapterUid == event.storyId);
+    if (index != -1) {
+      emit(state.copyWith(
+        chapterActive: state.chapterList[index],
+        pageChapterSelected: 0,
+      ));
+    }
   }
 
-  void _onAddNewReadingEvent(AddNewReadingEvent event, Emitter<ReadViewState> emit) async {
+  void _onAddNewReadingEvent(
+      AddNewReadingEvent event, Emitter<ReadViewState> emit) async {
     try {
       await readingService.addNewReading(event.storyId, false);
     } catch (e) {
@@ -58,9 +60,11 @@ class ReadViewBloc extends Bloc<ReadViewEvent, ReadViewState> {
     }
   }
 
-  void _onSaveLastPageReadEvent(SaveLastPageReadEvent event, Emitter<ReadViewState> emit) async {
+  void _onSaveLastPageReadEvent(
+      SaveLastPageReadEvent event, Emitter<ReadViewState> emit) async {
     try {
-      await readingService.saveLastPageInChapterReaded(state.story.storyUid, state.chapterActive.storyUid, state.pageChapterSelected);
+      await readingService.saveLastPageInChapterReaded(state.story.storyUid,
+          state.chapterActive.storyUid, state.pageChapterSelected);
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');
     }

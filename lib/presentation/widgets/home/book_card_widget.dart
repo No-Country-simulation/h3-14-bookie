@@ -96,27 +96,33 @@ class BookCardWidget extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 5),
-                    IconLabelWidget(label: placeChapterName, icon: Icons.place_outlined),
+                    IconLabelWidget(
+                        label: placeChapterName, icon: Icons.place_outlined),
                     const SizedBox(height: 3),
                   ],
                 ),
               ),
             ],
           ),
-                    IconLabelWidget(
-                      label: 'Capítulo $numberChapter: $titleChapterName',
-                    icon: Icons.list),
+          IconLabelWidget(
+              label: 'Capítulo $numberChapter: $titleChapterName',
+              icon: Icons.list),
           const SizedBox(height: 16),
           Wrap(
             spacing: 8,
             children: categories.map((category) {
               return Chip(
-                label: Text(category, style: const TextStyle(color: AppColors.primaryColor),),
-                backgroundColor:  AppColors.background,
+                label: Text(
+                  category,
+                  style: const TextStyle(color: AppColors.primaryColor),
+                ),
+                backgroundColor: AppColors.background,
                 side: const BorderSide(
                   color: AppColors.primaryColor,
                 ),
-                shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(16), ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               );
             }).toList(),
           ),
@@ -142,13 +148,13 @@ class BookCardWidget extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   IconButton.filled(
-                    onPressed: (){
-                       context.push('/home/0/book/$storyId');
-                    },
-                    style: const ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(AppColors.primaryColor)
-                    ),
-                    icon: const Icon(Icons.arrow_forward))
+                      onPressed: () {
+                        context.push('/home/0/book/$storyId');
+                      },
+                      style: const ButtonStyle(
+                          backgroundColor:
+                              WidgetStatePropertyAll(AppColors.primaryColor)),
+                      icon: const Icon(Icons.arrow_forward))
                 ],
               ),
             ],

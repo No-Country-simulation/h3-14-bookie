@@ -73,7 +73,9 @@ class BookReadScreen extends StatelessWidget {
                       children: [
                         InfoRouteMap(
                           centerOnUser: true,
-                          positions: state.chapterList.map((c)=>LatLng(c.lat, c.long)).toList(),
+                          positions: state.chapterList
+                              .map((c) => LatLng(c.lat, c.long))
+                              .toList(),
                         ),
                         if (blockContent)
                           const BlockContent(
@@ -120,14 +122,34 @@ class BookReadScreen extends StatelessWidget {
             ),
             BookNavigation(
               currentPage: state.pageChapterSelected,
-              totalPages: state.chapterActive.pages.length + 1,
+              totalPages: state.chapterActive.pages.length,
               changePage: (currentPage) {
-                if(currentPage == state.chapterActive.pages.length){
-                  context.read<ReadViewBloc>().add(const ChangePageChapterSelected(page: 0));
-                  context.push('/home/0/book/1/read/finish-read');
+                if (currentPage >= state.chapterActive.pages.length) {
+                  final currentIndex = state.chapterList.indexWhere(
+                      (c) => c.storyUid == state.chapterActive.storyUid);
+
+                  if (currentIndex != -1 &&
+                      currentIndex < state.chapterList.length - 1) {
+                    final nextChapter = state.chapterList[currentIndex + 1];
+
+                    context.read<ReadViewBloc>().add(
+                        ChangeChapterReadActive(storyId: nextChapter.storyUid));
+
+                    context
+                        .read<ReadViewBloc>()
+                        .add(const ChangePageChapterSelected(page: 0));
+                  } else {
+                    context
+                        .read<ReadViewBloc>()
+                        .add(const ChangePageChapterSelected(page: 0));
+                    context.push('/home/0/book/1/read/finish-read');
+                  }
                   return;
                 }
-                context.read<ReadViewBloc>().add(ChangePageChapterSelected(page: currentPage));
+
+                context
+                    .read<ReadViewBloc>()
+                    .add(ChangePageChapterSelected(page: currentPage));
               },
             )
           ],

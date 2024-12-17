@@ -22,12 +22,35 @@ class ChapterEditScreen extends StatefulWidget {
 
 class _ChapterEditScreenState extends State<ChapterEditScreen> {
   final keyScaffold = GlobalKey<ScaffoldState>();
+  bool _isSaving = false;
 
   late TextEditingController _textController;
   late TextEditingController _titleController;
   late TextEditingController _placeController;
 
   bool blockContent = true;
+
+  bool validate() {
+    if (_titleController.text.isEmpty || _placeController.text.isEmpty) {
+      Fluttertoast.showToast(
+          msg: 'El título y nombre de la ubicación, son obligatorios.',
+          backgroundColor: Colors.red);
+      return false;
+    }
+    if (blockContent) {
+      Fluttertoast.showToast(
+          msg: 'Es obligatorio elegir una ubicación.',
+          backgroundColor: Colors.red);
+      return false;
+    }
+    if (_textController.text.isEmpty) {
+      Fluttertoast.showToast(
+          msg: 'Es obligatorio tener una historia.',
+          backgroundColor: Colors.red);
+      return false;
+    }
+    return true;
+  }
 
   @override
   void initState() {
@@ -42,18 +65,16 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
 
     _titleController.addListener(() {
       bookCreateBloc.add(UpdateChapterActive(
-        chapter: bookCreateBloc.state.chapterActive.copyWith(
-          titleChapter: _titleController.text,
-        )
-      ));
+          chapter: bookCreateBloc.state.chapterActive.copyWith(
+        titleChapter: _titleController.text,
+      )));
     });
 
     _placeController.addListener(() {
       bookCreateBloc.add(UpdateChapterActive(
-        chapter: bookCreateBloc.state.chapterActive.copyWith(
-          placeName: _placeController.text,
-        )
-      ));
+          chapter: bookCreateBloc.state.chapterActive.copyWith(
+        placeName: _placeController.text,
+      )));
     });
   }
 
@@ -65,46 +86,58 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
     super.dispose();
   }
 
+  Future<void> _saveStory(BuildContext context) async {
+    if (_isSaving) {
+      Fluttertoast.showToast(
+          msg: 'Guardando historia...', backgroundColor: Colors.orange);
+      return;
+    }
+    if (!validate()) return;
+
+    final bookCreateBloc = context.read<BookCreateBloc>();
+    if (bookCreateBloc.state.storySave) {
+      Fluttertoast.showToast(
+          msg: 'La historia ya está guardada', backgroundColor: Colors.green);
+      context.go('/home/3');
+      return;
+    }
+
+    setState(() => _isSaving = true);
+
+    try {
+      bookCreateBloc.add(CreateStoryEvent(whenComplete: () {
+        if (!mounted) return;
+        setState(() => _isSaving = false);
+        context.read<EditViewBloc>().add(const GetStories());
+        context.go('/home/3');
+      }));
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      Fluttertoast.showToast(
+          msg: 'Error al guardar: $e', backgroundColor: Colors.red);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme;
     final size = MediaQuery.of(context).size;
     final bookCreateBloc = context.read<BookCreateBloc>();
 
-
-    bool validate(){
-      if(_titleController.text.isEmpty || _placeController.text.isEmpty){
-        Fluttertoast.showToast(msg: 'El título y nombre de la ubicación, son obligatorios.',
-        backgroundColor: Colors.red);
-        return false;
-      }
-      if(blockContent){
-        Fluttertoast.showToast(msg: 'Es obligatorio elegir una ubicación.',
-        backgroundColor: Colors.red);
-        return false;
-      }
-      if(_textController.text.isEmpty){
-        Fluttertoast.showToast(msg: 'Es obligatorio tener una historia.',
-        backgroundColor: Colors.red);
-        return false;
-      }
-      return true;
-    }
-
     return Scaffold(
       key: keyScaffold,
       appBar: AppBar(
         elevation: 0,
         actions: [
-          IconButton(onPressed: (){
-            if(!validate()){
-              return;
-            }
-            bookCreateBloc.add(CreateStoryEvent(whenComplete: (){
-                context.read<EditViewBloc>().add(const GetStories()); //todo: verificar si se actualia la lsita al dar atras
-                context.go('/home/3');
-            }));
-          }, icon: const Icon(Icons.save_outlined)),
+          IconButton(
+              onPressed: () => _saveStory(context),
+              icon: _isSaving
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.save_outlined)),
           IconButton(
               onPressed: () {
                 FocusManager.instance.primaryFocus?.unfocus();
@@ -124,40 +157,29 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
       endDrawer: const SelectChapterDrawer(),
       body: PopScope(
         canPop: false,
-        onPopInvokedWithResult: (didPop, result) {
-
-          if(context.read<BookCreateBloc>().state.storySave){
+        onPopInvokedWithResult: (didPop, result) async {
+          if (_isSaving) {
+            Fluttertoast.showToast(
+                msg: 'Guardando historia...', backgroundColor: Colors.orange);
             return;
           }
-          ConfirmationDialog.show(
-            context,
-            question: '¿Estás seguro de que deseas salir sin guardar?',
-            message: 'Tu historia no se ha guardado. Si decides irte sin guardar, perderás todos los cambios realizados.',
-            confirmText: 'Guardar',
-            cancelText: 'No guardar',
-            onConfirm: () {
-              if(validate()){
-                bookCreateBloc.add(CreateStoryEvent(
-                  whenComplete: (){
-                    context.read<EditViewBloc>().add(const GetStories()); //todo: verificar si se actualia la lsita al dar atras
-                    context.go('/home/3');
-                  }));
-              }
-              return;
-            },
-            onCancel: (){
-              context.go('/home/3');
-            }
-          );
-            
-          
-          // bookCreateBloc.add(SaveChapterActive(
-          //   chapter: bookCreateBloc.state.chapterActive.copyWith(
-          //   placeName: _placeController.text,
-          //   titleChapter: _titleController.text,
-          // )));
-          // bookCreateBloc.add(const CreateChapterEvent());
-          // Fluttertoast.showToast(msg: 'Cambios guardados.');
+
+          final bookCreateBloc = context.read<BookCreateBloc>();
+          if (bookCreateBloc.state.storySave) {
+            context.go('/home/3');
+            return;
+          }
+
+          ConfirmationDialog.show(context,
+              question: '¿Estás seguro de que deseas salir sin guardar?',
+              message:
+                  'Tu historia no se ha guardado. Si decides irte sin guardar, perderás todos los cambios realizados.',
+              confirmText: 'Guardar',
+              cancelText: 'No guardar',
+              onConfirm: () => _saveStory(context),
+              onCancel: () {
+                context.go('/home/3');
+              });
         },
         child: BorderLayout(
           child: BlocListener<BookCreateBloc, BookCreateState>(
@@ -317,11 +339,13 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                                               .copyWith(pages: list)));
                                     },
                                     decoration: InputDecoration(
-                                      hintText: 'Comienza a escribir una historia',
+                                      hintText:
+                                          'Comienza a escribir una historia',
                                       filled: true,
                                       fillColor: Colors.grey[200],
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(30.0),
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
                                         borderSide: BorderSide.none,
                                       ),
                                     ),
@@ -329,12 +353,13 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                                   Positioned(
                                     right: 0,
                                     child: Container(
-                                      padding: const EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: AppColors.background
-                                      ),
-                                      child: Text('${state.currentPage + 1}')),
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            color: AppColors.background),
+                                        child:
+                                            Text('${state.currentPage + 1}')),
                                   )
                                 ],
                               ),
@@ -349,7 +374,7 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                       adding: true,
                       activeLabels: true,
                       addingAction: () {
-                        if(!validate()){
+                        if (!validate()) {
                           return;
                         }
                         bookCreateBloc.add(UpdateChapterActive(
@@ -365,7 +390,7 @@ class _ChapterEditScreenState extends State<ChapterEditScreen> {
                       },
                       thirdOption: true,
                       thirdOptionAction: () async {
-                        if(!validate()){
+                        if (!validate()) {
                           return;
                         }
                         FocusManager.instance.primaryFocus?.unfocus();

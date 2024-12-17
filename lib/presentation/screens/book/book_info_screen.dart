@@ -39,7 +39,6 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
               color: AppColors.primaryColor,
               height: 1.0,
             )),
-        
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
@@ -67,14 +66,52 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                       width: size.width * 0.6,
                       height: size.width * 0.6,
                       decoration: BoxDecoration(
-                          image: story.cover!.isNotEmpty
-                              ? DecorationImage(
-                                  image: NetworkImage(story.cover!),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                          color: AppColors.secondaryColor,
                           borderRadius: BorderRadius.circular(15)),
+                      child: story.cover != null && story.cover!.isNotEmpty
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Image.network(
+                                story.cover!,
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: AppColors.secondaryColor,
+                                    child: const Icon(
+                                      Icons.error_outline,
+                                      color: Colors.red,
+                                      size: 40,
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.secondaryColor,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: const Icon(
+                                Icons.book_outlined,
+                                size: 40,
+                                color: Colors.grey,
+                              ),
+                            ),
                     ),
                     const SizedBox(
                       height: 10,
@@ -162,7 +199,8 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                           child: InfoRouteMap(
                             centerOnUser: false,
                             positions: [
-                              ...story.chapters.map((c) => LatLng(c.lat, c.long))
+                              ...story.chapters
+                                  .map((c) => LatLng(c.lat, c.long))
                               // LatLng(37.40523168383278, -122.15067051351069),
                               // LatLng(37.40209318936961, -122.14084122329949)
                             ],
@@ -189,7 +227,8 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                             height: 10,
                           ),
                           ...story.chapters.map((location) => IconLabelWidget(
-                              label: location.placeName, icon: Icons.push_pin_outlined)),
+                              label: location.placeName,
+                              icon: Icons.push_pin_outlined)),
                           const SizedBox(
                             height: 15,
                           ),
@@ -215,12 +254,17 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                       width: size.width * 0.8,
                       child: ElevatedButton(
                         onPressed: () {
-                          context.push('/home/0/book/1/read');
                           context
                               .read<ReadViewBloc>()
                               .add(ChangeStoryUidSelected(story: story));
-                          context.read<ReadViewBloc>()
+
+                          context
+                              .read<ReadViewBloc>()
                               .add(AddNewReadingEvent(storyId: widget.bookId));
+
+                          Future.delayed(const Duration(milliseconds: 100), () {
+                            context.push('/home/0/book/1/read');
+                          });
                         },
                         child: const Text('Leer'),
                       ),
