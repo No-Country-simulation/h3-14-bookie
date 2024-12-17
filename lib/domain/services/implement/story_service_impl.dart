@@ -245,9 +245,12 @@ class StoryServiceImpl implements IStoryService {
     if (readings.isEmpty) {
       return false;
     }
-    final reading =
-        readings.firstWhere((reading) => reading.storyId == storyUid);
-    return reading.inLibrary ?? false;
+    if (readings.any((reading) => reading.storyId == storyUid)) {
+      final reading =
+          readings.firstWhere((reading) => reading.storyId == storyUid);
+      return reading.inLibrary ?? false;
+    }
+    return false;
   }
 
   @override
