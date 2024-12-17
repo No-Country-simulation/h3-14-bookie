@@ -1,21 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:h3_14_bookie/domain/model/app_user.dart';
 import 'package:h3_14_bookie/domain/model/dto/user_dto.dart';
-import 'package:h3_14_bookie/domain/model/reading.dart';
 import 'package:h3_14_bookie/domain/model/writing.dart';
 import 'package:h3_14_bookie/domain/services/app_user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-const String APP_USER_COLLECTION_REF = "appuser";
+import 'package:h3_14_bookie/constants/collection_references.dart';
 
 class AppUserServiceImpl implements IAppUserService {
   final db = FirebaseFirestore.instance;
   late final CollectionReference _appUserRef;
 
   AppUserServiceImpl() {
-    _appUserRef = db.collection(APP_USER_COLLECTION_REF).withConverter<AppUser>(
-        fromFirestore: (snapshots, _) => AppUser.fromFirestore(snapshots, _),
-        toFirestore: (appUser, _) => appUser.toFirestore());
+    _appUserRef = db
+        .collection(CollectionReferences.APP_USER_COLLECTION_REF)
+        .withConverter<AppUser>(
+            fromFirestore: (snapshots, _) =>
+                AppUser.fromFirestore(snapshots, _),
+            toFirestore: (appUser, _) => appUser.toFirestore());
   }
 
   @override
@@ -34,17 +35,44 @@ class AppUserServiceImpl implements IAppUserService {
   @override
   Future<AppUser?> getAppUserById(String uid) async {
     final doc = await _appUserRef.doc(uid).get() as DocumentSnapshot<AppUser>;
-    return doc.data();
+    if (doc.data() == null) {
+      throw StateError('AppUser data is null');
+    }
+    final appUser = doc.data();
+    if (appUser == null) {
+      throw StateError('AppUser data is null');
+    }
+    return appUser;
   }
 
   @override
   Future<AppUser?> getAppUserByAuthUserUid(String authUserUid) async {
+    try {
+      final docs =
+          await _appUserRef.where('authUserUid', isEqualTo: authUserUid).get();
+      if (docs.docs.isEmpty) {
+        throw StateError('AppUser not found');
+      }
+
+      final docSnapshot = docs.docs.first as DocumentSnapshot<AppUser>;
+      final appUser = docSnapshot.data();
+
+      if (appUser == null) {
+        throw StateError('AppUser data is null');
+      }
+
+      return appUser;
+    } catch (e) {
+      print('Error getting AppUser: ${e.toString()}');
+      return null;
+    }
+  }
+
+  @override
+  Future<String> getAppUserIdByAuthUserUid(String authUserUid) async {
     final docs =
         await _appUserRef.where('authUserUid', isEqualTo: authUserUid).get();
-    return docs.docs.map((doc) {
-      final appUser = (doc as DocumentSnapshot<AppUser>).data();
-      return appUser;
-    }).first;
+    return docs.docs.first.id;
   }
 
   @override
@@ -59,6 +87,12 @@ class AppUserServiceImpl implements IAppUserService {
   @override
   Future<void> updateUser(String uid, String name, String email) async {
     _appUserRef.doc(uid).update({"name": name, "email": email});
+  }
+
+  @override
+  Future<void> updateAppUser(AppUser appUser) async {
+    final appUserUid = await getAppUserIdByAuthUserUid(appUser.authUserUid!);
+    _appUserRef.doc(appUserUid).update(appUser.toFirestore());
   }
 
   @override
@@ -86,27 +120,6 @@ class AppUserServiceImpl implements IAppUserService {
     _appUserRef.where('authUserUid', isEqualTo: appUserUid).get().then(
         (value) =>
             value.docs.first.reference.update({"writings": writingMaps}));
-  }
-
-  @override
-  Future<bool> addNewReading(String storyId, bool inLibrary) async {
-    final authUserUid = FirebaseAuth.instance.currentUser?.uid;
-    if (authUserUid == null) {
-      throw Exception('User not logged in');
-    }
-    final appUser = await getAppUserByAuthUserUid(authUserUid);
-    if (appUser == null) {
-      throw Exception('App user not found');
-    }
-    final readings = appUser.readings ?? [];
-    final reading = Reading(storyId: storyId, inLibrary: inLibrary);
-    readings.add(reading);
-    final appUserDoc =
-        await _appUserRef.where('authUserUid', isEqualTo: authUserUid).get();
-    final appUserDocId = appUserDoc.docs.first.id;
-    final readingMaps = readings.map((r) => r.toFirestore()).toList();
-    await _appUserRef.doc(appUserDocId).update({"readings": readingMaps});
-    return true;
   }
 
   @override
@@ -139,5 +152,45 @@ class AppUserServiceImpl implements IAppUserService {
       String stroyId, String completedChapterUid) {
     // TODO: implement completeNewChapterInStory
     throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> deleteUserReading(String userUid, String readingUid) async {
+    final appUser = await getAppUserByAuthUserUid(userUid);
+    final readings = appUser?.readings ?? [];
+    if (readings.isEmpty) {
+      return false;
+    }
+    try {
+      final reading = readings.firstWhere((r) => r.storyId == readingUid);
+      final readingIndex = readings.indexOf(reading);
+      readings.removeAt(readingIndex);
+      final readingMaps = readings.map((r) => r.toFirestore()).toList();
+      await _appUserRef.doc(userUid).update({"readings": readingMaps});
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> deleteUserWriting(String authUserUid, String writingUid) async {
+    final appUser = await getAppUserByAuthUserUid(authUserUid);
+    final writings = appUser?.writings ?? [];
+    if (writings.isEmpty) {
+      return false;
+    }
+    try {
+      final writing = writings.firstWhere((w) => w.storyId == writingUid);
+      final writingIndex = writings.indexOf(writing);
+      writings.removeAt(writingIndex);
+      final writingMaps = writings.map((w) => w.toFirestore()).toList();
+      await _appUserRef.doc(authUserUid).update({"writings": writingMaps});
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 }

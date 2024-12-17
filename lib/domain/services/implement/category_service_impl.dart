@@ -2,8 +2,7 @@ import 'package:h3_14_bookie/domain/model/category.dart';
 import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
 import 'package:h3_14_bookie/domain/services/category_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-const String CATEGORY_COLLECTION_REF = "categories";
+import 'package:h3_14_bookie/constants/collection_references.dart';
 
 class CategoryServiceImpl implements ICategoryService {
   final db = FirebaseFirestore.instance;
@@ -12,7 +11,7 @@ class CategoryServiceImpl implements ICategoryService {
 
   CategoryServiceImpl() {
     _categoryRef = db
-        .collection(CATEGORY_COLLECTION_REF)
+        .collection(CollectionReferences.CATEGORY_COLLECTION_REF)
         .withConverter<Category>(
             fromFirestore: (snapshots, _) =>
                 Category.fromFirestore(snapshots, _),

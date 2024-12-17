@@ -23,7 +23,16 @@ class ChangeFilter extends EditViewEvent {
 
 class ChangeStatusBook extends EditViewEvent {
   final Writing writing;
+  final Function? whenComplete;
   const ChangeStatusBook({
-    required this.writing
+    required this.writing,
+    this.whenComplete
+  });
+}
+
+class DeleteCreateBook extends EditViewEvent {
+  final String id;
+  const DeleteCreateBook({
+    required this.id
   });
 }

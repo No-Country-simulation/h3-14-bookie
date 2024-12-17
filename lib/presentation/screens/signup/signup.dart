@@ -82,13 +82,23 @@ class _SignupState extends State<Signup> {
           controller: _nameController,
           decoration: InputDecoration(
             hintText: 'Nombre completo',
+            hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 16),
             filled: true,
-            fillColor: Colors.grey.shade100,
+            fillColor: Colors.grey.shade50,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade500),
             ),
-            contentPadding: const EdgeInsets.all(16),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade500),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade400),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
         ),
         const SizedBox(height: 16),
@@ -96,13 +106,23 @@ class _SignupState extends State<Signup> {
           controller: _emailController,
           decoration: InputDecoration(
             hintText: 'Correo electrónico',
+            hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 16),
             filled: true,
-            fillColor: Colors.grey.shade100,
+            fillColor: Colors.grey.shade50,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade500),
             ),
-            contentPadding: const EdgeInsets.all(16),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade500),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade400),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
         ),
         const SizedBox(height: 16),
@@ -110,13 +130,23 @@ class _SignupState extends State<Signup> {
           controller: _userController,
           decoration: InputDecoration(
             hintText: 'Usuario',
+            hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 16),
             filled: true,
-            fillColor: Colors.grey.shade100,
+            fillColor: Colors.grey.shade50,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade500),
             ),
-            contentPadding: const EdgeInsets.all(16),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade500),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade400),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
         ),
         const SizedBox(height: 16),
@@ -125,13 +155,23 @@ class _SignupState extends State<Signup> {
           obscureText: _obscurePassword,
           decoration: InputDecoration(
             hintText: 'Contraseña',
+            hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 16),
             filled: true,
-            fillColor: Colors.grey.shade100,
+            fillColor: Colors.grey.shade50,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade500),
             ),
-            contentPadding: const EdgeInsets.all(16),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade500),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24),
+              borderSide: BorderSide(color: Colors.grey.shade400),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             suffixIcon: IconButton(
               icon: Icon(
                 _obscurePassword ? Icons.visibility_off : Icons.visibility,
@@ -193,11 +233,22 @@ class _SignupState extends State<Signup> {
                 _userController.text.trim(),
               );
 
+              // Iniciar sesión sin redirección automática al home
+              if (context.mounted) {
+                await AuthService().signin(
+                  email: _emailController.text.trim(),
+                  password: _passwordController.text.trim(),
+                  context: context,
+                  redirectToHome: false,
+                );
+              }
+
               if (context.mounted) {
                 // Navegar a la pantalla de usuario creado
-                await Navigator.push(
+                Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const UserCreated()),
+                  (route) => false,
                 );
               }
             } catch (e) {
@@ -215,16 +266,9 @@ class _SignupState extends State<Signup> {
             style: TextStyle(fontSize: 16),
           ),
         ),
-        const SizedBox(height: 16),
-        Text(
-          'Al registrarte, aceptas nuestros Términos de uso y Política de Privacidad',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.grey.shade600,
-            fontSize: 12,
-          ),
-        ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 47),
+        _termsAndConditions(),
+        const SizedBox(height: 47),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -241,12 +285,62 @@ class _SignupState extends State<Signup> {
               },
               child: Text(
                 'Iniciar sesión',
-                style: TextStyle(color: Colors.blue.shade700),
+                style: TextStyle(
+                  color: Colors.blue.shade700,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Colors.blue.shade700,
+                ),
               ),
             ),
           ],
         ),
       ],
+    );
+  }
+
+  Widget _termsAndConditions() {
+    return RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        style: TextStyle(
+          color: Colors.grey.shade600,
+          fontSize: 14,
+        ),
+        children: [
+          const TextSpan(
+            text: 'Al registrarte, aceptas nuestros ',
+          ),
+          TextSpan(
+            text: 'Términos de uso',
+            style: const TextStyle(
+              decoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => TermsScreen()),
+                // );
+              },
+          ),
+          const TextSpan(
+            text: ' y ',
+          ),
+          TextSpan(
+            text: 'Política de Privacidad',
+            style: const TextStyle(
+              decoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => PrivacyScreen()),
+                // );
+              },
+          ),
+        ],
+      ),
     );
   }
 }

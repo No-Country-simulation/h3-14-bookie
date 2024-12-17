@@ -1,24 +1,22 @@
 import 'package:h3_14_bookie/domain/model/Location.dart';
 import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
-import 'package:h3_14_bookie/domain/model/story.dart';
 import 'package:h3_14_bookie/domain/services/chapter_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:h3_14_bookie/domain/services/implement/story_service_impl.dart';
-import 'package:h3_14_bookie/domain/services/story_service.dart';
-
-const String CHAPTER_COLLECTION_REF = "chapter";
+import 'package:h3_14_bookie/constants/collection_references.dart';
 
 class ChapterServiceImpl implements IChapterService {
   final db = FirebaseFirestore.instance;
-  final IStoryService _storyService = StoryServiceImpl();
 
   late final CollectionReference _chapterRef;
 
   ChapterServiceImpl() {
-    _chapterRef = db.collection(CHAPTER_COLLECTION_REF).withConverter<Chapter>(
-        fromFirestore: (snapshots, _) => Chapter.fromFirestore(snapshots, _),
-        toFirestore: (chapter, _) => chapter.toFirestore());
+    _chapterRef = db
+        .collection(CollectionReferences.CHAPTER_COLLECTION_REF)
+        .withConverter<Chapter>(
+            fromFirestore: (snapshots, _) =>
+                Chapter.fromFirestore(snapshots, _),
+            toFirestore: (chapter, _) => chapter.toFirestore());
   }
 
   @override
@@ -38,15 +36,52 @@ class ChapterServiceImpl implements IChapterService {
   }
 
   @override
+  Future<String> getChapterUidByStoryUidAndChapterNumber(
+      String storyUid, int chapterNumber) async {
+    final docs = await _chapterRef
+        .where('storyUid', isEqualTo: storyUid)
+        .where('number', isEqualTo: chapterNumber)
+        .get();
+    return docs.docs.first.id;
+  }
+
+  @override
   Future<List<Chapter>> getChaptersByStoryUid(String storyUid) async {
     List<Chapter> chapters = await getChapters();
     return chapters.where((chapter) => chapter.storyUid == storyUid).toList();
   }
 
   @override
+  Future<Chapter> getFirstChapterByStoryUid(String storyUid) async {
+    List<Chapter> chapters = await getChaptersByStoryUid(storyUid);
+    return chapters.firstWhere((chapter) => chapter.number == 1);
+  }
+
+  @override
+  Future<List<String>> getChapterPages(String chapterUid) async {
+    final chapter = await getChapterById(chapterUid);
+    return chapter.pages ?? [];
+  }
+
+  @override
+  Future<String> getChapterPage(String chapterUid, int pageNumber) async {
+    final chapter = await getChapterById(chapterUid);
+    if (chapter.pages == null || chapter.pages!.isEmpty) {
+      throw Exception('Chapter pages are null or empty');
+    }
+    if (pageNumber < 1 || pageNumber > chapter.pages!.length) {
+      throw Exception('Page number out of bounds');
+    }
+    return chapter.pages![pageNumber - 1];
+  }
+
+  @override
   Future<ChapterDto> convertToChapterDto(Chapter chapter) async {
+    String chapterUid = await getChapterUidByStoryUidAndChapterNumber(
+        chapter.storyUid, chapter.number ?? 0);
     return ChapterDto(
       storyUid: chapter.storyUid,
+      chapterUid: chapterUid,
       title: chapter.title ?? '',
       pages: chapter.pages ?? [],
       placeName: chapter.location?.place ?? '',
@@ -59,7 +94,7 @@ class ChapterServiceImpl implements IChapterService {
   /// Return the chapter uid if success
   /// Return error message if failed
   @override
-  Future<String> createChapter(ChapterDto chapterDto) async {
+  Future<String> createChapter(ChapterDto chapterDto, int chapterNumber) async {
     Location location = Location(
       place: chapterDto.placeName,
       lat: chapterDto.lat,
@@ -71,31 +106,13 @@ class ChapterServiceImpl implements IChapterService {
       pages: chapterDto.pages,
       isCompleted: false,
       location: location,
-      number: await asignChapterNumber(chapterDto.storyUid),
+      number: chapterNumber,
     );
 
     final docRef = await _chapterRef.add(chapter);
     final docSnap = await docRef.get() as DocumentSnapshot<Chapter>;
 
-    bool success =
-        await _storyService.addChapterToStory(chapterDto.storyUid, docSnap.id);
-
-    if (!success) {
-      return 'Failed to add chapter to story';
-    }
-
     return docSnap.id;
-  }
-
-  Future<int> asignChapterNumber(String storyUid) async {
-    Story? story = await _storyService.getStoryById(storyUid);
-    if (story == null) {
-      return 0;
-    }
-    if (story.chaptersUid == null) {
-      return 1;
-    }
-    return story.chaptersUid!.length + 1;
   }
 
   @override
@@ -106,5 +123,15 @@ class ChapterServiceImpl implements IChapterService {
       await _chapterRef.doc(doc.id).delete();
     }
     return true;
+  }
+
+  @override
+  Future<bool> deleteChapter(String chapterUid) async {
+    try {
+      await _chapterRef.doc(chapterUid).delete();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

@@ -1,31 +1,40 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:h3_14_bookie/domain/model/category.dart';
+import 'package:h3_14_bookie/domain/model/chapter.dart';
 import 'package:h3_14_bookie/domain/model/dto/category_dto.dart';
+import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
+import 'package:h3_14_bookie/domain/model/dto/chapter_story_response_dto.dart';
+import 'package:h3_14_bookie/domain/model/dto/home_story_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/story_response_dto.dart';
 import 'package:h3_14_bookie/domain/model/story.dart';
 import 'package:h3_14_bookie/domain/services/app_user_service.dart';
 import 'package:h3_14_bookie/domain/services/category_service.dart';
+import 'package:h3_14_bookie/domain/services/chapter_service.dart';
 import 'package:h3_14_bookie/domain/services/implement/app_user_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/implement/category_service_impl.dart';
+import 'package:h3_14_bookie/domain/services/implement/chapter_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/implement/label_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/label_service.dart';
 import 'package:h3_14_bookie/domain/services/story_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-const String STORY_COLLECTION_REF = "stories";
+import 'package:h3_14_bookie/constants/collection_references.dart';
 
 class StoryServiceImpl implements IStoryService {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final ICategoryService categoryService = CategoryServiceImpl();
   final ILabelService labelService = LabelServiceImpl();
   final IAppUserService appUserService = AppUserServiceImpl();
+  final IChapterService chapterService = ChapterServiceImpl();
+
   late final CollectionReference _storyRef;
 
   StoryServiceImpl() {
-    _storyRef = db.collection(STORY_COLLECTION_REF).withConverter<Story>(
-        fromFirestore: (snapshots, _) => Story.fromFirestore(snapshots, _),
-        toFirestore: (story, _) => story.toFirestore());
+    _storyRef = db
+        .collection(CollectionReferences.STORY_COLLECTION_REF)
+        .withConverter<Story>(
+            fromFirestore: (snapshots, _) => Story.fromFirestore(snapshots, _),
+            toFirestore: (story, _) => story.toFirestore());
   }
 
   @override
@@ -35,17 +44,61 @@ class StoryServiceImpl implements IStoryService {
   }
 
   @override
-  Future<List<Story>> getStoriesWithFilter(
+  Future<List<String>> getAllStoriesUid() async {
+    try {
+      final querySnapshot = await _storyRef.get();
+      if (querySnapshot.docs.isEmpty) {
+        print("Warning: No documents found in stories collection");
+        return [];
+      }
+      return querySnapshot.docs.map((doc) => doc.id).toList();
+    } catch (e) {
+      print("Error getting stories: $e");
+      throw Exception("Failed to get stories: $e");
+    }
+  }
+
+  @override
+  Future<List<Story>> getPublishedStories() async {
+    final storiesUid = await getAllStoriesUid();
+    final publishedStoriesUids = await Future.wait(
+      storiesUid.map((storyUid) async {
+        final isPublished = await checkIfStoryIsPublished(storyUid);
+        return isPublished ? storyUid : null;
+      }),
+    );
+
+    final stories = await Future.wait(publishedStoriesUids
+        .where((uid) => uid != null)
+        .map((uid) => getStoryById(uid!)));
+
+    return stories.whereType<Story>().toList();
+  }
+
+  Future<bool> checkIfStoryIsPublished(String storyUid) async {
+    final appUsers = await appUserService.getAppUsers();
+    final authors =
+        appUsers.where((appUser) => appUser.writings != null).toList();
+    return authors.any((author) =>
+        author.writings?.any(
+            (writing) => writing.storyId == storyUid && !writing.isDraft!) ??
+        false);
+  }
+
+  @override
+  Future<List<StoryResponseDto>> getStoriesWithFilter(
       String filter, CategoryDto? category) async {
-    var stories = await getStories();
+    // Obtener las historias filtradas como antes
+    var publishedStories = await getPublishedStories();
+
     if (category != null) {
-      stories = stories
+      publishedStories = publishedStories
           .where(
-              (story) => story.categories.any((c) => c.name == category.name))
+              (story) => story.categories!.any((c) => c.name == category.name))
           .toList();
     }
 
-    return stories.where((story) {
+    publishedStories = publishedStories.where((story) {
       final containsInTitle =
           story.title?.toLowerCase().contains(filter.toLowerCase()) ?? false;
       final containsInLabels = story.labels?.any(
@@ -53,42 +106,219 @@ class StoryServiceImpl implements IStoryService {
           false;
       return containsInTitle || containsInLabels;
     }).toList();
+
+    // Convertir las historias filtradas a StoryResponseDto
+    final storiesResponseDtos = await Future.wait(
+      publishedStories.map((story) async {
+        final docRef =
+            _storyRef.where('title', isEqualTo: story.title).limit(1);
+        final querySnapshot = await docRef.get();
+        final storyUid = querySnapshot.docs.first.id;
+        final inLibrary = await isThisInLibrary(storyUid);
+        return await convertToStoryResponseDto(storyUid, story, inLibrary);
+      }),
+    );
+
+    return storiesResponseDtos;
   }
+  // Future<List<Story>> getStoriesWithFilter(
+  //     String filter, CategoryDto? category) async {
+  //   var stories = await getStories();
+  //   if (category != null) {
+  //     stories = stories
+  //         .where(
+  //             (story) => story.categories.any((c) => c.name == category.name))
+  //         .toList();
+  //   }
+
+  //   return stories.where((story) {
+  //     final containsInTitle =
+  //         story.title?.toLowerCase().contains(filter.toLowerCase()) ?? false;
+  //     final containsInLabels = story.labels?.any(
+  //             (label) => label.toLowerCase().contains(filter.toLowerCase())) ??
+  //         false;
+  //     return containsInTitle || containsInLabels;
+  //   }).toList();
+  // }
 
   @override
   Future<List<StoryResponseDto>> getStoriesResponseByStoryUid(
-      List<String> storiesUid) async {
+      List<String> storiesUid, bool? inLibrary) async {
     final storiesResponseDtos =
         await Future.wait(storiesUid.map((storyUid) async {
       final story = await getStoryById(storyUid);
       if (story == null) {
         throw Exception('Story not found');
       }
-      return convertToStoryResponseDto(storyUid, story);
+      return convertToStoryResponseDto(storyUid, story, inLibrary);
     }).toList());
     return storiesResponseDtos;
   }
 
   Future<StoryResponseDto> convertToStoryResponseDto(
-      String storyUid, Story story) async {
-    List<String> categoriesUid = await Future.wait(story.categories.map(
-        (category) =>
-            categoryService.getCategoryUidByName(category.name ?? '')));
+      String storyUid, Story story, bool? inLibrary) async {
+    List<String> categoriesUid = await Future.wait(story.categories?.map(
+            (category) =>
+                categoryService.getCategoryUidByName(category.name ?? '')) ??
+        []);
 
     StoryResponseDto storyResponseDto = StoryResponseDto(
         storyUid,
         story.title ?? '',
-        (await appUserService.getAppUserById(story.authorUid ?? ''))?.name ??
+        (await appUserService.getAppUserByAuthUserUid(story.authorUid ?? ''))
+                ?.name ??
             '',
         story.cover ?? '',
         story.synopsis ?? '',
         story.labels?.whereType<String>().toList() ?? [],
         categoriesUid,
-        story.rate ?? 0,
-        story.readings ?? 0,
+        story.rate ?? 5.0,
+        story.totalReadings ?? 0,
         story.storyTimeInMin ?? 0,
-        story.chaptersUid?.toList() ?? []);
+        story.chaptersUid?.toList() ?? [],
+        inLibrary);
     return storyResponseDto;
+  }
+
+  @override
+  Future<Story?> getStoryById(String storyUid) async {
+    final docSnap = await _storyRef.doc(storyUid).get();
+    if (!docSnap.exists) {
+      throw Exception('Story not found');
+    }
+    return (docSnap as DocumentSnapshot<Story>).data();
+  }
+
+  @override
+  Future<int> getStoryTotalReadings(String storyUid) async {
+    final story = await getStoryById(storyUid);
+    return story?.totalReadings ?? 0;
+  }
+
+  @override
+  Future<HomeStoryDto> getHomeStoryDtoByStoryUid(String storyUid) async {
+    final story = await getStoryById(storyUid);
+
+    List<Chapter> chapters =
+        await chapterService.getChaptersByStoryUid(storyUid);
+    List<ChapterDto> chaptersDto = await Future.wait(
+        chapters.map((chapter) => chapterService.convertToChapterDto(chapter)));
+
+    final author =
+        await appUserService.getAppUserByAuthUserUid(story?.authorUid ?? '');
+    final authorName = author?.name ?? '';
+
+    return HomeStoryDto(
+      storyUid: storyUid,
+      title: story?.title ?? '',
+      authorName: authorName,
+      cover: story?.cover ?? '',
+      synopsis: story?.synopsis ?? '',
+      labels: story?.labels ?? [],
+      categoryNames:
+          story?.categories?.map((category) => category.name ?? '').toList() ??
+              [],
+      rate: story?.rate ?? 0.0,
+      totalReadings: story?.totalReadings ?? 0,
+      chapters: chaptersDto,
+    );
+  }
+
+  @override
+  Future<bool> isThisAReading(String storyUid) async {
+    final appUserUid = FirebaseAuth.instance.currentUser?.uid;
+    if (appUserUid == null) {
+      return false;
+    }
+    final appUser = await appUserService.getAppUserByAuthUserUid(appUserUid);
+    final readings = appUser?.readings ?? [];
+    return readings.any((reading) => reading.storyId == storyUid);
+  }
+
+  Future<bool> isThisInLibrary(String storyUid) async {
+    final appUserUid = FirebaseAuth.instance.currentUser?.uid;
+    if (appUserUid == null) {
+      return false;
+    }
+    final appUser = await appUserService.getAppUserByAuthUserUid(appUserUid);
+    final readings = appUser?.readings ?? [];
+    if (readings.isEmpty) {
+      return false;
+    }
+    if (readings.any((reading) => reading.storyId == storyUid)) {
+      final reading =
+          readings.firstWhere((reading) => reading.storyId == storyUid);
+      return reading.inLibrary ?? false;
+    }
+    return false;
+  }
+
+  @override
+  Future<List<ChapterStoryResponseDto>> getChaptersStory(
+      String storyUid, int chapterNumber) async {
+    Story? story = await getStoryById(storyUid);
+    if (story == null) {
+      throw Exception('Story not found');
+    }
+    List<Chapter> chapters =
+        await chapterService.getChaptersByStoryUid(storyUid);
+    if (chapters.isEmpty) {
+      return [];
+    }
+
+    chapters =
+        chapters.where((chapter) => chapter.number == chapterNumber).toList();
+
+    List<ChapterStoryResponseDto> chaptersStoryResponseDto = [];
+    for (Chapter chapter in chapters) {
+      String chapterUid =
+          await chapterService.getChapterUidByStoryUidAndChapterNumber(
+              storyUid, chapter.number ?? 0);
+      chaptersStoryResponseDto.add(
+          await convertToChapterStoryResponseDto(chapter, story, chapterUid));
+    }
+    return chaptersStoryResponseDto;
+  }
+
+  @override
+  Future<List<ChapterStoryResponseDto>> getAllFirstChaptersStory() async {
+    List<String> storiesUid = await getAllStoriesUid();
+    List<ChapterStoryResponseDto> chaptersStoryResponseDto = [];
+    try {
+      for (String storyUid in storiesUid) {
+        List<ChapterStoryResponseDto> chapters =
+            await getChaptersStory(storyUid, 1);
+        chaptersStoryResponseDto.addAll(chapters);
+      }
+    } catch (e) {
+      print("Error: $e");
+      throw Exception('Error getting chapters');
+    }
+    return chaptersStoryResponseDto;
+  }
+
+  Future<ChapterStoryResponseDto> convertToChapterStoryResponseDto(
+      Chapter chapter, Story story, String chapterUid) async {
+    bool isReading = await isThisAReading(chapter.storyUid);
+
+    return ChapterStoryResponseDto(
+      chapterUid: chapterUid,
+      storyUid: chapter.storyUid,
+      title: story.title ?? '',
+      cover: story.cover ?? '',
+      synopsis: story.synopsis ?? '',
+      categories:
+          story.categories?.map((category) => category.name ?? '').toList() ??
+              [],
+      rate: story.rate ?? 0.0,
+      totalReadings: story.totalReadings ?? 0,
+      isReading: isReading,
+      chapterNumber: chapter.number ?? 0,
+      chapterTitle: chapter.title ?? '',
+      placeName: chapter.location?.place ?? '',
+      latitude: chapter.location?.lat ?? 0.0,
+      longitude: chapter.location?.long ?? 0.0,
+    );
   }
 
   @override
@@ -103,9 +333,8 @@ class StoryServiceImpl implements IStoryService {
         synopsis: storyDto.synopsis,
         categories: categories,
         labels: storyDto.labels,
-        rate: 0,
-        readings: 0);
-    await _storyRef.add(story);
+        rate: 5.0,
+        totalReadings: 0);
 
     final docRef = await _storyRef.add(story);
     final docSnap = await docRef.get();
@@ -115,12 +344,43 @@ class StoryServiceImpl implements IStoryService {
   }
 
   @override
-  Future<Story?> getStoryById(String storyUid) async {
-    final docSnap = await _storyRef.doc(storyUid).get();
-    if (!docSnap.exists) {
-      throw Exception('Story not found');
+  Future<String> addNewChapterToStory(ChapterDto chapterDto) async {
+    final chapterNumber = await asignChapterNumber(chapterDto.storyUid);
+    String chapterUid = '';
+
+    try {
+      chapterUid =
+          await chapterService.createChapter(chapterDto, chapterNumber);
+
+      bool success = await addChapterToStory(chapterDto.storyUid, chapterUid);
+
+      if (!success) {
+        await chapterService.deleteChapter(chapterUid);
+        return 'Failed to add chapter to story';
+      }
+    } catch (e) {
+      print(e);
+      return 'Failed to add chapter to story';
     }
-    return (docSnap as DocumentSnapshot<Story>).data();
+
+    return chapterUid;
+  }
+
+  Future<int> asignChapterNumber(String storyUid) async {
+    Story? story = await getStoryById(storyUid);
+    if (story == null) {
+      return 0;
+    }
+    if (story.chaptersUid == null) {
+      return 1;
+    }
+    return story.chaptersUid!.length + 1;
+  }
+
+  @override
+  Future<Story> updateStory(String storyUid, Story updatedStory) async {
+    await _storyRef.doc(storyUid).update(updatedStory.toFirestore());
+    return updatedStory;
   }
 
   /// Add a chapter to the story
@@ -133,9 +393,45 @@ class StoryServiceImpl implements IStoryService {
       return false;
     }
 
-    story.chaptersUid?.add(chapterUid);
-    await _storyRef.doc(storyUid).update(story.toFirestore());
+    var chaptersUid = story.chaptersUid ?? [];
+
+    if (chaptersUid.contains(chapterUid)) {
+      return false;
+    }
+
+    chaptersUid.add(chapterUid);
+
+    Story updatedStory = Story(chaptersUid: chaptersUid);
+
+    final finalStory = await updateStory(storyUid, updatedStory);
+
+    if (finalStory.chaptersUid == null ||
+        !finalStory.chaptersUid!.contains(chapterUid)) {
+      return false;
+    }
+
     return true;
+  }
+
+  /// Rate a story
+  /// Add the rate to the story by averaging the old rate and the new rate
+  /// Return the new rate of the story
+  /// Return -1 if the story is not found
+  @override
+  Future<double> rateStory(String storyUid, int rate) async {
+    final story = await getStoryById(storyUid);
+    if (story == null) {
+      return -1;
+    }
+    final updatedStory = Story(rate: (story.rate ?? 5.0 + rate) / 2);
+    await _storyRef.doc(storyUid).update(updatedStory.toFirestore());
+    return updatedStory.rate ?? -1;
+  }
+
+  @override
+  Future<double> getStoryRate(String storyUid) async {
+    final story = await getStoryById(storyUid);
+    return story?.rate ?? -1;
   }
 
   @override
@@ -144,8 +440,50 @@ class StoryServiceImpl implements IStoryService {
     if (story == null) {
       return false;
     }
+
+    try {
+      await chapterService.deleteChaptersByStoryUid(storyUid);
+    } catch (e) {
+      return false;
+    }
+
     story.chaptersUid?.clear();
     await _storyRef.doc(storyUid).update(story.toFirestore());
     return true;
+  }
+
+  @override
+  Future<bool> deleteStory(String storyUid) async {
+    final currentAuthUser = FirebaseAuth.instance.currentUser;
+    if (currentAuthUser == null) {
+      return false;
+    }
+
+    // 1. Eliminar la story del usuario. Si falla o no es writing del usuario, no continuar
+    try {
+      await appUserService.deleteUserWriting(currentAuthUser.uid, storyUid);
+    } catch (e) {
+      print(e);
+      return false;
+    }
+
+    try {
+      // 2. Eliminar referencias en usuarios
+      final users = await appUserService.getAppUsers();
+      for (var user in users) {
+        await appUserService.deleteUserReading(user.authUserUid!, storyUid);
+      }
+
+      // 3. Eliminar chapters relacionados
+      await deleteAllChaptersInStory(storyUid);
+
+      // 4. Eliminar la story
+      await _storyRef.doc(storyUid).delete();
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 }

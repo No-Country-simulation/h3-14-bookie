@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:h3_14_bookie/domain/model/dto/chapter_story_response_dto.dart';
 import 'package:h3_14_bookie/presentation/location/location_provider.dart';
 import 'package:h3_14_bookie/presentation/resources/app_images.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
@@ -8,12 +9,10 @@ import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 class CustomMapInfoWidget extends StatefulWidget {
   const CustomMapInfoWidget({
     super.key,
-    required CameraPosition postion,
     this.positions,
-  }) : _position = postion;
+  });
 
-  final CameraPosition _position;
-  final List<LatLng>? positions;
+  final List<ChapterStoryResponseDto>? positions;
 
   @override
   State<CustomMapInfoWidget> createState() => _CustomMapInfoWidgetState();
@@ -58,28 +57,24 @@ class _CustomMapInfoWidgetState extends State<CustomMapInfoWidget> {
   }
 
   void setMarkers() {
-    bool flag = true;
-    for (var position in widget.positions!) {
-      markers.add(
-        Marker(
-          onTap: () async {
-            showCustomCardModal(context);
-          },
-          markerId: MarkerId(position.toString()),
-          position: position,
-          icon: flag ? iconOn : iconOff,
-          // infoWindow: InfoWindow(
-          //   title: 'La montaña',
-          //   onTap: () async {
-          //     _dialogBuilder(context);
-          //   }
-          // ),
-        ),
-      );
-      flag = !flag;
-    }
-    setState(() {});
+  bool flag = true;
+  for (int i = 0; i < widget.positions!.length; i++) {
+    final position = widget.positions![i];
+    markers.add(
+      Marker(
+        onTap: () async {
+          showCustomCardModal(context, position);
+        },
+        markerId: MarkerId(position.storyUid ?? 'marker_$i'), // Usar un ID único
+        position: LatLng(position.latitude, position.longitude),
+        icon: flag ? iconOn : iconOff,
+      ),
+    );
+    flag = !flag;
   }
+  setState(() {});
+}
+
 
   @override
   void dispose() {
@@ -88,7 +83,10 @@ class _CustomMapInfoWidgetState extends State<CustomMapInfoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return currentPosition == null
+    return SizedBox(
+      width: double.infinity,
+      height: double.infinity,
+      child: currentPosition == null
         ? const Center(child: CircularProgressIndicator())
         : GoogleMap(
             markers: {
@@ -103,13 +101,14 @@ class _CustomMapInfoWidgetState extends State<CustomMapInfoWidget> {
             style:
                 ''' [ { "featureType": "poi", "elementType": "labels", "stylers": [ { "visibility": "off" } ] }, { "featureType": "transit", "elementType": "labels", "stylers": [ { "visibility": "off" } ] } ] ''',
             initialCameraPosition: CameraPosition(
-              target: currentPosition ?? widget._position.target,
+              target: currentPosition!,
               zoom: 17,
             ),
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
             },
-          );
+          ),
+    );
   }
 
   Future<void> fetchLocationUpdate() async {
@@ -121,10 +120,10 @@ class _CustomMapInfoWidgetState extends State<CustomMapInfoWidget> {
     }
   }
 
-  void showCustomCardModal(BuildContext context) {
+  void showCustomCardModal(BuildContext context, ChapterStoryResponseDto chapterStory) {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       isScrollControlled: true,
@@ -133,12 +132,16 @@ class _CustomMapInfoWidgetState extends State<CustomMapInfoWidget> {
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: BookCardWidget(
-              imageUrl: 'https://example.com/image.png',
-              title: 'Título',
-              synopsis: 'Sinopsis... En un pueblo olvidado...',
-              categories: ['Terror', 'Suspenso'],
+              imageUrl: chapterStory.cover,
+              title: chapterStory.title,
+              synopsis: chapterStory.synopsis,
+              categories: chapterStory.categories,
               rating: 4.2,
-              reads: 10000,
+              reads: chapterStory.totalReadings,
+              numberChapter: chapterStory.chapterNumber,
+              placeChapterName: chapterStory.placeName,
+              titleChapterName: chapterStory.chapterTitle,
+              storyId: chapterStory.storyUid,
             ),
           ),
         );

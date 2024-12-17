@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:h3_14_bookie/domain/model/dto/chapter_dto.dart';
 import 'package:h3_14_bookie/domain/model/dto/writing_dto.dart';
-import 'package:h3_14_bookie/domain/model/writing.dart';
 import 'package:h3_14_bookie/domain/services/app_user_service.dart';
 import 'package:h3_14_bookie/domain/services/chapter_service.dart';
 import 'package:h3_14_bookie/domain/services/implement/app_user_service_impl.dart';
@@ -10,8 +9,6 @@ import 'package:h3_14_bookie/domain/services/implement/story_service_impl.dart';
 import 'package:h3_14_bookie/domain/services/story_service.dart';
 import 'package:h3_14_bookie/domain/services/writing_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-const String WRITING_COLLECTION_REF = "writings";
 
 class WritingServiceImpl implements IWritingService {
   final db = FirebaseFirestore.instance;
@@ -39,7 +36,7 @@ class WritingServiceImpl implements IWritingService {
         : writings;
 
     final storiesResponseDtos = await storyService.getStoriesResponseByStoryUid(
-        filteredWritings.map((writing) => writing.storyId!).toList());
+        filteredWritings.map((writing) => writing.storyId!).toList(), null);
 
     final writingDtos =
         await Future.wait(storiesResponseDtos.map((story) async {

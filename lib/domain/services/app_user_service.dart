@@ -15,15 +15,17 @@ interface class IAppUserService {
     return null;
   }
 
+  Future<String> getAppUserIdByAuthUserUid(String authUserUid) async {
+    return '';
+  }
+
   Future<void> createAppUser(UserDto newUser) async {}
 
   Future<void> updateUser(String uid, String name, String email) async {}
 
-  Future<void> updateUserWriting(Writing writing) async {}
+  Future<void> updateAppUser(AppUser appUser) async {}
 
-  Future<bool> addNewReading(String storyId, bool inLibrary) async {
-    throw UnimplementedError();
-  }
+  Future<void> updateUserWriting(Writing writing) async {}
 
   Future<void> addNewWriting(
       String authUserUid, String storyId, bool isDraft) async {}
@@ -34,4 +36,12 @@ interface class IAppUserService {
 
   Future<void> completeNewChapterInStory(
       String stroyId, String completedChapterUid) async {}
+
+  Future<bool> deleteUserReading(String authUserUid, String readingUid) async {
+    throw UnimplementedError();
+  }
+
+  Future<bool> deleteUserWriting(String authUserUid, String writingUid) async {
+    throw UnimplementedError();
+  }
 }

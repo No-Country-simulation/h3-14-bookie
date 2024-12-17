@@ -64,9 +64,24 @@ class AddChapterEvent extends BookCreateEvent{
 }
 
 class CreateStoryEvent extends BookCreateEvent{
-  final StoryDto story;
+  final Function? whenComplete;
   const CreateStoryEvent({
-    required this.story
+    this.whenComplete,
+  });
+}
+
+class SaveStoryEvent extends BookCreateEvent{
+  final String titleBook;
+  final String titleChapter;
+  final String placeName;
+  final String synopsisBook;
+  final String pathImage;
+  const SaveStoryEvent({
+    required this.titleBook,
+    required this.synopsisBook,
+    required this.pathImage,
+    required this.titleChapter,
+    required this.placeName,
   });
 }
 
@@ -74,8 +89,27 @@ class CreateChapterEvent extends BookCreateEvent{
   const CreateChapterEvent();
 }
 
-class UploadCover extends BookCreateEvent {
-  final String path;
-  final Function(String url) whenComplete;
-  const UploadCover({required this.path, required this.whenComplete});
+class ResetValuesBookCreateEvent extends BookCreateEvent{
+  const ResetValuesBookCreateEvent();
+}
+
+class ChangeChapterActive extends BookCreateEvent {
+  final int number;
+  const ChangeChapterActive({
+    required this.number
+  });
+}
+
+class DeleteChapterEvent extends BookCreateEvent {
+  final int number;
+  const DeleteChapterEvent({
+    required this.number
+  });
+}
+
+class DeleteTargetEvent extends BookCreateEvent {
+  final int index;
+  const DeleteTargetEvent({
+    required this.index
+  });
 }

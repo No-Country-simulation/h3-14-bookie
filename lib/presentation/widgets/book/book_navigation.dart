@@ -26,7 +26,7 @@ class BookNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w500);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         mainAxisAlignment: thirdOption ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
         children: [
@@ -104,12 +104,14 @@ class BookNavigation extends StatelessWidget {
                     }
                   },
                 icon: Icon(
-                  adding && totalPages == (currentPage + 1)? Icons.add :Icons.arrow_forward_rounded,
+                  adding && totalPages == (currentPage + 1)
+                    ? Icons.add
+                    : Icons.arrow_forward_rounded,
                   color: AppColors.accentColor,
                 ),
                 style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(
-                    (currentPage / totalPages) == 1 && !adding
+                    ((currentPage + 1)/ totalPages) == 1 && !adding
                     ? AppColors.primaryColor.withOpacity(0.5)
                     :AppColors.primaryColor,)
                 ),

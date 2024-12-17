@@ -17,6 +17,7 @@ class FloatingButtonAddBook extends StatelessWidget {
       child: const Icon(Icons.add_rounded, size: 25, color: AppColors.background,),
       onPressed: (){
         context.read<BookCreateBloc>().add(const InitCategoriesEvent());
+        context.read<BookCreateBloc>().add(const ResetValuesBookCreateEvent());
         context.go('/home/3/book-create');
       },
     );
