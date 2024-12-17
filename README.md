@@ -121,6 +121,7 @@ Nota: Asegúrate de tener Flutter y Dart correctamente instalados.
 ---
 
 ### 🎨 Documentación UX/UI
+- [📖 Metodologías Ágiles e Innovación](https://drive.google.com/file/d/1Ym-PleDfrI2OY9f7LrPUprCRnzFJISho/view?usp=drive_link)
 - [🖥️ Presentación UX/UI](https://drive.google.com/file/d/1QZFzSYgOqMpl80M-GL0YbiS_DLO9b4YB/view?usp=sharing)  
 - [🎨 Proyecto de Figma](https://www.figma.com/design/hps5pgUhOIUXp7aydqOWMq/Bookie?node-id=0-1&t=1VGHTlsV5MuTjeJ1-1)  
 - [📱 Prototipo Bookie - H3-14](https://www.figma.com/proto/hps5pgUhOIUXp7aydqOWMq/Bookie?page-id=0%3A1&node-id=145-3121&node-type=frame&viewport=489%2C-565%2C0.1&t=R5z4HCfdhjc9hyDD-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=145%3A3121&show-proto-sidebar=1)  
