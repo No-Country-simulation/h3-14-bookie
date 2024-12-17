@@ -46,11 +46,11 @@ interface class IStoryService {
   }
 
   Future<List<ChapterStoryResponseDto>> getChaptersStory(
-      String storyUid) async {
+      String storyUid, int chapterNumber) async {
     throw UnimplementedError();
   }
 
-  Future<List<ChapterStoryResponseDto>> getAllChaptersStory() async {
+  Future<List<ChapterStoryResponseDto>> getAllFirstChaptersStory() async {
     throw UnimplementedError();
   }
 

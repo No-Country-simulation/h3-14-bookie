@@ -255,7 +255,7 @@ class StoryServiceImpl implements IStoryService {
 
   @override
   Future<List<ChapterStoryResponseDto>> getChaptersStory(
-      String storyUid) async {
+      String storyUid, int chapterNumber) async {
     Story? story = await getStoryById(storyUid);
     if (story == null) {
       throw Exception('Story not found');
@@ -265,6 +265,10 @@ class StoryServiceImpl implements IStoryService {
     if (chapters.isEmpty) {
       return [];
     }
+
+    chapters =
+        chapters.where((chapter) => chapter.number == chapterNumber).toList();
+
     List<ChapterStoryResponseDto> chaptersStoryResponseDto = [];
     for (Chapter chapter in chapters) {
       String chapterUid =
@@ -277,13 +281,13 @@ class StoryServiceImpl implements IStoryService {
   }
 
   @override
-  Future<List<ChapterStoryResponseDto>> getAllChaptersStory() async {
+  Future<List<ChapterStoryResponseDto>> getAllFirstChaptersStory() async {
     List<String> storiesUid = await getAllStoriesUid();
     List<ChapterStoryResponseDto> chaptersStoryResponseDto = [];
     try {
       for (String storyUid in storiesUid) {
         List<ChapterStoryResponseDto> chapters =
-            await getChaptersStory(storyUid);
+            await getChaptersStory(storyUid, 1);
         chaptersStoryResponseDto.addAll(chapters);
       }
     } catch (e) {
