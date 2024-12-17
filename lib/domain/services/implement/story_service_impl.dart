@@ -242,6 +242,9 @@ class StoryServiceImpl implements IStoryService {
     }
     final appUser = await appUserService.getAppUserByAuthUserUid(appUserUid);
     final readings = appUser?.readings ?? [];
+    if (readings.isEmpty) {
+      return false;
+    }
     final reading =
         readings.firstWhere((reading) => reading.storyId == storyUid);
     return reading.inLibrary ?? false;
