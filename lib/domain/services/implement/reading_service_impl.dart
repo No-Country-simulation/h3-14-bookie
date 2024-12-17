@@ -94,6 +94,10 @@ class ReadingServiceImpl implements IReadingService {
 
   @override
   Future<bool> addNewReading(String storyId, bool inLibrary) async {
+    if (await verifyIsUserReading(storyId)) {
+      return false;
+    }
+
     final authUserUid = FirebaseAuth.instance.currentUser?.uid;
     if (authUserUid == null) {
       throw Exception('User not logged in');
@@ -131,8 +135,16 @@ class ReadingServiceImpl implements IReadingService {
     return true;
   }
 
+  Future<bool> verifyIsUserReading(String storyId) async {
+    final readings = await getUserReadings(null);
+    return readings.any((reading) => reading.storyId == storyId);
+  }
+
   @override
   Future<bool> updateInLibrary(String storyId, bool inLibrary) async {
+    if (!(await verifyIsUserReading(storyId))) {
+      return await addNewReading(storyId, inLibrary);
+    }
     final readings = await getUserReadings(null);
     if (readings.isEmpty) {
       return false;
@@ -143,22 +155,29 @@ class ReadingServiceImpl implements IReadingService {
       orElse: () => throw Exception('Reading not found'),
     );
 
-    final updatedReading =
-        Reading(storyId: readingToUpdate.storyId, inLibrary: inLibrary);
-
     final readingIndex = readings.indexOf(readingToUpdate);
+
+    final updatedReading = Reading(
+        storyId: readingToUpdate.storyId,
+        inLibrary: inLibrary,
+        readingChaptersUids: readingToUpdate.readingChaptersUids,
+        lastPageInChapterReaded: readingToUpdate.lastPageInChapterReaded);
+
     readings[readingIndex] = updatedReading;
 
-    final readingMaps = readings.map((r) => r.toFirestore()).toList();
+    final appUserAuthUid = FirebaseAuth.instance.currentUser?.uid;
+    if (appUserAuthUid == null) {
+      throw Exception('User not logged in');
+    }
 
-    final appUserDoc = await db
-        .collection(CollectionReferences.APP_USER_COLLECTION_REF)
-        .where('authUserUid', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
-        .get();
+    var appUserUpdate =
+        AppUser(authUserUid: appUserAuthUid, readings: readings);
 
-    await appUserDoc.docs.first.reference.update({
-      "readings": readingMaps,
-    });
+    try {
+      await appUserService.updateAppUser(appUserUpdate);
+    } catch (e) {
+      throw Exception('Error updating app user');
+    }
 
     return true;
   }

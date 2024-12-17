@@ -29,31 +29,33 @@ class HomeViewBloc extends Bloc<HomeViewEvent, HomeViewState> {
     on<ChangeFavoriteStoryHome>(_onChangeFavoriteStoryHome);
   }
 
-  void _onInitHomeEvent(InitHomeEvent event, Emitter<HomeViewState> emit) async {
+  void _onInitHomeEvent(
+      InitHomeEvent event, Emitter<HomeViewState> emit) async {
     final categories = await categoryService.getCategories();
     add(const GetStoriesHome(filter: ''));
     emit(state.copyWith(
-      categories: categories.map((c)=>CategoryUserEntity(name: c.name, isActive: false, uid: c.uid)).toList(),
+      categories: categories
+          .map((c) =>
+              CategoryUserEntity(name: c.name, isActive: false, uid: c.uid))
+          .toList(),
     ));
   }
 
   void _onGetStories(GetStoriesHome event, Emitter<HomeViewState> emit) async {
-    try{
+    try {
       emit(state.copyWith(
         isLoading: true,
       ));
-      final list = await storyService.getStoriesWithFilter(event.filter, event.category);
-      final newList = list.map((s) => BookNearEntity(story: s, isFavorite: s.inLibrary ?? false)).toList();
-      emit(state.copyWith(
-        stories: newList,
-        isLoading: false
-      ));
-    }
-    catch(e) {
+      final list =
+          await storyService.getStoriesWithFilter(event.filter, event.category);
+      final newList = list
+          .map(
+              (s) => BookNearEntity(story: s, isFavorite: s.inLibrary ?? false))
+          .toList();
+      emit(state.copyWith(stories: newList, isLoading: false));
+    } catch (e) {
       Fluttertoast.showToast(msg: '$e');
-      emit(state.copyWith(
-        isLoading: false
-      ));
+      emit(state.copyWith(isLoading: false));
     }
   }
 
@@ -75,19 +77,22 @@ class HomeViewBloc extends Bloc<HomeViewEvent, HomeViewState> {
   //   }
   // }
 
-  void _onChangeFavoriteStoryHome(ChangeFavoriteStoryHome event, Emitter<HomeViewState> emit) {
+  void _onChangeFavoriteStoryHome(
+      ChangeFavoriteStoryHome event, Emitter<HomeViewState> emit) {
     try {
       List<BookNearEntity> list = List.from(state.stories);
-      readingService.addNewReading(list[event.index].story.storyUid, true);
-      list[event.index] = BookNearEntity(story: list[event.index].story, isFavorite: !list[event.index].isFavorite);
+      print(list[event.index].story.storyUid);
+      print(list[event.index].isFavorite);
+      readingService.updateInLibrary(
+          list[event.index].story.storyUid, !list[event.index].isFavorite);
+      list[event.index] = BookNearEntity(
+          story: list[event.index].story,
+          isFavorite: !list[event.index].isFavorite);
       // int index = list.indexWhere((c) => c.number == event.number);
       // if(index == -1){return;}
-      emit(state.copyWith(
-        stories: list
-      ));
+      emit(state.copyWith(stories: list));
     } catch (e) {
       Fluttertoast.showToast(msg: '$e', backgroundColor: Colors.red);
     }
-
   }
 }
