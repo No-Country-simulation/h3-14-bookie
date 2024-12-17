@@ -16,7 +16,7 @@ class LoadingScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/loading.png',
+                'assets/images/iconos-png/Illustration_reading.png',
                 height: 250,
               ),
               const SizedBox(height: 40),

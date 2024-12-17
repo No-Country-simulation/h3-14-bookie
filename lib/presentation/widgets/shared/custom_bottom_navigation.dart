@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:h3_14_bookie/config/theme/app_colors.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/favorite_view/favorite_view_bloc.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/navigation_view/navigation_view_bloc.dart';
+import 'package:h3_14_bookie/presentation/blocs/home_view/home_view_bloc.dart';
 import 'package:h3_14_bookie/presentation/resources/app_images.dart';
 
 class CustomBottomNavigation extends StatelessWidget {
@@ -15,12 +19,15 @@ class CustomBottomNavigation extends StatelessWidget {
     switch (index) {
       case 0:
         context.go('/home/0');
+        context.read<HomeViewBloc>().add(const GetStoriesHome(filter: ''));
         break;
       case 1:
         context.go('/home/1');
+        context.read<FavoriteViewBloc>().add(const InitFavoritesEvent());
         break;
       case 2:
         context.go('/home/2'); // Central button
+        context.read<NavigationViewBloc>().add(const GetStoryChapterEvent());
         break;
       case 3:
         context.go('/home/3');

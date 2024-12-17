@@ -30,6 +30,7 @@ class BookItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: isDraft ? Colors.grey[300] : AppColors.background,
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
@@ -111,18 +112,17 @@ class BookItemWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 PopupMenuButton<BookItemMenuEnum>(
-                  icon: Icon(Icons.more_vert, size: 20),
+                  icon: const Icon(Icons.more_vert, size: 20),
                   padding: EdgeInsets.zero,
                   onSelected: (BookItemMenuEnum item) {
                     if (BookItemMenuEnum.unposting == item ||
                         BookItemMenuEnum.posting == item) {
                       context.read<EditViewBloc>().add(ChangeStatusBook(
-                          writing: Writing(isDraft: !isDraft, storyId: id)));
-                      context.read<HomeViewBloc>().add(const GetStoriesHome(filter: ''));
+                          writing: Writing(isDraft: !isDraft, storyId: id),
+                       ));
                     }
                     if(BookItemMenuEnum.delete == item) {
                       context.read<EditViewBloc>().add(DeleteCreateBook(id: id));
-                      context.read<HomeViewBloc>().add(const GetStoriesHome(filter: ''));
                     }
                   },
                   itemBuilder: (BuildContext context) => <PopupMenuEntry<BookItemMenuEnum>>[
