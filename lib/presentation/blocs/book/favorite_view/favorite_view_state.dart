@@ -2,22 +2,22 @@ part of 'favorite_view_bloc.dart';
 
 class FavoriteViewState extends Equatable {
   final List<BookFavoriteEntity> listFavorites;
-  final bool loading;
+  final bool loadingFavorites;
   const FavoriteViewState({
     this.listFavorites = const [],
-    this.loading = false,
+    this.loadingFavorites = false,
   });
 
   FavoriteViewState copyWith({
     List<BookFavoriteEntity>? listFavorites,
-    bool? loading,
+    bool? loadingFavorites,
   }) {
     return FavoriteViewState(
       listFavorites: listFavorites ?? this.listFavorites,
-      loading: loading ?? this.loading,
+      loadingFavorites: loadingFavorites ?? this.loadingFavorites,
     );
   }
   
   @override
-  List<Object> get props => [listFavorites, loading];
+  List<Object> get props => [listFavorites, loadingFavorites];
 }

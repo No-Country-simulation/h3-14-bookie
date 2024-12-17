@@ -77,7 +77,12 @@ class FavoritesView extends StatelessWidget {
                 child: Center(child: Text('Aún no tienes historias en tu biblioteca.'),))
               : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: GridView.builder(
+                child: state.loadingFavorites
+                    ? const Center(child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: CircularProgressIndicator(),
+                    ),) 
+                    : GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: state.listFavorites.length,

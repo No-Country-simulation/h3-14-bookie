@@ -25,13 +25,13 @@ class FavoriteViewBloc extends Bloc<FavoriteViewEvent, FavoriteViewState> {
   void _onGetListFavorites(GetListFavorites event, Emitter<FavoriteViewState> emit) async {
     try {
       emit(state.copyWith(
-        loading: true,
+        loadingFavorites: true,
       ));
       final list = await readingService.getUserReadingsResponseDto(true);
       final newList = list.map((r) => BookFavoriteEntity(reading: r, isFavorite: true)).toList();
       emit(state.copyWith(
         listFavorites: newList,
-        loading: false,
+        loadingFavorites: false,
       ));
     } catch (e) {
       Fluttertoast.showToast(msg: '$e', backgroundColor: Colors.red);
@@ -48,6 +48,7 @@ class FavoriteViewBloc extends Bloc<FavoriteViewEvent, FavoriteViewState> {
       emit(state.copyWith(
         listFavorites: list
       ));
+      await Future.delayed(const Duration(milliseconds: 500));
       add(const GetListFavorites());
     } catch (e) {
       Fluttertoast.showToast(msg: '$e', backgroundColor: Colors.red);
