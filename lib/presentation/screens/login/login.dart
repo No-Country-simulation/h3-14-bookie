@@ -7,6 +7,7 @@ import 'package:h3_14_bookie/presentation/screens/loading/loading_screen.dart';
 import 'package:h3_14_bookie/presentation/screens/password/forgot_password_screen.dart';
 import 'package:h3_14_bookie/presentation/screens/signup/signup.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Login extends StatefulWidget {
   static const String name = 'Login';
@@ -66,9 +67,9 @@ class _LoginState extends State<Login> {
               ),
               const SizedBox(height: 150),
               _socialButtons(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               _divider(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               _loginForm(context),
             ],
           ),
@@ -83,11 +84,11 @@ class _LoginState extends State<Login> {
       children: [
         _socialButton(
           'assets/images/google_icon.png',
-          onTap: () {
-            // Implementar login con Google
+          onTap: () async {
+            await AuthService().signInWithGoogle(context);
           },
         ),
-        const SizedBox(width: 47),
+        const SizedBox(width: 24),
         _socialButton(
           'assets/images/facebook_icon.png',
           onTap: () {
@@ -104,38 +105,18 @@ class _LoginState extends State<Login> {
       child: Container(
         width: 47,
         height: 47,
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 8,
-              offset: const Offset(0, 4), // Cambiado a 4 para sombra más abajo
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Image.asset(iconPath, fit: BoxFit.cover),
-      ),
-    );
-  }
-
-  Widget _divider() {
-    return Container(
-      width: 100,
-      child: Row(
-        children: [
-          Expanded(child: Divider(color: Colors.grey.shade500, thickness: 1)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              'O',
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-            ),
-          ),
-          Expanded(child: Divider(color: Colors.grey.shade500, thickness: 1)),
-        ],
       ),
     );
   }
@@ -152,19 +133,11 @@ class _LoginState extends State<Login> {
             filled: true,
             fillColor: Colors.grey.shade50,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(24),
-              borderSide: BorderSide(color: Colors.grey.shade500),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(24),
-              borderSide: BorderSide(color: Colors.grey.shade500),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(24),
-              borderSide: BorderSide(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           ),
         ),
         const SizedBox(height: 16),
@@ -177,19 +150,11 @@ class _LoginState extends State<Login> {
             filled: true,
             fillColor: Colors.grey.shade50,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(24),
-              borderSide: BorderSide(color: Colors.grey.shade500),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(24),
-              borderSide: BorderSide(color: Colors.grey.shade500),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(24),
-              borderSide: BorderSide(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             suffixIcon: IconButton(
               icon: Icon(
                 _obscureText ? Icons.visibility_off : Icons.visibility,
@@ -215,7 +180,7 @@ class _LoginState extends State<Login> {
             elevation: 0,
           ),
           onPressed: () async {
-            // Validar que los campos no estén vacíos
+            // Validar campos vacíos
             if (_emailController.text.trim().isEmpty ||
                 _passwordController.text.trim().isEmpty) {
               Fluttertoast.showToast(
@@ -231,12 +196,12 @@ class _LoginState extends State<Login> {
 
             try {
               await AuthService().signin(
-                email: _emailController.text,
-                password: _passwordController.text,
+                email: _emailController.text.trim(),
+                password: _passwordController.text.trim(),
                 context: context,
               );
             } catch (e) {
-              // El error ya se maneja en AuthService
+              print('Error inesperado en login: $e');
             }
           },
           child: const Text(
@@ -297,13 +262,28 @@ class _LoginState extends State<Login> {
                 'Regístrate',
                 style: TextStyle(
                   color: Colors.blue.shade700,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.blue.shade700,
+                  fontSize: 12,
                 ),
               ),
             ),
           ],
         ),
+      ],
+    );
+  }
+
+  Widget _divider() {
+    return Row(
+      children: [
+        Expanded(child: Divider(color: Colors.grey.shade200, thickness: 1)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'o',
+            style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+          ),
+        ),
+        Expanded(child: Divider(color: Colors.grey.shade200, thickness: 1)),
       ],
     );
   }

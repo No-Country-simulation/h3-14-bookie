@@ -9,6 +9,8 @@ import 'package:h3_14_bookie/domain/model/dto/story_dto.dart';
 import 'package:h3_14_bookie/presentation/blocs/book/book_create/book_create_bloc.dart';
 import 'package:h3_14_bookie/presentation/widgets/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:h3_14_bookie/config/helpers/enums/book_enum.dart';
+import 'package:h3_14_bookie/presentation/blocs/book/edit_view/edit_view_bloc.dart';
 
 class BookCreateScreen extends StatefulWidget {
   static const name = 'book-create';
@@ -23,9 +25,10 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
   final synopsisController = TextEditingController();
   final placeController = TextEditingController();
   final chapterController = TextEditingController();
-  File? _image; 
+  File? _image;
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
@@ -65,37 +68,37 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                         width: size.width * 0.7,
                         height: size.height * 0.35,
                         decoration: BoxDecoration(
-                            image: _image == null? null :DecorationImage(
-                              image: FileImage(_image!),
-                              fit: BoxFit.cover
-                            ),
+                            image: _image == null
+                                ? null
+                                : DecorationImage(
+                                    image: FileImage(_image!),
+                                    fit: BoxFit.cover),
                             color: Colors.grey,
                             borderRadius: BorderRadius.circular(16)),
                         child: Center(
                           child: _image == null
-                            ? const Text('Inserte una foto de portada')
-                            : null,
+                              ? const Text('Inserte una foto de portada')
+                              : null,
                         ),
                       ),
-                      if(_image != null)
-                      Positioned(
-                        top: 2,
-                        right: 1,
-                        child: IconButton(
-                          style: const ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                              AppColors.background
-                            )
-                          ),
-                          onPressed: (){
-                            setState(() {
-                              _image = null;
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.delete_outline,
-                            color: AppColors.primaryColor,)),
-                      )
+                      if (_image != null)
+                        Positioned(
+                          top: 2,
+                          right: 1,
+                          child: IconButton(
+                              style: const ButtonStyle(
+                                  backgroundColor: WidgetStatePropertyAll(
+                                      AppColors.background)),
+                              onPressed: () {
+                                setState(() {
+                                  _image = null;
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.delete_outline,
+                                color: AppColors.primaryColor,
+                              )),
+                        )
                     ],
                   ),
                 ),
@@ -115,17 +118,25 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                 controller: synopsisController,
               ),
               ButtonAddForm(
-                  label: 'Etiquetas',
-                  message:
-                      'Utiliza palabras clave para que el lector encuentre tu historia',
-                  onTap: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    context.go('/home/3/book-create/tags');
-                  },
+                label: 'Etiquetas',
+                message:
+                    'Utiliza palabras clave para que el lector encuentre tu historia',
+                selectedItems: context.watch<BookCreateBloc>().state.targets,
+                onTap: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  context.go('/home/3/book-create/tags');
+                },
               ),
               ButtonAddForm(
                 label: 'Categorías',
                 message: 'Seleccione una o más categorias',
+                selectedItems: context
+                    .watch<BookCreateBloc>()
+                    .state
+                    .categories
+                    .where((c) => c.isActive)
+                    .map((c) => c.name)
+                    .toList(),
                 onTap: () {
                   FocusManager.instance.primaryFocus?.unfocus();
                   context.go('/home/3/book-create/categories');
@@ -140,8 +151,13 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
               ),
               Row(
                 children: [
-                  const Icon(Icons.push_pin_outlined, color: AppColors.primaryColor,),
-                  const SizedBox(width: 20,),
+                  const Icon(
+                    Icons.push_pin_outlined,
+                    color: AppColors.primaryColor,
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
                   Expanded(
                     child: TextFormField(
                       controller: placeController,
@@ -150,8 +166,7 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                         fillColor: Colors.grey[200],
                         hintText: 'Ingrese el nombre de la ubicación',
                         border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(30.0),
+                          borderRadius: BorderRadius.circular(30.0),
                           borderSide: BorderSide.none,
                         ),
                       ),
@@ -169,7 +184,9 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
               Row(
                 children: [
                   const IconLabelWidget(label: 'Capítulo 1', icon: Icons.list),
-                  const SizedBox(width: 20,),
+                  const SizedBox(
+                    width: 20,
+                  ),
                   Expanded(
                     child: TextFormField(
                       controller: chapterController,
@@ -178,8 +195,7 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                         fillColor: Colors.grey[200],
                         hintText: 'Título del capítulo',
                         border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(30.0),
+                          borderRadius: BorderRadius.circular(30.0),
                           borderSide: BorderSide.none,
                         ),
                       ),
@@ -187,69 +203,71 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20,),
+              const SizedBox(
+                height: 20,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
                     width: size.width * 0.8,
                     child: ElevatedButton(
-                      onPressed: () {
-                        if(_image == null){
-                          Fluttertoast.showToast(msg: 'Es obligatorio subir una portada.',
-                          backgroundColor: Colors.red);
+                      onPressed: () async {
+                        if (_image == null) {
+                          Fluttertoast.showToast(
+                              msg: 'Es obligatorio subir una portada.',
+                              backgroundColor: Colors.red);
                           return;
                         }
-                        if(titleController.text.isEmpty || synopsisController.text.isEmpty){
-                          Fluttertoast.showToast(msg: 'El Título y la Sinopsis son obligatorios.',
-                          backgroundColor: Colors.red);
+                        if (titleController.text.isEmpty ||
+                            synopsisController.text.isEmpty) {
+                          Fluttertoast.showToast(
+                              msg: 'El Título y la Sinopsis son obligatorios.',
+                              backgroundColor: Colors.red);
                           return;
                         }
-                        if(bookCreateBloc.state.categories.isEmpty || bookCreateBloc.state.targets.isEmpty){
-                          Fluttertoast.showToast(msg: 'Debes agregar almenos una etiqueta y una categoría.',
-                          backgroundColor: Colors.red);
+                        if (bookCreateBloc.state.categories.isEmpty ||
+                            bookCreateBloc.state.targets.isEmpty) {
+                          Fluttertoast.showToast(
+                              msg:
+                                  'Debes agregar almenos una etiqueta y una categoría.',
+                              backgroundColor: Colors.red);
                           return;
                         }
-                        if(chapterController.text.isEmpty || placeController.text.isEmpty){
-                          Fluttertoast.showToast(msg: 'El título y nombre de la ubicación, son obligatorios.',
-                          backgroundColor: Colors.red);
+                        if (chapterController.text.isEmpty ||
+                            placeController.text.isEmpty) {
+                          Fluttertoast.showToast(
+                              msg:
+                                  'El título y nombre de la ubicación, son obligatorios.',
+                              backgroundColor: Colors.red);
                           return;
                         }
-                        // bookCreateBloc.add(UploadCover(
-                        //   path: _image!.path, whenComplete: (url) {
-                        //     bookCreateBloc.add(CreateStoryEvent(
-                        //       story: StoryDto(
-                        //         title: titleController.text,
-                        //         synopsis: synopsisController.text,
-                        //         categoriesUid: bookCreateBloc.state.categories.where((c)=>c.isActive).map((c)=>c.uid).toList(),
-                        //         labels: bookCreateBloc.state.targets,
-                        //         cover: url
-                        //       )
-                        //     ));
-                        //     bookCreateBloc.add(
-                        //       AddInitialChapterEvent(
-                        //         title: chapterController.text,
-                        //         placeName: placeController.text
-                        //       )
-                        //     );
-                        //     context.push('/home/3/book-create/chapter-edit');
-                        //   }
-                        // ));
                         bookCreateBloc.add(SaveStoryEvent(
-                          titleBook: titleController.text,
-                          synopsisBook: synopsisController.text,
-                          pathImage: _image!.path,
-                          titleChapter: chapterController.text,
-                          placeName: placeController.text
-                        ));
-                        context.push('/home/3/book-create/chapter-edit');
+                            titleBook: titleController.text,
+                            synopsisBook: synopsisController.text,
+                            pathImage: _image!.path,
+                            titleChapter: chapterController.text,
+                            placeName: placeController.text));
+
+                        // Esperamos a que se guarde el estado
+                        await Future.delayed(const Duration(milliseconds: 100));
+                        context.push(
+                            '/home/3/book-create/chapter-edit'); // Creamos la historia
+                        // bookCreateBloc.add(CreateStoryEvent(whenComplete: () {
+                        //   // Navegamos a la pantalla de edición de capítulos
+                        //   context.push('/home/3/book-create/chapter-edit');
+                        // }
+                        // ))
+                        ;
                       },
                       child: const Text('Continuar'),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
             ],
           ),
         ),
@@ -263,7 +281,12 @@ class TextForm extends StatelessWidget {
   final int? maxLines;
   final String hintText;
   final TextEditingController controller;
-  const TextForm({super.key, required this.label, this.maxLines, required this.hintText, required this.controller});
+  const TextForm(
+      {super.key,
+      required this.label,
+      this.maxLines,
+      required this.hintText,
+      required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -280,9 +303,7 @@ class TextForm extends StatelessWidget {
             fillColor: Colors.grey[200],
             hintText: hintText,
             border: OutlineInputBorder(
-              
-              borderRadius:
-                  BorderRadius.circular(30.0),
+              borderRadius: BorderRadius.circular(30.0),
               borderSide: BorderSide.none,
             ),
           ),
@@ -319,8 +340,14 @@ class ButtonAddForm extends StatelessWidget {
   final String label;
   final String message;
   final Function onTap;
-  const ButtonAddForm(
-      {super.key, required this.label, required this.message, required this.onTap});
+  final List<String>? selectedItems;
+  const ButtonAddForm({
+    super.key,
+    required this.label,
+    required this.message,
+    required this.onTap,
+    this.selectedItems,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -336,19 +363,30 @@ class ButtonAddForm extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         OutlinedButton(
-          onPressed: ()=>onTap(),
+          onPressed: () => onTap(),
           style: OutlinedButton.styleFrom(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0)),
+                  borderRadius: BorderRadius.circular(24)),
               padding:
                   const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15)),
           child: Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                message,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              )),
+              child: selectedItems != null && selectedItems!.isNotEmpty
+                  ? Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: selectedItems!
+                          .map((item) => Chip(
+                                label: Text(item),
+                                backgroundColor: Colors.grey[200],
+                              ))
+                          .toList(),
+                    )
+                  : Text(
+                      message,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    )),
         ),
         const SizedBox(
           height: 3,

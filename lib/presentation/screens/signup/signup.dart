@@ -224,6 +224,7 @@ class _SignupState extends State<Signup> {
                 password: _passwordController.text.trim(),
                 name: _nameController.text.trim(),
                 username: _userController.text.trim(),
+                context: context,
               );
 
               await addUser(

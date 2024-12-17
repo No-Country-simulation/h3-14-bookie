@@ -40,48 +40,60 @@ class HomeView extends StatelessWidget {
                 ),
               ),
               BlocBuilder<HomeViewBloc, HomeViewState>(
-                  builder: (context, state) {
-                    return Expanded(
-                      child: state.isLoading 
-                      ? const Center(child: CircularProgressIndicator(),)
-                      : state.stories.isEmpty
-                      ? const Center(
-                        child: Text(
-                          'No tienes historias en tu biblioteca, \n mueve para descubrir más.',
-                          textAlign: TextAlign.center,),)
-                      : GridView.builder(
-                        // clipBehavior: Clip.none,
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 180,
-                          mainAxisExtent: 290,
-                          mainAxisSpacing: 20,
-                          crossAxisSpacing: 20,
-                        ),
-                        itemCount: state.stories.length,
-                        itemBuilder: (context, index) {
-                          bool isSecondColumn = index % 2 == 1;
-                          return Transform.translate(
-                            offset: Offset(0, isSecondColumn ? 20.0 : 0.0),
-                            child: GestureDetector(
-                                onTap: () {
-                                  context.push('/home/0/book/${state.stories[index].story.storyUid}');
+                builder: (context, state) {
+                  return Expanded(
+                    child: state.isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : state.stories.isEmpty
+                            ? const Center(
+                                child: Text(
+                                  'No tienes historias en tu biblioteca, \n mueve para descubrir más.',
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                            : GridView.builder(
+                                // clipBehavior: Clip.none,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 20),
+                                gridDelegate:
+                                    const SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: 180,
+                                  mainAxisExtent: 290,
+                                  mainAxisSpacing: 20,
+                                  crossAxisSpacing: 20,
+                                ),
+                                itemCount: state.stories.length,
+                                itemBuilder: (context, index) {
+                                  bool isSecondColumn = index % 2 == 1;
+                                  return Transform.translate(
+                                    offset:
+                                        Offset(0, isSecondColumn ? 20.0 : 0.0),
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          context.push(
+                                              '/home/0/book/${state.stories[index].story.storyUid}');
+                                        },
+                                        child: BookWidget(
+                                          onFavorite: () {
+                                            context.read<HomeViewBloc>().add(
+                                                ChangeFavoriteStoryHome(
+                                                    index: index));
+                                            context
+                                                .read<FavoriteViewBloc>()
+                                                .add(const GetListFavorites());
+                                          },
+                                          story: state.stories[index].story,
+                                          isFavorite:
+                                              state.stories[index].isFavorite,
+                                        )),
+                                  );
                                 },
-                                child: BookWidget(
-                                  onFavorite: () {
-                                    context.read<HomeViewBloc>().add(ChangeFavoriteStoryHome(index: index));
-                                    context.read<FavoriteViewBloc>().add(const GetListFavorites());
-                                  },
-                                  story: state.stories[index].story,
-                                  isFavorite: state.stories[index].isFavorite,
-                                )),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                )
+                              ),
+                  );
+                },
+              )
             ],
           ),
         )

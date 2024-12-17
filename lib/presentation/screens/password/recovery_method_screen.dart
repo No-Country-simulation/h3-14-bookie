@@ -53,11 +53,11 @@ class RecoveryMethodScreen extends StatelessWidget {
                 subtitle: 'Al celular terminado en 0711',
                 onTap: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => PasswordLinkSentScreen(
-                                isSMS: true,
-                              )));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PasswordLinkSentScreen(),
+                    ),
+                  );
                 },
                 // onTap: () => _handleRecovery(context, 'sms'),
               ),
@@ -68,11 +68,11 @@ class RecoveryMethodScreen extends StatelessWidget {
                 subtitle: 'Al correo j****@g****.com',
                 onTap: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => PasswordLinkSentScreen(
-                                isSMS: false,
-                              )));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PasswordLinkSentScreen(),
+                    ),
+                  );
                 },
                 // onTap: () => _handleRecovery(context, 'email'),
               ),
@@ -90,9 +90,7 @@ class RecoveryMethodScreen extends StatelessWidget {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => PasswordLinkSentScreen(
-              isSMS: method == 'sms',
-            ),
+            builder: (context) => const PasswordLinkSentScreen(),
           ),
         );
       }

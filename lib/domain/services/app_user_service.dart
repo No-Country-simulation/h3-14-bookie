@@ -37,11 +37,13 @@ interface class IAppUserService {
   Future<void> completeNewChapterInStory(
       String stroyId, String completedChapterUid) async {}
 
-  Future<bool> deleteUserReading(String authUserUid, String readingUid) async {
+  Future<bool> deleteUserReading(
+      String authUserUid, String readingStoryUid) async {
     throw UnimplementedError();
   }
 
-  Future<bool> deleteUserWriting(String authUserUid, String writingUid) async {
+  Future<bool> deleteUserWriting(
+      String authUserUid, String writingStoryUid) async {
     throw UnimplementedError();
   }
 }
