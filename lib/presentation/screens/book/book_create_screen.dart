@@ -251,12 +251,14 @@ class _BookCreateScreenState extends State<BookCreateScreen> {
 
                         // Esperamos a que se guarde el estado
                         await Future.delayed(const Duration(milliseconds: 100));
-
-                        // Creamos la historia
-                        bookCreateBloc.add(CreateStoryEvent(whenComplete: () {
-                          // Navegamos a la pantalla de edición de capítulos
-                          context.push('/home/3/book-create/chapter-edit');
-                        }));
+                        context.push(
+                            '/home/3/book-create/chapter-edit'); // Creamos la historia
+                        // bookCreateBloc.add(CreateStoryEvent(whenComplete: () {
+                        //   // Navegamos a la pantalla de edición de capítulos
+                        //   context.push('/home/3/book-create/chapter-edit');
+                        // }
+                        // ))
+                        ;
                       },
                       child: const Text('Continuar'),
                     ),
