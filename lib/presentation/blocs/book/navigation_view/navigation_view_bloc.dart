@@ -9,20 +9,21 @@ import 'package:h3_14_bookie/domain/services/story_service.dart';
 part 'navigation_view_event.dart';
 part 'navigation_view_state.dart';
 
-class NavigationViewBloc extends Bloc<NavigationViewEvent, NavigationViewState> {
+class NavigationViewBloc
+    extends Bloc<NavigationViewEvent, NavigationViewState> {
   final IStoryService storyService;
-  NavigationViewBloc({
-    required this.storyService
-  }) : super(const NavigationViewState()) {
+  NavigationViewBloc({required this.storyService})
+      : super(const NavigationViewState()) {
     on<GetStoryChapterEvent>(_onGetStoryChapterEvent);
   }
 
-  void _onGetStoryChapterEvent(GetStoryChapterEvent event, Emitter<NavigationViewState> emit) async {
+  void _onGetStoryChapterEvent(
+      GetStoryChapterEvent event, Emitter<NavigationViewState> emit) async {
     try {
       emit(state.copyWith(
         loading: true,
       ));
-      final list = await storyService.getAllChaptersStory();
+      final list = await storyService.getAllFirstChaptersStory();
       emit(state.copyWith(
         listChapterStory: list,
         loading: false,

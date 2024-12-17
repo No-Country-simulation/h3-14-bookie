@@ -34,3 +34,14 @@ class ChangeChapterReadActive extends ReadViewEvent {
     required this.storyId
   });
 }
+
+class AddNewReadingEvent extends ReadViewEvent {
+  final String storyId;
+  const AddNewReadingEvent({
+    required this.storyId
+  });
+}
+
+class SaveLastPageReadEvent extends ReadViewEvent {
+  const SaveLastPageReadEvent();
+}

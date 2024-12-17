@@ -57,28 +57,24 @@ class _CustomMapInfoWidgetState extends State<CustomMapInfoWidget> {
   }
 
   void setMarkers() {
-    bool flag = true;
-    for (var position in widget.positions!) {
-      markers.add(
-        Marker(
-          onTap: () async {
-            showCustomCardModal(context, position);
-          },
-          markerId: MarkerId(position.toString()),
-          position: LatLng(position.latitude, position.longitude),
-          icon: flag ? iconOn : iconOff,
-          // infoWindow: InfoWindow(
-          //   title: 'La montaña',
-          //   onTap: () async {
-          //     _dialogBuilder(context);
-          //   }
-          // ),
-        ),
-      );
-      flag = !flag;
-    }
-    setState(() {});
+  bool flag = true;
+  for (int i = 0; i < widget.positions!.length; i++) {
+    final position = widget.positions![i];
+    markers.add(
+      Marker(
+        onTap: () async {
+          showCustomCardModal(context, position);
+        },
+        markerId: MarkerId(position.storyUid ?? 'marker_$i'), // Usar un ID único
+        position: LatLng(position.latitude, position.longitude),
+        icon: flag ? iconOn : iconOff,
+      ),
+    );
+    flag = !flag;
   }
+  setState(() {});
+}
+
 
   @override
   void dispose() {
@@ -87,7 +83,10 @@ class _CustomMapInfoWidgetState extends State<CustomMapInfoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return currentPosition == null
+    return SizedBox(
+      width: double.infinity,
+      height: double.infinity,
+      child: currentPosition == null
         ? const Center(child: CircularProgressIndicator())
         : GoogleMap(
             markers: {
@@ -108,7 +107,8 @@ class _CustomMapInfoWidgetState extends State<CustomMapInfoWidget> {
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
             },
-          );
+          ),
+    );
   }
 
   Future<void> fetchLocationUpdate() async {

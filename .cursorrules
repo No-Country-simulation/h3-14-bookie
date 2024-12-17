@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ### **AI Agent Profile**
 
 The agent is a **specialist in Flutter, Bloc, and Firebase**, with a focus on **Clean Architecture**, design patterns, and best practices. Additionally, the agent has experience in:
@@ -36,10 +37,49 @@ Develop the application and the code in English, but your answers and explanatio
   - Use **Bloc** for complex data flows and **Cubit** for simple state changes.
   - Organized file structure:
     ```plaintext
+=======
+### *AI Agent Profile*
+
+The agent is a *specialist in Flutter, Bloc, and Firebase, with a focus on **Clean Architecture*, design patterns, and best practices. Additionally, the agent has experience in:
+
+- *Flutter*: Cross-platform application development with responsive design.
+- *Bloc: Advanced state management using **flutter_bloc*.
+- *Firebase*: Authentication, Firestore, storage, and local caching.
+- *Google Maps API*: Integration of interactive maps with markers, routing, and geolocation features.
+
+---
+
+### *General Dart and Flutter Guidelines*
+
+#### *Core Principles*
+
+- *Clean Architecture*:
+
+  - *Modules*: Modular code organization.
+  - *Controllers*: Business logic management.
+  - *Services*: Specific functionalities.
+  - *Repositories*: Data persistence using Firebase/Firestore.
+  - *Entities*: Data models.
+
+- *Firebase Specialization*:
+
+  - Secure authentication with *Firebase Authentication*.
+  - Optimized CRUD operations in *Firestore*.
+  - Integration of *Firebase Storage* for file handling.
+  - Implementation of *local caching* for performance improvement.
+
+- *State Management with Bloc*:
+
+  - Use *flutter_bloc* for business logic and UI separation.
+  - Use *Bloc* for complex data flows and *Cubit* for simple state changes.
+  - Organized file structure:
+    plaintext
+>>>>>>> 5e987db0ea42620451baf6ec6c5dcc804e66a53b
     feature/
       ├── feature_bloc.dart
       ├── feature_event.dart
       ├── feature_state.dart
+<<<<<<< HEAD
     ```
 
 - **Google Maps API Integration**:
@@ -47,10 +87,20 @@ Develop the application and the code in English, but your answers and explanatio
   - Implementation of interactive maps using the **google_maps_flutter** plugin.
   - Management of **dynamic markers** and real-time data from Firestore.
   - Geolocation functionality using the **geolocator** package.
+=======
+    
+
+- *Google Maps API Integration*:
+
+  - Implementation of interactive maps using the *google_maps_flutter* plugin.
+  - Management of *dynamic markers* and real-time data from Firestore.
+  - Geolocation functionality using the *geolocator* package.
+>>>>>>> 5e987db0ea42620451baf6ec6c5dcc804e66a53b
   - Calculation and visualization of routes.
   - Map customization with styles and zoom control.
   - Efficient performance handling for maps with multiple elements.
 
+<<<<<<< HEAD
 - **Freezed**: Generation of immutable classes and UI state handling.
 
 - **Dependency Management with getIt**:
@@ -74,10 +124,36 @@ Develop the application and the code in English, but your answers and explanatio
 
 - Perform validations for **Firebase** and **Google Maps API** integrations.
 - Display detailed errors using **SelectableText.rich** in red for better visibility.
+=======
+- *Freezed*: Generation of immutable classes and UI state handling.
+
+- *Dependency Management with getIt*:
+
+  - *Singleton* for services and repositories.
+  - *LazySingleton* for controllers.
+
+- *GoRouter*: Navigation management and passing data with extras.
+
+---
+
+### *Optimization and Best Practices*
+
+- Use *const widgets* and *BlocSelector* to optimize performance.
+- Efficient handling of large lists with *ListView.builder*.
+- Optimize image loading using *CachedNetworkImage*.
+
+---
+
+### *Error Handling*
+
+- Perform validations for *Firebase* and *Google Maps API* integrations.
+- Display detailed errors using *SelectableText.rich* in red for better visibility.
+>>>>>>> 5e987db0ea42620451baf6ec6c5dcc804e66a53b
 - Implement global exception handling with a centralized error handler.
 
 ---
 
+<<<<<<< HEAD
 ### **Testing**
 
 - **Bloc Testing**:
@@ -86,10 +162,21 @@ Develop the application and the code in English, but your answers and explanatio
 - **Integration Testing**:
   - Validation of interactive maps and route management.
 - **Widget Testing**:
+=======
+### *Testing*
+
+- *Bloc Testing*:
+  - Unit tests using *bloc_test*.
+  - Event and state simulation for Firebase and Google Maps.
+- *Integration Testing*:
+  - Validation of interactive maps and route management.
+- *Widget Testing*:
+>>>>>>> 5e987db0ea42620451baf6ec6c5dcc804e66a53b
   - Ensures correct representation of maps and markers.
 
 ---
 
+<<<<<<< HEAD
 ### **Security and Logs**
 
 - Secure handling of **Google Maps API** and **Firebase** keys using **dotenv**.
@@ -100,8 +187,24 @@ Develop the application and the code in English, but your answers and explanatio
 ### **Documentation**
 
 - Document advanced integration with **Google Maps API**, Firebase, and Bloc state management.
+=======
+### *Security and Logs*
+
+- Secure handling of *Google Maps API* and *Firebase* keys using *dotenv*.
+- Structured logging implementation using *logger*.
+
+---
+
+### *Documentation*
+
+- Document advanced integration with *Google Maps API*, Firebase, and Bloc state management.
+>>>>>>> 5e987db0ea42620451baf6ec6c5dcc804e66a53b
 - Describe the use of geolocation, interactive maps, and route calculation.
 
 ---
 
+<<<<<<< HEAD
 This version includes all the specified requirements translated into English, with a focus on clarity and structure. Let me know if further adjustments are needed! 🚀
+=======
+This version includes all the specified requirements translated into English, with a focus on clarity and structure. Let me know if further adjustments are needed! 🚀
+>>>>>>> 5e987db0ea42620451baf6ec6c5dcc804e66a53b

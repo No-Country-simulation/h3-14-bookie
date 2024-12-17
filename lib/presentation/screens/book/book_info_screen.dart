@@ -219,6 +219,8 @@ class _BookInfoScreenState extends State<BookInfoScreen> {
                           context
                               .read<ReadViewBloc>()
                               .add(ChangeStoryUidSelected(story: story));
+                          context.read<ReadViewBloc>()
+                              .add(AddNewReadingEvent(storyId: widget.bookId));
                         },
                         child: const Text('Leer'),
                       ),

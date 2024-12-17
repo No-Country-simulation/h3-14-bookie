@@ -47,6 +47,7 @@ class BlocsProviders extends StatelessWidget {
         BlocProvider(
           create: (_) =>
               locator<FavoriteViewBloc>()..add(const InitFavoritesEvent()),
+          lazy: false,
         ),
         BlocProvider(
           create: (_) =>

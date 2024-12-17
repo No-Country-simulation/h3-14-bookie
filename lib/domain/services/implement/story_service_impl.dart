@@ -283,7 +283,7 @@ class StoryServiceImpl implements IStoryService {
 
   @override
   Future<List<ChapterStoryResponseDto>> getChaptersStory(
-      String storyUid) async {
+      String storyUid, int chapterNumber) async {
     Story? story = await getStoryById(storyUid);
     if (story == null) {
       throw Exception('Story not found');
@@ -293,6 +293,10 @@ class StoryServiceImpl implements IStoryService {
     if (chapters.isEmpty) {
       return [];
     }
+
+    chapters =
+        chapters.where((chapter) => chapter.number == chapterNumber).toList();
+
     List<ChapterStoryResponseDto> chaptersStoryResponseDto = [];
     for (Chapter chapter in chapters) {
       String chapterUid =
@@ -305,13 +309,13 @@ class StoryServiceImpl implements IStoryService {
   }
 
   @override
-  Future<List<ChapterStoryResponseDto>> getAllChaptersStory() async {
+  Future<List<ChapterStoryResponseDto>> getAllFirstChaptersStory() async {
     List<String> storiesUid = await getAllStoriesUid();
     List<ChapterStoryResponseDto> chaptersStoryResponseDto = [];
     try {
       for (String storyUid in storiesUid) {
         List<ChapterStoryResponseDto> chapters =
-            await getChaptersStory(storyUid);
+            await getChaptersStory(storyUid, 1);
         chaptersStoryResponseDto.addAll(chapters);
       }
     } catch (e) {
@@ -417,8 +421,23 @@ class StoryServiceImpl implements IStoryService {
       return false;
     }
 
-    story.chaptersUid?.add(chapterUid);
-    await _storyRef.doc(storyUid).update(story.toFirestore());
+    var chaptersUid = story.chaptersUid ?? [];
+
+    if (chaptersUid.contains(chapterUid)) {
+      return false;
+    }
+
+    chaptersUid.add(chapterUid);
+
+    Story updatedStory = Story(chaptersUid: chaptersUid);
+
+    final finalStory = await updateStory(storyUid, updatedStory);
+
+    if (finalStory.chaptersUid == null ||
+        !finalStory.chaptersUid!.contains(chapterUid)) {
+      return false;
+    }
+
     return true;
   }
 
