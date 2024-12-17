@@ -41,7 +41,7 @@ class ReadingServiceImpl implements IReadingService {
   @override
   Future<List<ReadingResponseDto>> getUserReadingsResponseDto(
       bool? inLibrary) async {
-    final readings = await getUserReadings(null);
+    final readings = await getUserReadings(inLibrary);
     final Map<Story, String> storiesMap = {};
     final stories = await Future.wait(readings.map((reading) async {
       final story = await storyService.getStoryById(reading.storyId!);
