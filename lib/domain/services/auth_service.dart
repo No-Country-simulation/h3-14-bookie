@@ -48,22 +48,22 @@ class AuthService {
       }
 
       // Validar complejidad de contraseña
-      final hasUpperCase = password.contains(RegExp(r'[A-Z]'));
-      final hasLowerCase = password.contains(RegExp(r'[a-z]'));
-      final hasNumbers = password.contains(RegExp(r'[0-9]'));
-      final hasSpecialCharacters =
-          password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+      // final hasUpperCase = password.contains(RegExp(r'[A-Z]'));
+      // final hasLowerCase = password.contains(RegExp(r'[a-z]'));
+      // final hasNumbers = password.contains(RegExp(r'[0-9]'));
+      // final hasSpecialCharacters =
+      //     password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 
-      if (!hasUpperCase ||
-          !hasLowerCase ||
-          !hasNumbers ||
-          !hasSpecialCharacters) {
-        throw FirebaseAuthException(
-          code: 'password-requirements',
-          message:
-              'La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial.',
-        );
-      }
+      // if (!hasUpperCase ||
+      //     !hasLowerCase ||
+      //     !hasNumbers ||
+      //     !hasSpecialCharacters) {
+      //   throw FirebaseAuthException(
+      //     code: 'password-requirements',
+      //     message:
+      //         'La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial.',
+      //   );
+      // }
 
       // Validar nombre de usuario si se proporciona
       if (username.trim().isEmpty || username.length < 3) {
@@ -167,10 +167,14 @@ class AuthService {
       }
 
       try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
+
+        // Imprimir el UID del usuario
+        print('UID del usuario: ${userCredential.user?.uid}');
       } on FirebaseAuthException catch (e) {
         if (context.mounted) {
           context.go('/initScreen');

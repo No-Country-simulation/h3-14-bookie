@@ -39,22 +39,49 @@ class StoryServiceImpl implements IStoryService {
 
   @override
   Future<List<Story>> getStories() async {
-    final docs = await _storyRef.get();
-    return docs.docs.map((doc) => doc.data() as Story).toList();
+    try {
+      final docs = await _storyRef.get();
+      final stories = docs.docs.map((doc) => doc.data() as Story).toList();
+
+      for (var story in stories) {
+        print('Story: ${story.title} (ID: ${story.authorUid})');
+      }
+
+      return stories;
+    } catch (e) {
+      print('Error getting stories: $e');
+      return [];
+    }
   }
 
   @override
   Future<List<String>> getAllStoriesUid() async {
-    final docs = await _storyRef.get();
-    return docs.docs.map((doc) => doc.id).toList();
+    try {
+      final docs = await _storyRef.get();
+      final storyIds = docs.docs.map((doc) => doc.id).toList();
+
+      for (var id in storyIds) {
+        print('Story ID: $id');
+      }
+
+      return storyIds;
+    } catch (e) {
+      print('Error getting story IDs: $e');
+      return [];
+    }
   }
 
   @override
   Future<List<Story>> getPublishedStories() async {
+    print('📚 [StoryService] Getting all published stories');
     final storiesUid = await getAllStoriesUid();
+    print('🔑 [StoryService] Found ${storiesUid.length} story UIDs');
+
     final publishedStoriesUids = await Future.wait(
       storiesUid.map((storyUid) async {
         final isPublished = await checkIfStoryIsPublished(storyUid);
+        print(
+            '📖 [StoryService] Story $storyUid published status: $isPublished');
         return isPublished ? storyUid : null;
       }),
     );
@@ -63,6 +90,7 @@ class StoryServiceImpl implements IStoryService {
         .where((uid) => uid != null)
         .map((uid) => getStoryById(uid!)));
 
+    print('✅ [StoryService] Retrieved ${stories.length} published stories');
     return stories.whereType<Story>().toList();
   }
 
@@ -79,14 +107,20 @@ class StoryServiceImpl implements IStoryService {
   @override
   Future<List<StoryResponseDto>> getStoriesWithFilter(
       String filter, CategoryDto? category) async {
-    // Obtener las historias filtradas como antes
+    print('🔍 [StoryService] Starting to fetch stories with filter: $filter');
+
     var publishedStories = await getPublishedStories();
+    print(
+        '📚 [StoryService] Found ${publishedStories.length} published stories');
 
     if (category != null) {
+      print('🏷️ [StoryService] Filtering by category: ${category.name}');
       publishedStories = publishedStories
           .where(
               (story) => story.categories!.any((c) => c.name == category.name))
           .toList();
+      print(
+          '📚 [StoryService] After category filter: ${publishedStories.length} stories');
     }
 
     publishedStories = publishedStories.where((story) {
@@ -98,9 +132,12 @@ class StoryServiceImpl implements IStoryService {
       return containsInTitle || containsInLabels;
     }).toList();
 
-    // Convertir las historias filtradas a StoryResponseDto
+    print(
+        '🔍 [StoryService] After text filter: ${publishedStories.length} stories');
+
     final storiesResponseDtos = await Future.wait(
       publishedStories.map((story) async {
+        print('📖 [StoryService] Processing story: ${story.title}');
         final docRef =
             _storyRef.where('title', isEqualTo: story.title).limit(1);
         final querySnapshot = await docRef.get();
@@ -110,6 +147,8 @@ class StoryServiceImpl implements IStoryService {
       }),
     );
 
+    print(
+        '✅ [StoryService] Finished processing all stories. Returning ${storiesResponseDtos.length} stories');
     return storiesResponseDtos;
   }
   // Future<List<Story>> getStoriesWithFilter(
