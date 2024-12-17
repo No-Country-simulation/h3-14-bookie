@@ -56,17 +56,23 @@ class EditViewBloc extends Bloc<EditViewEvent, EditViewState> {
         isLoading: true,
       ));
       await appUserService.updateUserWriting(event.writing);
-      Future.delayed(const Duration(milliseconds: 1000));
+      
+      await Future.delayed(const Duration(milliseconds: 500));
+      
       add(GetStories(
           draftOrPublish: state.filterSelected == FilterBook.all
               ? null
               : state.filterSelected == FilterBook.drafts
                   ? 'draft'
                   : 'publish'));
+                  
       if(event.whenComplete != null){
         event.whenComplete!();
       }
+      
+      emit(state.copyWith(isLoading: false));
     } catch (e) {
+      emit(state.copyWith(isLoading: false));
       Fluttertoast.showToast(msg: '$e');
     }
   }
