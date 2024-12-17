@@ -165,8 +165,11 @@ class AppUserServiceImpl implements IAppUserService {
       final reading = readings.firstWhere((r) => r.storyId == readingStoryUid);
       final readingIndex = readings.indexOf(reading);
       readings.removeAt(readingIndex);
-      //final readingMaps = readings.map((r) => r.toFirestore()).toList();
-      await _appUserRef.doc(userUid).update({"readings": readings});
+
+      final updatedAppUser =
+          AppUser(authUserUid: appUser?.authUserUid, readings: readings);
+
+      await updateAppUser(updatedAppUser);
       return true;
     } catch (e) {
       print(e);
@@ -186,8 +189,13 @@ class AppUserServiceImpl implements IAppUserService {
       final writing = writings.firstWhere((w) => w.storyId == writingStoryUid);
       final writingIndex = writings.indexOf(writing);
       writings.removeAt(writingIndex);
-      //final writingMaps = writings.map((w) => w.toFirestore()).toList();
-      await _appUserRef.doc(authUserUid).update({"writings": writings});
+
+      final updatedAppUser = AppUser(
+        authUserUid: appUser?.authUserUid,
+        writings: writings,
+      );
+
+      await updateAppUser(updatedAppUser);
       return true;
     } catch (e) {
       print(e);
