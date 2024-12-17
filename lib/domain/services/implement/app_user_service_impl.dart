@@ -47,19 +47,23 @@ class AppUserServiceImpl implements IAppUserService {
 
   @override
   Future<AppUser?> getAppUserByAuthUserUid(String authUserUid) async {
-    final docs =
-        await _appUserRef.where('authUserUid', isEqualTo: authUserUid).get();
-    if (docs.docs.isEmpty) {
-      throw StateError('AppUser not found');
-    }
     try {
-      final appUser = docs.docs.first.data() as AppUser?;
+      final docs =
+          await _appUserRef.where('authUserUid', isEqualTo: authUserUid).get();
+      if (docs.docs.isEmpty) {
+        throw StateError('AppUser not found');
+      }
+
+      final docSnapshot = docs.docs.first as DocumentSnapshot<AppUser>;
+      final appUser = docSnapshot.data();
+
       if (appUser == null) {
         throw StateError('AppUser data is null');
       }
+
       return appUser;
     } catch (e) {
-      print(e);
+      print('Error getting AppUser: ${e.toString()}');
       return null;
     }
   }
