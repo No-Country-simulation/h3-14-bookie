@@ -50,6 +50,8 @@ class BookReadWidget extends StatelessWidget {
             ),
             Text(
               reading.title ?? '',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
               style: textStyle.bodyLarge!.copyWith(fontWeight: FontWeight.w700),
             ),
             Text(
