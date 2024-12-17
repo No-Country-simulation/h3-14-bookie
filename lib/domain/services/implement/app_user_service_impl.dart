@@ -155,18 +155,18 @@ class AppUserServiceImpl implements IAppUserService {
   }
 
   @override
-  Future<bool> deleteUserReading(String userUid, String readingUid) async {
+  Future<bool> deleteUserReading(String userUid, String readingStoryUid) async {
     final appUser = await getAppUserByAuthUserUid(userUid);
     final readings = appUser?.readings ?? [];
     if (readings.isEmpty) {
       return false;
     }
     try {
-      final reading = readings.firstWhere((r) => r.storyId == readingUid);
+      final reading = readings.firstWhere((r) => r.storyId == readingStoryUid);
       final readingIndex = readings.indexOf(reading);
       readings.removeAt(readingIndex);
-      final readingMaps = readings.map((r) => r.toFirestore()).toList();
-      await _appUserRef.doc(userUid).update({"readings": readingMaps});
+      //final readingMaps = readings.map((r) => r.toFirestore()).toList();
+      await _appUserRef.doc(userUid).update({"readings": readings});
       return true;
     } catch (e) {
       print(e);
@@ -175,18 +175,19 @@ class AppUserServiceImpl implements IAppUserService {
   }
 
   @override
-  Future<bool> deleteUserWriting(String authUserUid, String writingUid) async {
+  Future<bool> deleteUserWriting(
+      String authUserUid, String writingStoryUid) async {
     final appUser = await getAppUserByAuthUserUid(authUserUid);
     final writings = appUser?.writings ?? [];
     if (writings.isEmpty) {
       return false;
     }
     try {
-      final writing = writings.firstWhere((w) => w.storyId == writingUid);
+      final writing = writings.firstWhere((w) => w.storyId == writingStoryUid);
       final writingIndex = writings.indexOf(writing);
       writings.removeAt(writingIndex);
-      final writingMaps = writings.map((w) => w.toFirestore()).toList();
-      await _appUserRef.doc(authUserUid).update({"writings": writingMaps});
+      //final writingMaps = writings.map((w) => w.toFirestore()).toList();
+      await _appUserRef.doc(authUserUid).update({"writings": writings});
       return true;
     } catch (e) {
       print(e);
