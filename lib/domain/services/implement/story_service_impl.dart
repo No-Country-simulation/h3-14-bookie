@@ -57,17 +57,15 @@ class StoryServiceImpl implements IStoryService {
   @override
   Future<List<String>> getAllStoriesUid() async {
     try {
-      final docs = await _storyRef.get();
-      final storyIds = docs.docs.map((doc) => doc.id).toList();
-
-      for (var id in storyIds) {
-        print('Story ID: $id');
+      final querySnapshot = await _storyRef.get();
+      if (querySnapshot.docs.isEmpty) {
+        print("Warning: No documents found in stories collection");
+        return [];
       }
-
-      return storyIds;
+      return querySnapshot.docs.map((doc) => doc.id).toList();
     } catch (e) {
-      print('Error getting story IDs: $e');
-      return [];
+      print("Error getting stories: $e");
+      throw Exception("Failed to get stories: $e");
     }
   }
 
@@ -272,9 +270,15 @@ class StoryServiceImpl implements IStoryService {
     }
     final appUser = await appUserService.getAppUserByAuthUserUid(appUserUid);
     final readings = appUser?.readings ?? [];
-    final reading =
-        readings.firstWhere((reading) => reading.storyId == storyUid);
-    return reading.inLibrary ?? false;
+    if (readings.isEmpty) {
+      return false;
+    }
+    if (readings.any((reading) => reading.storyId == storyUid)) {
+      final reading =
+          readings.firstWhere((reading) => reading.storyId == storyUid);
+      return reading.inLibrary ?? false;
+    }
+    return false;
   }
 
   @override
