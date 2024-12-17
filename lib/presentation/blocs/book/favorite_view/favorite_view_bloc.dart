@@ -41,7 +41,7 @@ class FavoriteViewBloc extends Bloc<FavoriteViewEvent, FavoriteViewState> {
   void _onChangeFavoriteStoryFavorites(ChangeFavoriteStoryFavorites event, Emitter<FavoriteViewState> emit) async {
     try {
       List<BookFavoriteEntity> list = List.from(state.listFavorites);
-      readingService.updateInLibrary(list[event.index].reading.storyId!, !list[event.index].isFavorite);
+      await readingService.updateInLibrary(list[event.index].reading.storyId!, !list[event.index].isFavorite);
       list[event.index] = BookFavoriteEntity(reading: list[event.index].reading, isFavorite: !list[event.index].isFavorite);
       // int index = list.indexWhere((c) => c.number == event.number);
       // if(index == -1){return;}
