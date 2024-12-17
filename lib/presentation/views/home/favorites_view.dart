@@ -16,18 +16,18 @@ class FavoritesView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(
-          height: 10,
-        ),
-        Center(
-          child: Text(
-            'Mi biblioteca',
-            style: textStyle.titleLarge!.copyWith(
-              fontSize: 21,
-              fontWeight: FontWeight.bold,
+            height: 10,
+          ),
+          Center(
+            child: Text(
+              'Mi biblioteca',
+              style: textStyle.titleLarge!.copyWith(
+                fontSize: 21,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
-        const Divider(),
+          const Divider(),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(
@@ -43,14 +43,29 @@ class FavoritesView extends StatelessWidget {
           const SizedBox(height: 16),
           SizedBox(
             height: 290,
-            child: ListView.builder(
-              clipBehavior: Clip.none,
-              scrollDirection: Axis.horizontal,
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return const Padding(
-                  padding: EdgeInsets.only(left: 16),
-                  child: BookReadWidget(),
+            child: BlocBuilder<FavoriteViewBloc, FavoriteViewState>(
+              builder: (context, state) {
+                return state.loading
+                          ? const Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          : state.list.isEmpty 
+                          ? const Center(
+                              child: Text('Aún no tienes lecturas iniciadas.')
+                            )
+                          :ListView.builder(
+                  clipBehavior: Clip.none,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: state.list.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: BookReadWidget(reading: state.list[index],),
+                    );
+                  },
                 );
               },
             ),
@@ -72,44 +87,65 @@ class FavoritesView extends StatelessWidget {
           BlocBuilder<FavoriteViewBloc, FavoriteViewState>(
             builder: (context, state) {
               return state.listFavorites.isEmpty
-              ? const Padding(
-                padding: EdgeInsets.symmetric(vertical: 60),
-                child: Center(child: Text('Aún no tienes historias en tu biblioteca.'),))
-              : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: state.loadingFavorites
-                    ? const Center(child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: CircularProgressIndicator(),
-                    ),) 
-                    : GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: state.listFavorites.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 180 / 290,
-                  ),
-                  itemBuilder: (context, index) {
-                    final story = state.listFavorites[index].reading;
-                    return GestureDetector(
-                      onTap: () {
-                        context.push('/home/0/book/${story.storyId}');
-                      },
-                      child: BookWidget(
-                        isFavorite: true,
-                        story: StoryResponseDto(
-                            story.storyId, story.title??'(Título)', '', story.cover??'', story.synopsis??'', [], [], 0, 0, 0, [], true),
-                        onFavorite: () {
-                          context.read<FavoriteViewBloc>().add(ChangeFavoriteStoryFavorites(index: index));
-                        },
-                      ),
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 60),
+                      child: Center(
+                        child:
+                            Text('Aún no tienes historias en tu biblioteca.'),
+                      ))
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: state.loadingFavorites
+                          ? const Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          : GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: state.listFavorites.length,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                                childAspectRatio: 180 / 290,
+                              ),
+                              itemBuilder: (context, index) {
+                                final story =
+                                    state.listFavorites[index].reading;
+                                return GestureDetector(
+                                  onTap: () {
+                                    context
+                                        .push('/home/0/book/${story.storyId}');
+                                  },
+                                  child: BookWidget(
+                                    isFavorite: true,
+                                    story: StoryResponseDto(
+                                        story.storyId,
+                                        story.title ?? '(Título)',
+                                        '',
+                                        story.cover ?? '',
+                                        story.synopsis ?? '',
+                                        [],
+                                        [],
+                                        0,
+                                        0,
+                                        0,
+                                        [],
+                                        true),
+                                    onFavorite: () {
+                                      context.read<FavoriteViewBloc>().add(
+                                          ChangeFavoriteStoryFavorites(
+                                              index: index));
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
                     );
-                  },
-                ),
-              );
             },
           ),
         ],

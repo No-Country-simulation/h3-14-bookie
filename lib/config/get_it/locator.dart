@@ -35,7 +35,9 @@ void setupLocator() {
     readingService: ReadingServiceImpl(),
     categoryService: CategoryServiceImpl(),
   ));
-  locator.registerSingleton(ReadViewBloc());
+  locator.registerSingleton(ReadViewBloc(
+    readingService: ReadingServiceImpl()
+  ));
   locator.registerSingleton(FavoriteViewBloc(
     readingService: ReadingServiceImpl()
   ));

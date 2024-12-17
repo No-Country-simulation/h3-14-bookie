@@ -1,4 +1,6 @@
-class ReadingResponseDto {
+import 'package:equatable/equatable.dart';
+
+class ReadingResponseDto extends Equatable{
   final String storyId;
   final List<String>? readingChaptersUids;
   final bool? inLibrary;
@@ -9,7 +11,7 @@ class ReadingResponseDto {
   final double? rate;
   final int? totalReadings;
 
-  ReadingResponseDto(
+  const ReadingResponseDto(
       this.storyId,
       this.inLibrary,
       this.cover,
@@ -19,4 +21,7 @@ class ReadingResponseDto {
       this.totalReadings,
       this.readingChaptersUids,
       this.lastPageInChapterReaded);
+      
+        @override
+        List<Object?> get props => [storyId, inLibrary, cover,title, synopsis,rate,totalReadings,readingChaptersUids,lastPageInChapterReaded];
 }

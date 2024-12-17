@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:h3_14_bookie/domain/entities/book_favorite_entity.dart';
+import 'package:h3_14_bookie/domain/model/dto/reading_response_dto.dart';
 import 'package:h3_14_bookie/domain/services/reading_service.dart';
 
 part 'favorite_view_event.dart';
@@ -16,10 +17,19 @@ class FavoriteViewBloc extends Bloc<FavoriteViewEvent, FavoriteViewState> {
     on<GetListFavorites>(_onGetListFavorites);
     on<InitFavoritesEvent>(_onInitFavoritesEvent);
     on<ChangeFavoriteStoryFavorites>(_onChangeFavoriteStoryFavorites);
+    on<GetReadingStoryEvent>(_onGetReadingStoryEvent);
   }
 
-  void _onInitFavoritesEvent(InitFavoritesEvent event, Emitter<FavoriteViewState> emit) {
-    add(const GetListFavorites());
+  void _onInitFavoritesEvent(InitFavoritesEvent event, Emitter<FavoriteViewState> emit) async {
+    try {
+      emit(state.copyWith(loading: true, loadingFavorites: true));
+      
+      add(const GetListFavorites());
+      add(const GetReadingStoryEvent());
+      
+    } catch (e) {
+      Fluttertoast.showToast(msg: '$e');
+    }
   }
 
   void _onGetListFavorites(GetListFavorites event, Emitter<FavoriteViewState> emit) async {
@@ -32,6 +42,23 @@ class FavoriteViewBloc extends Bloc<FavoriteViewEvent, FavoriteViewState> {
       emit(state.copyWith(
         listFavorites: newList,
         loadingFavorites: false,
+      ));
+    } catch (e) {
+      Fluttertoast.showToast(msg: '$e', backgroundColor: Colors.red);
+    }
+  }
+
+  void _onGetReadingStoryEvent(GetReadingStoryEvent event, Emitter<FavoriteViewState> emit) async {
+    try {
+      emit(state.copyWith(
+        loading: true,
+      ));
+      final list = await readingService.getUserReadingsResponseDto(null);
+      List<ReadingResponseDto> newList = List.from(list);
+      // final newList = list.map((r) => BookFavoriteEntity(reading: r, isFavorite: r.inLibrary ?? false)).toList();
+      emit(state.copyWith(
+        list: newList,
+        loading: false,
       ));
     } catch (e) {
       Fluttertoast.showToast(msg: '$e', backgroundColor: Colors.red);

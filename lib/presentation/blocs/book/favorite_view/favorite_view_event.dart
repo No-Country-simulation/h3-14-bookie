@@ -21,3 +21,7 @@ class ChangeFavoriteStoryFavorites extends FavoriteViewEvent {
     required this.index
   });
 }
+
+class GetReadingStoryEvent extends FavoriteViewEvent {
+  const GetReadingStoryEvent();
+}

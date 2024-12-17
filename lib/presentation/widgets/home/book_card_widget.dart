@@ -98,13 +98,14 @@ class BookCardWidget extends StatelessWidget {
                     const SizedBox(height: 5),
                     IconLabelWidget(label: placeChapterName, icon: Icons.place_outlined),
                     const SizedBox(height: 3),
-                    IconLabelWidget(label: 'Capítulo $numberChapter: $titleChapterName',
-                    icon: Icons.list),
                   ],
                 ),
               ),
             ],
           ),
+                    IconLabelWidget(
+                      label: 'Capítulo $numberChapter: $titleChapterName',
+                    icon: Icons.list),
           const SizedBox(height: 16),
           Wrap(
             spacing: 8,
