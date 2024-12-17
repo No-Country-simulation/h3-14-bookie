@@ -1,95 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:h3_14_bookie/presentation/screens/login/login.dart';
 
 class PasswordLinkSentScreen extends StatelessWidget {
-  final bool isSMS;
-
-  const PasswordLinkSentScreen({
-    super.key,
-    this.isSMS = false,
-  });
+  const PasswordLinkSentScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Spacer(),
-              Icon(
-                isSMS ? Icons.phone_android_outlined : Icons.mail_outline,
+              const Icon(
+                Icons.mark_email_read_outlined,
                 size: 80,
-                color: const Color(0xFF006494),
+                color: Color(0xFF006494),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               Text(
-                'Ya puedes cambiar tu contraseña',
+                '¡Enlace enviado!',
                 style: GoogleFonts.inter(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               Text(
-                isSMS
-                    ? 'Te enviamos los pasos a seguir al celular terminado en 0650'
-                    : 'Te enviamos los pasos a seguir al email a****@g****.com',
+                'Hemos enviado un correo electrónico con las instrucciones para restablecer tu contraseña.',
                 style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: Colors.black87,
+                  fontSize: 16,
+                  color: Colors.black54,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Reenviar (00:54)',
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const Spacer(),
+              const SizedBox(height: 32),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF006494),
+                  minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(24),
                   ),
-                  minimumSize: const Size(double.infinity, 56),
                 ),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Login()));
-                  // Navigator.pushAndRemoveUntil(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => Login()),
-                  //   (route) => false,
-                  // );
+                  Navigator.of(context).popUntil((route) => route.isFirst);
                 },
                 child: const Text(
-                  'Ir al inicio',
+                  'Volver al inicio',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
             ],
           ),
         ),

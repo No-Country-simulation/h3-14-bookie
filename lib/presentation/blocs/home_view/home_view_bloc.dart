@@ -43,26 +43,6 @@ class HomeViewBloc extends Bloc<HomeViewEvent, HomeViewState> {
 
   void _onGetStories(GetStoriesHome event, Emitter<HomeViewState> emit) async {
     try {
-<<<<<<< HEAD
-      print(
-          '🔄 [HomeViewBloc] Starting to fetch stories with filter: ${event.filter}');
-      emit(state.copyWith(isLoading: true));
-
-      final list =
-          await storyService.getStoriesWithFilter(event.filter, event.category);
-      print('📚 [HomeViewBloc] Received ${list.length} stories from service');
-
-      final newList = list.map((s) {
-        print(
-            '📖 [HomeViewBloc] Processing story: ${s.title} (ID: ${s.storyUid})');
-        return BookNearEntity(story: s, isFavorite: s.inLibrary ?? false);
-      }).toList();
-
-      print('✅ [HomeViewBloc] Processed all stories, emitting new state');
-      emit(state.copyWith(stories: newList, isLoading: false));
-    } catch (e) {
-      print('❌ [HomeViewBloc] Error fetching stories: $e');
-=======
       emit(state.copyWith(
         isLoading: true,
       ));
@@ -74,7 +54,6 @@ class HomeViewBloc extends Bloc<HomeViewEvent, HomeViewState> {
           .toList();
       emit(state.copyWith(stories: newList, isLoading: false));
     } catch (e) {
->>>>>>> 5e987db0ea42620451baf6ec6c5dcc804e66a53b
       Fluttertoast.showToast(msg: '$e');
       emit(state.copyWith(isLoading: false));
     }
@@ -102,14 +81,10 @@ class HomeViewBloc extends Bloc<HomeViewEvent, HomeViewState> {
       ChangeFavoriteStoryHome event, Emitter<HomeViewState> emit) {
     try {
       List<BookNearEntity> list = List.from(state.stories);
-<<<<<<< HEAD
-      readingService.addNewReading(list[event.index].story.storyUid, true);
-=======
       print(list[event.index].story.storyUid);
       print(list[event.index].isFavorite);
       readingService.updateInLibrary(
           list[event.index].story.storyUid, !list[event.index].isFavorite);
->>>>>>> 5e987db0ea42620451baf6ec6c5dcc804e66a53b
       list[event.index] = BookNearEntity(
           story: list[event.index].story,
           isFavorite: !list[event.index].isFavorite);

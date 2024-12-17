@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:h3_14_bookie/domain/services/auth_service.dart';
-import 'package:h3_14_bookie/presentation/screens/password/recovery_method_screen.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
   static const String name = 'forgot-password';
+  const ForgotPasswordScreen({super.key});
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
@@ -15,12 +12,11 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
-  bool _isLoading = false;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -30,149 +26,92 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              Center(
-                child: Text(
-                  '¿Olvidaste tu contraseña?',
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Recuperar contraseña',
                   style: GoogleFonts.inter(
-                    fontSize: 35,
+                    fontSize: 32,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black,
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Necesitamos identificarte. Luego podrás cambiar tu contraseña.',
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 32),
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  hintText: 'Ingresa tu correo electrónico o usuario',
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
+                const SizedBox(height: 16),
+                Text(
+                  'Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    color: Colors.black54,
                   ),
-                  contentPadding: const EdgeInsets.all(16),
                 ),
-              ),
-              const Spacer(),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF006494),
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 47),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
+                const SizedBox(height: 32),
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    hintText: 'Correo electrónico',
+                    filled: true,
+                    fillColor: Colors.grey.shade50,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 16,
+                    ),
                   ),
-                  elevation: 0,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingresa tu correo electrónico';
+                    }
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                        .hasMatch(value)) {
+                      return 'Ingresa un correo electrónico válido';
+                    }
+                    return null;
+                  },
                 ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => RecoveryMethodScreen(
-                              email: _emailController.text)));
-                },
-                // onPressed: _isLoading ? null : _handleContinue,
-                child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text(
-                        'Continuar',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-              ),
-              const SizedBox(height: 32),
-            ],
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF006494),
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      await AuthService().resetPassword(
+                        email: _emailController.text.trim(),
+                        context: context,
+                      );
+                    }
+                  },
+                  child: const Text(
+                    'Enviar enlace de recuperación',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  void _handleContinue() async {
-    final email = _emailController.text.trim();
-
-    if (email.isEmpty) {
-      Fluttertoast.showToast(
-        msg: 'Por favor ingresa tu correo electrónico',
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
-        toastLength: Toast.LENGTH_LONG,
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    try {
-      // Intentar verificar el email
-      final emailExists = await AuthService().verifyEmail(email);
-
-      if (mounted) {
-        if (emailExists) {
-          // Si el email existe, navegamos a la pantalla de recuperación
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RecoveryMethodScreen(email: email),
-            ),
-          );
-        }
-      }
-    } on FirebaseAuthException catch (e) {
-      // Manejar errores específicos de Firebase
-      String errorMessage;
-      switch (e.code) {
-        case 'user-not-found':
-          errorMessage = 'No existe una cuenta con este correo electrónico';
-          break;
-        case 'invalid-email':
-          errorMessage = 'El formato del correo electrónico no es válido';
-          break;
-        case 'too-many-requests':
-          errorMessage = 'Demasiados intentos. Por favor, intenta más tarde';
-          break;
-        default:
-          errorMessage = 'Ha ocurrido un error. Por favor, intenta nuevamente';
-      }
-
-      Fluttertoast.showToast(
-        msg: errorMessage,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-      );
-    } catch (e) {
-      // Manejar otros errores inesperados
-      print('Error inesperado: $e');
-      Fluttertoast.showToast(
-        msg: 'Ha ocurrido un error inesperado',
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-      );
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
   }
 }

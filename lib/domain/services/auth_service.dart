@@ -9,6 +9,7 @@ import 'package:h3_14_bookie/presentation/screens/home/home.dart';
 import 'package:h3_14_bookie/presentation/screens/login/login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:h3_14_bookie/presentation/screens/auth/email_verification_screen.dart';
+import 'package:h3_14_bookie/presentation/screens/password/password_link_sent_screen.dart';
 import 'package:h3_14_bookie/presentation/widgets/dialogs/error_dialog.dart';
 
 class AuthService {
@@ -392,6 +393,42 @@ class AuthService {
     } catch (e) {
       print('Error en verifyEmail: $e');
       return false;
+    }
+  }
+
+  Future<void> resetPassword({
+    required String email,
+    required BuildContext context,
+  }) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      if (context.mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PasswordLinkSentScreen(),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'user-not-found':
+          errorMessage = 'No existe una cuenta con este correo electrónico.';
+          break;
+        case 'invalid-email':
+          errorMessage = 'El correo electrónico no es válido.';
+          break;
+        default:
+          errorMessage =
+              'Ocurrió un error al enviar el correo de recuperación.';
+      }
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => ErrorDialog(message: errorMessage),
+        );
+      }
     }
   }
 }
