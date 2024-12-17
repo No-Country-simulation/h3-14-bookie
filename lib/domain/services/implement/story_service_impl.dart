@@ -389,8 +389,23 @@ class StoryServiceImpl implements IStoryService {
       return false;
     }
 
-    story.chaptersUid?.add(chapterUid);
-    await _storyRef.doc(storyUid).update(story.toFirestore());
+    var chaptersUid = story.chaptersUid ?? [];
+
+    if (chaptersUid.contains(chapterUid)) {
+      return false;
+    }
+
+    chaptersUid.add(chapterUid);
+
+    Story updatedStory = Story(chaptersUid: chaptersUid);
+
+    final finalStory = await updateStory(storyUid, updatedStory);
+
+    if (finalStory.chaptersUid == null ||
+        !finalStory.chaptersUid!.contains(chapterUid)) {
+      return false;
+    }
+
     return true;
   }
 
